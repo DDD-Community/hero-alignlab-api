@@ -13,7 +13,6 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
     QUERY_DSL_NOT_EXISTS_ERROR(HttpStatus.NOT_FOUND, "not found query dsl"),
     COROUTINE_CANCELLATION_ERROR(HttpStatus.BAD_REQUEST, "coroutine cancellation error"),
     FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR(HttpStatus.BAD_REQUEST, "fail to tx-templates execute error"),
-    FAIL_TO_REDIS_EXECUTE_ERROR(HttpStatus.BAD_REQUEST, "fail to redis execute error"),
 
     /** short url */
     NOT_FOUND_SHORT_URL(HttpStatus.NOT_FOUND, "not found short url"),

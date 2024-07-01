@@ -47,8 +47,6 @@ jobs:
         with:
           files: ./src/main/resources/config/application-prod.yml
         env:
-          spring.data.redis.host: ${{ secrets.SPRING_REDIS_HOST }}
-          spring.data.redis.port: ${{ secrets.SPRING_REDIS_PORT }}
           hero.master.datasource.url: ${{ secrets.HERO_MASTER_DATASOURCE_URL }}
           hero.master.datasource.username: ${{ secrets.HERO_MASTER_DATASOURCE_USERNAME }}
           hero.master.datasource.password: ${{ secrets.HERO_MASTER_DATASOURCE_PASSWORD }}
