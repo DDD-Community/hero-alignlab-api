@@ -18,9 +18,9 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   PROJECT_NAME: hero-alignlab-api
-  S3_BUCKET_NAME: github-actions-s3-core-bucket
+  S3_BUCKET_NAME: alignlab
   CODE_DEPLOY_APP_NAME: hero-alignlab-api
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: hero-alignlab-api-deployment
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: hero-align-lab-deploy
 
 permissions:
   contents: read
