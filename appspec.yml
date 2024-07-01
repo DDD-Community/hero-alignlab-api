@@ -7,7 +7,7 @@ os: linux
 ## overwrite: 복사할 위치에 파일이 있는 경우 대체
 files:
   - source: /
-    destination: /home/ec2-user/apps/hero-aliginlab-api
+    destination: /home/ec2-user/apps/hero-alignlab-api
     overwrite: yes
 
 # files 섹션에서 복사한 파일에 대한 권한 설정
