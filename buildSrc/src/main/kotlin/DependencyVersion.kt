@@ -9,7 +9,7 @@ object DependencyVersion {
     const val JAVADOC_SCRIBE = "0.15.0"
 
     /** test */
-    const val TEST_CONTAINER_MYSQL = "1.24.0"
+    const val TEST_CONTAINER_MYSQL = "1.19.8"
     const val P6SPY_LOG = "1.9.1"
     const val LOGBACK_CLASSIC = "1.5.6"
     const val MOCKK = "1.13.11"
