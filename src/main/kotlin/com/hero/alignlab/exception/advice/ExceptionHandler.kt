@@ -1,6 +1,6 @@
 package com.hero.alignlab.exception.advice
 
-import com.hero.alignlab.dto.ErrorResponse
+import com.hero.alignlab.common.model.ErrorResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.validation.ConstraintViolationException
 import kotlinx.coroutines.CancellationException

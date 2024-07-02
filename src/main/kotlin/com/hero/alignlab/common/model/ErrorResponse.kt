@@ -1,4 +1,4 @@
-package com.hero.alignlab.dto
+package com.hero.alignlab.common.model
 
 import com.hero.alignlab.exception.ErrorCode
 import jakarta.validation.ConstraintViolationException

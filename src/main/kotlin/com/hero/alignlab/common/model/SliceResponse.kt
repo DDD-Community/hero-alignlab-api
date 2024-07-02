@@ -1,9 +1,9 @@
-package com.hero.alignlab.dto
+package com.hero.alignlab.common.model
 
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
 
-data class SliceResponseDto<T>(
+data class SliceResponse<T>(
     val data: List<T>,
     val page: Int?,
     val size: Int?,

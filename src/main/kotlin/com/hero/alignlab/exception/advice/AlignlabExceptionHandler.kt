@@ -1,6 +1,6 @@
 package com.hero.alignlab.exception.advice
 
-import com.hero.alignlab.dto.ErrorResponse
+import com.hero.alignlab.common.model.ErrorResponse
 import com.hero.alignlab.exception.AlignlabException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.core.Ordered

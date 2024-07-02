@@ -1,9 +1,9 @@
-package com.hero.alignlab.dto
+package com.hero.alignlab.common.model
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
 
-data class PageResponseDto<T>(
+data class PageResponse<T>(
     val data: List<T>,
     val page: Int?,
     val size: Int?,
