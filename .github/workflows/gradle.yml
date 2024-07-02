@@ -5,7 +5,7 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: hero-alignlab-api Gradle CI/CD
+name: hero-alignlab-api CI/CD
 
 # release 브랜치에 push 또는 pull request가 되면 스크립트 실행
 on:
@@ -14,7 +14,7 @@ on:
   pull_request:
     branches: [ main ]
 
-# 해당 코드에서 사용될 변수 설정
+# 해당 스크립트에서 사용될 환경 변수
 env:
   AWS_REGION: ap-northeast-2
   PROJECT_NAME: hero-alignlab-api
@@ -35,21 +35,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up JDK 17
+      # JDK 17, Corretto 17
+      - name: Set up Corretto JDK  17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
       # Secret Setup
-      - name: Set Prod Yml
+      - name: Inject env-values to prod.yml
         uses: microsoft/variable-substitution@v1
         with:
           files: ./src/main/resources/config/application-prod.yml
         env:
+          # Database 환경 변수 주입
           hero.master.datasource.url: ${{ secrets.HERO_MASTER_DATASOURCE_URL }}
           hero.master.datasource.username: ${{ secrets.HERO_MASTER_DATASOURCE_USERNAME }}
           hero.master.datasource.password: ${{ secrets.HERO_MASTER_DATASOURCE_PASSWORD }}
+          # Aws Credentials 환경 변수 주입
           cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY_ID }}
           cloud.aws.credentials.secretKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
