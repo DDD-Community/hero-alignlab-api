@@ -39,3 +39,11 @@ hero:
     show-sql: false
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
+
+auth:
+  jwt:
+    secret:
+
+encrypt:
+  key:
+  algorithm:

@@ -14,7 +14,16 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
     COROUTINE_CANCELLATION_ERROR(HttpStatus.BAD_REQUEST, "coroutine cancellation error"),
     FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR(HttpStatus.BAD_REQUEST, "fail to tx-templates execute error"),
 
-    /** short url */
-    NOT_FOUND_SHORT_URL(HttpStatus.NOT_FOUND, "not found short url"),
+    /** Auth Error Code */
+    FAIL_TO_VERIFY_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "fail to verify token"),
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "유효한 엑세스 토큰이 아닙니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "유효한 리프레시 토큰이 아닙니다."),
+    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효한 토큰이 아닙니다."),
+    NO_AUTHORITY_ERROR(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+    INVALID_OAUTH_PROVIDER(HttpStatus.BAD_REQUEST, "잘못된 oauth 벤더입니다."),
+    DUPLICATED_USERNAME_ERROR(HttpStatus.BAD_REQUEST, "중복된 아이디 입니다."),
+
+    /** User Error Code */
+    NOT_FOUND_USER_ERROR(HttpStatus.NOT_FOUND, "유저 정보를 찾을 수 없습니다."),
     ;
 }

@@ -81,6 +81,9 @@ dependencies {
     /** database */
     runtimeOnly("com.mysql:mysql-connector-j")
 
+    /** jwt */
+    implementation("com.auth0:java-jwt:${DependencyVersion.AUTH_JWT}")
+
     /** test */
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
