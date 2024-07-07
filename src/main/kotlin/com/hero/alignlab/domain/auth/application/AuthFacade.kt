@@ -4,6 +4,7 @@ import com.hero.alignlab.common.encrypt.EncryptData
 import com.hero.alignlab.common.encrypt.Encryptor
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthContextImpl
+import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.auth.model.AuthUserImpl
 import com.hero.alignlab.domain.auth.model.AuthUserToken
 import com.hero.alignlab.domain.auth.model.request.SignInRequest
@@ -14,10 +15,13 @@ import com.hero.alignlab.domain.user.application.CredentialUserInfoService
 import com.hero.alignlab.domain.user.application.UserService
 import com.hero.alignlab.domain.user.domain.CredentialUserInfo
 import com.hero.alignlab.domain.user.domain.UserInfo
+import com.hero.alignlab.domain.user.model.response.UserInfoResponse
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.InvalidTokenException
 import com.hero.alignlab.extension.coExecute
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
@@ -90,5 +94,13 @@ class AuthFacade(
         val accessToken = jwtTokenService.createToken(userInfo.id, TOKEN_EXPIRED_DATE)
 
         return SignInResponse(accessToken)
+    }
+
+    suspend fun getUserInfo(user: AuthUser): UserInfoResponse {
+        val userInfo = withContext(Dispatchers.IO) {
+            userService.getUserByIdOrThrowSync(user.uid)
+        }
+
+        return UserInfoResponse.from(userInfo)
     }
 }

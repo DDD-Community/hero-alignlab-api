@@ -1,6 +1,5 @@
 package com.hero.alignlab.domain.user.application
 
-import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.user.domain.UserInfo
 import com.hero.alignlab.domain.user.infrastructure.UserInfoRepository
 import com.hero.alignlab.domain.user.model.response.UserInfoResponse
@@ -28,9 +27,9 @@ class UserService(
         return userInfoRepository.save(userInfo)
     }
 
-    suspend fun getUserInfo(user: AuthUser): UserInfoResponse {
+    suspend fun getUserInfo(id: Long): UserInfoResponse {
         val userInfo = withContext(Dispatchers.IO) {
-            getUserByIdOrThrowSync(user.uid)
+            getUserByIdOrThrowSync(id)
         }
 
         return UserInfoResponse.from(userInfo)

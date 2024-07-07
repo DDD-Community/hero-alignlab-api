@@ -1,6 +1,7 @@
 package com.hero.alignlab.domain.auth.resource
 
 import com.hero.alignlab.domain.auth.application.AuthFacade
+import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.auth.model.request.SignInRequest
 import com.hero.alignlab.domain.auth.model.request.SignUpRequest
 import com.hero.alignlab.extension.wrapCreated
@@ -8,10 +9,7 @@ import com.hero.alignlab.extension.wrapOk
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Auth 인증 및 인가 관리")
 @RestController
@@ -30,4 +28,10 @@ class AuthResource(
     suspend fun signUp(
         @RequestBody request: SignInRequest,
     ) = authFacade.signIn(request).wrapOk()
+
+    @Operation(summary = "토큰 기반으로 유저 정보를 조회")
+    @GetMapping("/api/v1/auth/me")
+    suspend fun getUserInfo(
+        user: AuthUser
+    ) = authFacade.getUserInfo(user).wrapOk()
 }

@@ -63,3 +63,7 @@ class SpringDocConfig(
             )
     }
 }
+
+object SwaggerTag {
+    const val DEV_TAG = "Dev Resource, 테스트용 API"
+}
