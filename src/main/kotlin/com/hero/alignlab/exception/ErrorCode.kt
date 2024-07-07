@@ -15,6 +15,7 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
     FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR(HttpStatus.BAD_REQUEST, "fail to tx-templates execute error"),
 
     /** Auth Error Code */
+    NOT_FOUND_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "not found token"),
     FAIL_TO_VERIFY_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "fail to verify token"),
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "유효한 엑세스 토큰이 아닙니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "유효한 리프레시 토큰이 아닙니다."),
