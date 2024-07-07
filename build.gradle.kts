@@ -58,6 +58,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
+    /** querydsl */
+    implementation("com.querydsl:querydsl-jpa:${DependencyVersion.QUERYDSL}:jakarta")
+    kapt("com.querydsl:querydsl-apt:${DependencyVersion.QUERYDSL}:jakarta")
+
     /** kotlin */
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")

@@ -33,9 +33,6 @@ class UserService(
             getUserByIdOrThrowSync(user.uid)
         }
 
-        return UserInfoResponse(
-            uid = userInfo.id,
-            nickname = userInfo.nickname
-        )
+        return UserInfoResponse.from(userInfo)
     }
 }

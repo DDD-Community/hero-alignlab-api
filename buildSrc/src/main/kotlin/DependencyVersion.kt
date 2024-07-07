@@ -1,4 +1,7 @@
 object DependencyVersion {
+    /** querydsl */
+    const val QUERYDSL = "5.0.0"
+
     /** external */
     const val ARROW_FX = "1.2.4"
     const val KOTLIN_LOGGING = "6.0.9"

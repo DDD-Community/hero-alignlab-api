@@ -17,6 +17,7 @@ import com.hero.alignlab.domain.user.domain.UserInfo
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.InvalidTokenException
+import com.hero.alignlab.extension.coExecute
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
@@ -59,28 +60,35 @@ class AuthFacade(
             throw InvalidRequestException(ErrorCode.DUPLICATED_USERNAME_ERROR)
         }
 
-        val userInfo = userService.save(UserInfo(nickname = request.username))
+        val userInfo = txTemplates.writer.coExecute {
+            val userInfo = userService.save(UserInfo(nickname = request.username))
 
-        credentialUserInfoService.save(
-            CredentialUserInfo(
-                uid = userInfo.id,
-                username = request.username,
-                password = EncryptData.enc(request.password, encryptor)
+            credentialUserInfoService.save(
+                CredentialUserInfo(
+                    uid = userInfo.id,
+                    username = request.username,
+                    password = EncryptData.enc(request.password, encryptor)
+                )
             )
-        )
 
-        return SignUpResponse(
-            accessToken = jwtTokenService.createToken(userInfo.id, TOKEN_EXPIRED_DATE)
-        )
+            userInfo
+        }
+
+        val accessToken = jwtTokenService.createToken(userInfo.id, TOKEN_EXPIRED_DATE)
+
+        return SignUpResponse(accessToken)
     }
 
     suspend fun signIn(request: SignInRequest): SignInResponse {
-        val credentialUserInfo = credentialUserInfoService.findByUsernameAndPassword(request.username, request.password)
-
-        val user = userService.getUserByIdOrThrowSync(credentialUserInfo.uid)
-
-        return SignInResponse(
-            accessToken = jwtTokenService.createToken(user.id, TOKEN_EXPIRED_DATE)
+        val credentialUserInfo = credentialUserInfoService.findByUsernameAndPassword(
+            username = request.username,
+            password = request.password
         )
+
+        val userInfo = userService.getUserByIdOrThrowSync(credentialUserInfo.uid)
+
+        val accessToken = jwtTokenService.createToken(userInfo.id, TOKEN_EXPIRED_DATE)
+
+        return SignInResponse(accessToken)
     }
 }
