@@ -1,4 +1,4 @@
-package com.hero.alignlab.extension
+package com.hero.alignlab.common.extension
 
 import io.github.oshai.kotlinlogging.KLogger
 import kotlinx.coroutines.CancellationException

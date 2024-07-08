@@ -2,7 +2,7 @@ package com.hero.alignlab.domain.user.resource
 
 import com.hero.alignlab.config.swagger.SwaggerTag.DEV_TAG
 import com.hero.alignlab.domain.user.application.UserService
-import com.hero.alignlab.extension.wrapOk
+import com.hero.alignlab.common.extension.wrapOk
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType

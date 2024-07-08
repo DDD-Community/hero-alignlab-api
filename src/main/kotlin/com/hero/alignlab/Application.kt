@@ -1,6 +1,6 @@
 package com.hero.alignlab
 
-import com.hero.alignlab.extension.Zone
+import com.hero.alignlab.common.extension.Zone
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.event.ApplicationReadyEvent

@@ -1,4 +1,4 @@
-package com.hero.alignlab.extension
+package com.hero.alignlab.common.extension
 
 import com.hero.alignlab.common.model.PageResponse
 import com.hero.alignlab.common.model.Response

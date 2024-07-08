@@ -1,4 +1,4 @@
-package com.hero.alignlab.extension
+package com.hero.alignlab.common.extension
 
 import org.springframework.http.server.reactive.ServerHttpRequest
 

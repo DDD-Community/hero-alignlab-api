@@ -1,4 +1,4 @@
-package com.hero.alignlab.extension
+package com.hero.alignlab.common.extension
 
 import java.time.Instant
 import java.time.LocalDate

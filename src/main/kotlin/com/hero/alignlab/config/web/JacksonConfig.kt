@@ -1,4 +1,4 @@
-package com.hero.alignlab.config
+package com.hero.alignlab.config.web
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer

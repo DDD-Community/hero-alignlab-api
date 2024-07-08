@@ -1,4 +1,4 @@
-package com.hero.alignlab.config
+package com.hero.alignlab.config.jwt
 
 import jakarta.validation.constraints.NotBlank
 import org.springframework.boot.context.properties.ConfigurationProperties

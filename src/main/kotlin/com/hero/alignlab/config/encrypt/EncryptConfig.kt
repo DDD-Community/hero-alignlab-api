@@ -1,4 +1,4 @@
-package com.hero.alignlab.config
+package com.hero.alignlab.config.encrypt
 
 import com.hero.alignlab.common.encrypt.Encryptor
 import io.github.oshai.kotlinlogging.KotlinLogging

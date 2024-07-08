@@ -1,4 +1,4 @@
-package com.hero.alignlab.extension
+package com.hero.alignlab.common.extension
 
 import java.net.URLDecoder
 import java.net.URLEncoder

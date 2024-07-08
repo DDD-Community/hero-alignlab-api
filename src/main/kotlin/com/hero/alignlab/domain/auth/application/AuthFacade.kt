@@ -19,7 +19,7 @@ import com.hero.alignlab.domain.user.model.response.UserInfoResponse
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.InvalidTokenException
-import com.hero.alignlab.extension.coExecute
+import com.hero.alignlab.common.extension.coExecute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
