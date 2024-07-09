@@ -2,6 +2,7 @@ package com.hero.alignlab.domain.auth.application
 
 import com.hero.alignlab.common.encrypt.EncryptData
 import com.hero.alignlab.common.encrypt.Encryptor
+import com.hero.alignlab.common.extension.coExecute
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthContextImpl
 import com.hero.alignlab.domain.auth.model.AuthUser
@@ -12,14 +13,13 @@ import com.hero.alignlab.domain.auth.model.request.SignUpRequest
 import com.hero.alignlab.domain.auth.model.response.SignInResponse
 import com.hero.alignlab.domain.auth.model.response.SignUpResponse
 import com.hero.alignlab.domain.user.application.CredentialUserInfoService
-import com.hero.alignlab.domain.user.application.UserService
+import com.hero.alignlab.domain.user.application.UserInfoService
 import com.hero.alignlab.domain.user.domain.CredentialUserInfo
 import com.hero.alignlab.domain.user.domain.UserInfo
 import com.hero.alignlab.domain.user.model.response.UserInfoResponse
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.InvalidTokenException
-import com.hero.alignlab.common.extension.coExecute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
@@ -28,7 +28,7 @@ import java.time.LocalDateTime
 
 @Service
 class AuthFacade(
-    private val userService: UserService,
+    private val userInfoService: UserInfoService,
     private val credentialUserInfoService: CredentialUserInfoService,
     private val jwtTokenService: JwtTokenService,
     private val encryptor: Encryptor,
@@ -46,7 +46,7 @@ class AuthFacade(
                     return@handle
                 }
 
-                val user = userService.getUserByIdOrThrowSync(payload.id)
+                val user = userInfoService.getUserByIdOrThrowSync(payload.id)
 
                 sink.next(
                     AuthUserImpl(
@@ -65,7 +65,7 @@ class AuthFacade(
         }
 
         val userInfo = txTemplates.writer.coExecute {
-            val userInfo = userService.save(UserInfo(nickname = request.username))
+            val userInfo = userInfoService.saveSync(UserInfo(nickname = request.username))
 
             credentialUserInfoService.save(
                 CredentialUserInfo(
@@ -84,13 +84,8 @@ class AuthFacade(
     }
 
     suspend fun signIn(request: SignInRequest): SignInResponse {
-        val credentialUserInfo = credentialUserInfoService.findByUsernameAndPassword(
-            username = request.username,
-            password = request.password
-        )
-
-        val userInfo = userService.getUserByIdOrThrowSync(credentialUserInfo.uid)
-
+        val userInfo = userInfoService.findByCredential(request.username, request.password)
+        
         val accessToken = jwtTokenService.createToken(userInfo.id, TOKEN_EXPIRED_DATE)
 
         return SignInResponse(accessToken)
@@ -98,7 +93,7 @@ class AuthFacade(
 
     suspend fun getUserInfo(user: AuthUser): UserInfoResponse {
         val userInfo = withContext(Dispatchers.IO) {
-            userService.getUserByIdOrThrowSync(user.uid)
+            userInfoService.getUserByIdOrThrowSync(user.uid)
         }
 
         return UserInfoResponse.from(userInfo)

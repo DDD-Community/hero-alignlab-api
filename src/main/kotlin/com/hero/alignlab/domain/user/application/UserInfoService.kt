@@ -1,5 +1,7 @@
 package com.hero.alignlab.domain.user.application
 
+import com.hero.alignlab.common.encrypt.EncryptData
+import com.hero.alignlab.common.encrypt.Encryptor
 import com.hero.alignlab.domain.user.domain.UserInfo
 import com.hero.alignlab.domain.user.infrastructure.UserInfoRepository
 import com.hero.alignlab.domain.user.model.response.UserInfoResponse
@@ -11,11 +13,12 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class UserService(
+class UserInfoService(
     private val userInfoRepository: UserInfoRepository,
+    private val encryptor: Encryptor,
 ) {
     fun getUserByIdOrThrowSync(id: Long): UserInfo {
-        return userInfoRepository.findByIdOrNull(id)
+        return getUserByIdOrNullSync(id)
             ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
     }
 
@@ -23,7 +26,7 @@ class UserService(
         return userInfoRepository.findByIdOrNull(id)
     }
 
-    fun save(userInfo: UserInfo): UserInfo {
+    fun saveSync(userInfo: UserInfo): UserInfo {
         return userInfoRepository.save(userInfo)
     }
 
@@ -33,5 +36,14 @@ class UserService(
         }
 
         return UserInfoResponse.from(userInfo)
+    }
+
+    suspend fun findByCredential(username: String, password: String): UserInfo {
+        return withContext(Dispatchers.IO) {
+            userInfoRepository.findByCredential(
+                username = username,
+                password = EncryptData.enc(password, encryptor)
+            )
+        } ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
     }
 }
