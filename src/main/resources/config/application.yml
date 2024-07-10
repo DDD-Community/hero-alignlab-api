@@ -19,6 +19,9 @@ spring:
     timeout-per-shutdown-phase: 5s # format : https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config-conversion-duration
   application:
     name: hero-alignlab-api
+  config:
+    import:
+      - classpath:/config/hero-alignlab-config.yml
 
 # DATABASE
 hero:

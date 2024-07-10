@@ -1,0 +1,12 @@
+# ===================================================================
+# Spring Boot Configuration for the Hero Alignlab Config
+# ===================================================================
+
+---
+# ===================================================================
+# Spring Boot Configuration for the Hero Alignlab Config profile Prod
+# ===================================================================
+spring:
+  config:
+    activate:
+      on-profile: prod
