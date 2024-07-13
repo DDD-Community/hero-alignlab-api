@@ -88,6 +88,9 @@ dependencies {
     /** jwt */
     implementation("com.auth0:java-jwt:${DependencyVersion.AUTH_JWT}")
 
+    /** fcm */
+    implementation("com.google.firebase:firebase-admin:${DependencyVersion.FCM_ADMIN}")
+
     /** test */
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
