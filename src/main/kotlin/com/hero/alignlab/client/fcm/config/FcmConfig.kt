@@ -1,5 +1,6 @@
 package com.hero.alignlab.client.fcm.config
 
+import com.hero.alignlab.client.WebClientFactory
 import com.hero.alignlab.client.fcm.client.FcmClient
 import com.hero.alignlab.client.fcm.client.ReactiveFcmClient
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -12,7 +13,11 @@ import org.springframework.context.annotation.Configuration
 class FcmConfig {
     @Bean
     fun fcmClient(fcmProperties: FcmProperties): FcmClient {
-        return ReactiveFcmClient(fcmProperties)
+        return ReactiveFcmClient(
+            fcmProperties = fcmProperties,
+            // 향후, 변경 작업 진행 필요.
+            webClient = WebClientFactory.generate(baseUrl = "http://localhost:8080")
+        )
     }
 }
 
