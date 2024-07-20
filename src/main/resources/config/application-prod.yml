@@ -44,3 +44,7 @@ hero:
       hibernate.hbm2ddl.auto: none
       hibernate.criteria.literal_handling_mode: bind
   maximum-jdbc-thread-pool-size:
+
+# rsocket
+rsocket:
+  url: ws://api.alignlab.site/rs
