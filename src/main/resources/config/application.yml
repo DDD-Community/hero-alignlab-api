@@ -22,14 +22,6 @@ spring:
   config:
     import:
       - classpath:/config/hero-alignlab-config.yml
-  rsocket:
-    server:
-      transport: websocket
-      mapping-path: /rs
-
-# rsocket
-rsocket:
-  url: ws://localhost:8080/rs
 
 # DATABASE
 hero:
