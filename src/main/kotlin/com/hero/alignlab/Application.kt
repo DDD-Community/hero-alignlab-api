@@ -8,9 +8,11 @@ import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.ApplicationListener
 import org.springframework.core.env.Environment
+import org.springframework.integration.config.EnablePublisher
 import org.springframework.scheduling.annotation.EnableScheduling
 import java.util.*
 
+@EnablePublisher
 @EnableScheduling
 @SpringBootApplication
 class Application(
