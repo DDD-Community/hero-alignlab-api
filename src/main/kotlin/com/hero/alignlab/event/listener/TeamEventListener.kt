@@ -1,12 +1,11 @@
 package com.hero.alignlab.event.listener
 
+import com.hero.alignlab.common.extension.executes
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.team.domain.TeamUser
 import com.hero.alignlab.domain.team.infrastructure.TeamUserRepository
 import com.hero.alignlab.event.model.CreateTeamEvent
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionalEventListener
 
@@ -19,7 +18,7 @@ class TeamEventListener(
 
     @TransactionalEventListener
     fun handle(event: CreateTeamEvent) {
-        txTemplates.newTxWriter.execute {
+        txTemplates.newTxWriter.executes {
             TeamUser(
                 teamId = event.team.id,
                 uid = event.team.ownerUid
