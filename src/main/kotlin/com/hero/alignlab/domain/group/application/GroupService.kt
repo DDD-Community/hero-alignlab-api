@@ -7,7 +7,6 @@ import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.infrastructure.GroupRepository
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.response.CreateGroupResponse
-import com.hero.alignlab.domain.group.model.response.GetGroupResponse
 import com.hero.alignlab.event.model.CreateGroupEvent
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
@@ -49,12 +48,6 @@ class GroupService(
     suspend fun existsByName(name: String): Boolean {
         return withContext(Dispatchers.IO) {
             groupRepository.existsByName(name)
-        }
-    }
-
-    suspend fun getGroup(id: Long): GetGroupResponse {
-        return findByIdOrThrow(id).run {
-            GetGroupResponse.from(this)
         }
     }
 
