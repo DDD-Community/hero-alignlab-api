@@ -22,6 +22,10 @@ spring:
   config:
     import:
       - classpath:/config/hero-alignlab-config.yml
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 # DATABASE
 hero:
