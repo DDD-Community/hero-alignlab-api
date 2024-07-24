@@ -7,12 +7,15 @@ import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.infrastructure.GroupRepository
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.response.CreateGroupResponse
+import com.hero.alignlab.domain.group.model.response.GetGroupResponse
 import com.hero.alignlab.event.model.CreateGroupEvent
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
+import com.hero.alignlab.exception.NotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -46,6 +49,22 @@ class GroupService(
     suspend fun existsByName(name: String): Boolean {
         return withContext(Dispatchers.IO) {
             groupRepository.existsByName(name)
+        }
+    }
+
+    suspend fun getGroup(id: Long): GetGroupResponse {
+        return findByIdOrThrow(id).run {
+            GetGroupResponse.from(this)
+        }
+    }
+
+    suspend fun findByIdOrThrow(id: Long): Group {
+        return findByIdOrNull(id) ?: throw NotFoundException(ErrorCode.NOT_FOUND_GROUP_ERROR)
+    }
+
+    suspend fun findByIdOrNull(id: Long): Group? {
+        return withContext(Dispatchers.IO) {
+            groupRepository.findByIdOrNull(id)
         }
     }
 }
