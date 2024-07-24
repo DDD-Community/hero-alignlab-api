@@ -50,3 +50,8 @@ auth:
 encrypt:
   key:
   algorithm:
+
+hero-alignlab:
+  dev:
+    resource:
+      key:

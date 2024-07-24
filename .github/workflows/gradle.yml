@@ -56,6 +56,8 @@ jobs:
           # Encrypt 환경 변수 주입
           encrypt.key: ${{ secrets.ENCRYPT_KEY }}
           encrypt.algorithm: ${{ secrets.ENCRYPT_ALGORITHM }}
+          # dev resource 환경 변수 주입
+          hero-alignlab.dev.resource.key: ${{ secrets.HERO_ALIGNLAB_DEV_RESOURCE_KEY }}
 
       # Secret Setup - application-prod.yml
       - name: Inject env-values to application-prod.yml

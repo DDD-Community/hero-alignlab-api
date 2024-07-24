@@ -181,6 +181,16 @@ class ReactiveConcurrentUserWebSocketHandler(
         }
     }
 
+    fun forceCloseAllSessions() {
+        concurrentUserMap.forEach { (_, sessions) ->
+            sessions.forEach { (_, session) ->
+                session.close().subscribe()
+            }
+        }
+        
+        // 모든 세션이 종료된 후, 맵을 비울 수 있습니다.
+        concurrentUserMap.clear()
+    }
 }
 
 data class ConcurrentMessage(

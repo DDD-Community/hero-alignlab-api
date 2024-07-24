@@ -1,5 +1,6 @@
 package com.hero.alignlab.config.swagger
 
+import com.hero.alignlab.config.dev.DevResourceCheckConfig.Companion.DEV_AUTH_TOKEN_KEY
 import com.hero.alignlab.domain.auth.model.AUTH_TOKEN_KEY
 import com.hero.alignlab.domain.auth.model.AuthUser
 import io.swagger.v3.oas.models.Components
