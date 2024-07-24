@@ -19,3 +19,5 @@ class AlreadyException(errorCode: ErrorCode) : AlignlabException(errorCode)
 class NoAuthorityException(errorCode: ErrorCode) : AlignlabException(errorCode)
 
 class FailToExecuteException(errorCode: ErrorCode) : AlignlabException(errorCode)
+
+class RedisPubSubException(errorCode: ErrorCode) : AlignlabException(errorCode)

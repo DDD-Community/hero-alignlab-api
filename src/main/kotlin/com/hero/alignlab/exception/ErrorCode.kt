@@ -14,6 +14,10 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
     COROUTINE_CANCELLATION_ERROR(HttpStatus.BAD_REQUEST, "coroutine cancellation error"),
     FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR(HttpStatus.BAD_REQUEST, "fail to tx-templates execute error"),
 
+    /** redis pub-sub */
+    NOT_FOUND_CHANNEL_ERROR(HttpStatus.NOT_FOUND, "channel not found"),
+    NOT_FOUND_MESSAGE_ERROR(HttpStatus.NOT_FOUND, "message not found"),
+
     /** Auth Error Code */
     NOT_FOUND_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "not found token"),
     FAIL_TO_VERIFY_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "fail to verify token"),

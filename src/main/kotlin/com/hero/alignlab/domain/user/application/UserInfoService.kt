@@ -46,4 +46,8 @@ class UserInfoService(
             )
         } ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
     }
+
+    fun findAllByIds(ids: List<Long>): List<UserInfo> {
+        return userInfoRepository.findAllById(ids)
+    }
 }
