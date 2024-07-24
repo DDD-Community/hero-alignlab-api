@@ -22,10 +22,6 @@ spring:
   config:
     import:
       - classpath:/config/hero-alignlab-config.yml
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
 # DATABASE
 hero:
@@ -68,4 +64,3 @@ push:
     auth-provider-x509-cert-url:
     client-x509-cert-url:
     universe-domain:
-
