@@ -14,9 +14,6 @@ object DependencyVersion {
     /** auth0-jwt */
     const val AUTH_JWT = "4.4.0"
 
-    /** fcm */
-    const val FCM_ADMIN = "9.3.0"
-
     /** test */
     const val TEST_CONTAINER_MYSQL = "1.19.8"
     const val P6SPY_LOG = "1.9.1"

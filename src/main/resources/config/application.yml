@@ -50,17 +50,3 @@ auth:
 encrypt:
   key:
   algorithm:
-
-push:
-  fcm:
-    type:
-    project-id:
-    private-key-id:
-    private-key:
-    client-email:
-    client-id:
-    auth-uri:
-    token-uri:
-    auth-provider-x509-cert-url:
-    client-x509-cert-url:
-    universe-domain:

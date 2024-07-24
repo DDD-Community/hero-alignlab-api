@@ -56,22 +56,10 @@ jobs:
           cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY_ID }}
           cloud.aws.credentials.secretKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           # Jwt Secret Key 환경 변수 주입
-          auth.jwt.secret: ${{ secrets.auth.jwt.secret }}
+          auth.jwt.secret: ${{ secrets.AUTH_JWT_SECRET }}
           # Encrypt 환경 변수 주입
-          encrypt.key: ${{ secrets.encrypt.key }}
-          encrypt.algorithm: ${{ secrets.encrypt.algorithm }}
-          # FCM 환경 변수 주입
-          push.fcm.type: ${{ secrets.push.fcm.type }}
-          push.fcm.project-id: ${{ secrets.push.fcm.project-id }}
-          push.fcm.private-key-id: ${{ secrets.push.fcm.private-key-id }}
-          push.fcm.private-key: ${{ secrets.push.fcm.private-key }}
-          push.fcm.client-email: ${{ secrets.push.fcm.client-email }}
-          push.fcm.client-id: ${{ secrets.push.fcm.client-id }}
-          push.fcm.auth-uri: ${{ secrets.push.fcm.auth-uri }}
-          push.fcm.token-uri: ${{ secrets.push.fcm.token-uri }}
-          push.fcm.auth-provider-x509-cert-url: ${{ secrets.push.fcm.auth-provider-x509-cert-url }}
-          push.fcm.client-x509-cert-url: ${{ secrets.push.fcm.client-x509-cert-url }}
-          push.fcm.universe-domain: ${{ secrets.push.fcm.universe-domain }}
+          encrypt.key: ${{ secrets.ENCRYPT_KEY }}
+          encrypt.algorithm: ${{ secrets.ENCRYPT_ALGORITHM }}
 
       # gradlew 파일 실행권한 설정
       - name: Grant execute permission for gradlew

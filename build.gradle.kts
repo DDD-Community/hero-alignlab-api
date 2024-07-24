@@ -57,7 +57,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-rsocket")
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     /** querydsl */
@@ -89,9 +88,6 @@ dependencies {
 
     /** jwt */
     implementation("com.auth0:java-jwt:${DependencyVersion.AUTH_JWT}")
-
-    /** fcm */
-    implementation("com.google.firebase:firebase-admin:${DependencyVersion.FCM_ADMIN}")
 
     /** test */
     testImplementation("org.springframework.boot:spring-boot-starter-test")
