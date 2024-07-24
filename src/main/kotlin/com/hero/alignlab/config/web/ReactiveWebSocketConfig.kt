@@ -1,5 +1,6 @@
 package com.hero.alignlab.config.web
 
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.HandlerMapping
@@ -10,17 +11,20 @@ import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAd
 import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy
 
 @Configuration
-class ReactiveWebSocketConfiguration(
-    private val reactiveWebSocketHandler: WebSocketHandler
-) {
+class ReactiveWebSocketConfiguration {
     @Bean
-    fun reactiveWebSocketHandlerMapping(): HandlerMapping {
-        val map = mapOf("/event-emitter" to reactiveWebSocketHandler)
+    fun reactiveWebSocketHandlerMapping(
+        @Qualifier("reactiveWebSocketHandler") reactiveWebSocketHandler: WebSocketHandler
+    ): HandlerMapping {
+        val map = mapOf(
+            /** 접속 유저 처리 */
+            "/ws/v1/groups/concurrent-users" to reactiveWebSocketHandler
+        )
 
-        val handlerMapping = SimpleUrlHandlerMapping()
-        handlerMapping.order = 1
-        handlerMapping.urlMap = map
-        return handlerMapping
+        return SimpleUrlHandlerMapping().apply {
+            this.order = 1
+            this.urlMap = map
+        }
     }
 
     @Bean
@@ -31,5 +35,10 @@ class ReactiveWebSocketConfiguration(
     @Bean
     fun webSocketService(): HandshakeWebSocketService {
         return HandshakeWebSocketService(ReactorNettyRequestUpgradeStrategy())
+    }
+
+    @Bean
+    fun reactiveWebSocketHandler(): WebSocketHandler {
+        return ReactiveWebSocketHandler()
     }
 }

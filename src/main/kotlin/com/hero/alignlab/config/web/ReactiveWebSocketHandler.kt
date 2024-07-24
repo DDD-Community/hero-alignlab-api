@@ -1,7 +1,6 @@
 package com.hero.alignlab.config.web
 
 import com.hero.alignlab.common.extension.mapper
-import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
@@ -11,7 +10,6 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID.randomUUID
 
-@Configuration
 class ReactiveWebSocketHandler : WebSocketHandler {
     private val eventFlux: Flux<String> = Flux.generate { sink ->
         val event = Event(randomUUID().toString(), LocalDateTime.now().toString())
