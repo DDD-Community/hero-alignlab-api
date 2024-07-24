@@ -1,17 +1,17 @@
-package com.hero.alignlab.domain.team.domain
+package com.hero.alignlab.domain.group.domain
 
 import com.hero.alignlab.domain.common.domain.BaseEntity
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "team_user")
-data class TeamUser(
+@Table(name = "`group_user`")
+data class GroupUser(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1,
 
-    @Column(name = "team_id")
-    val teamId: Long,
+    @Column(name = "group_id")
+    val groupId: Long,
 
     @Column(name = "uid")
     val uid: Long,

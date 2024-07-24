@@ -27,7 +27,7 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
     /** User Error Code */
     NOT_FOUND_USER_ERROR(HttpStatus.NOT_FOUND, "유저 정보를 찾을 수 없습니다."),
 
-    /** Team Error Code */
-    DUPLICATE_TEAM_NAME_ERROR(HttpStatus.BAD_REQUEST, "중복된 팀명입니다."),
+    /** Group Error Code */
+    DUPLICATE_GROUP_NAME_ERROR(HttpStatus.BAD_REQUEST, "중복된 그룹명입니다."),
     ;
 }
