@@ -42,16 +42,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Secret Setup
-      - name: Inject env-values to prod.yml
+      # Secret Setup - application.yml
+      - name: Inject env-values to application.yml
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./src/main/resources/config/application-prod.yml
+          files: ./src/main/resources/config/application.yml
         env:
-          # Database 환경 변수 주입
-          hero.master.datasource.url: ${{ secrets.HERO_MASTER_DATASOURCE_URL }}
-          hero.master.datasource.username: ${{ secrets.HERO_MASTER_DATASOURCE_USERNAME }}
-          hero.master.datasource.password: ${{ secrets.HERO_MASTER_DATASOURCE_PASSWORD }}
           # Aws Credentials 환경 변수 주입
           cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY_ID }}
           cloud.aws.credentials.secretKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -60,6 +56,17 @@ jobs:
           # Encrypt 환경 변수 주입
           encrypt.key: ${{ secrets.ENCRYPT_KEY }}
           encrypt.algorithm: ${{ secrets.ENCRYPT_ALGORITHM }}
+
+      # Secret Setup - application-prod.yml
+      - name: Inject env-values to application-prod.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/config/application-prod.yml
+        env:
+          # Database 환경 변수 주입
+          hero.master.datasource.url: ${{ secrets.HERO_MASTER_DATASOURCE_URL }}
+          hero.master.datasource.username: ${{ secrets.HERO_MASTER_DATASOURCE_USERNAME }}
+          hero.master.datasource.password: ${{ secrets.HERO_MASTER_DATASOURCE_PASSWORD }}
 
       # gradlew 파일 실행권한 설정
       - name: Grant execute permission for gradlew
