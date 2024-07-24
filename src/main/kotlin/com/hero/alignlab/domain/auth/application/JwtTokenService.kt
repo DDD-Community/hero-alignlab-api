@@ -3,51 +3,49 @@ package com.hero.alignlab.domain.auth.application
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.hero.alignlab.common.extension.decodeBase64
+import com.hero.alignlab.common.extension.mapper
+import com.hero.alignlab.common.extension.toInstant
 import com.hero.alignlab.config.jwt.JwtConfig
 import com.hero.alignlab.domain.auth.model.AuthUserToken
 import com.hero.alignlab.domain.auth.model.AuthUserTokenPayload
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidTokenException
-import com.hero.alignlab.common.extension.decodeBase64
-import com.hero.alignlab.common.extension.mapper
-import com.hero.alignlab.common.extension.toInstant
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import java.util.*
 
 private const val ACCESS_TOKEN = "accessToken"
 
-@Service
 class JwtTokenService(
-    private val jwtConfig: JwtConfig,
+    private val jwtProperties: JwtConfig.JwtProperties,
 ) {
     private val logger = KotlinLogging.logger {}
 
     private val accessJwtVerifier = JWT
-        .require(Algorithm.HMAC256(jwtConfig.secret))
-        .withIssuer(jwtConfig.issuer)
-        .withAudience(jwtConfig.audience)
+        .require(Algorithm.HMAC256(jwtProperties.secret))
+        .withIssuer(jwtProperties.issuer)
+        .withAudience(jwtProperties.audience)
         .withClaim("type", ACCESS_TOKEN)
         .build()
 
     private val accessJwtVerifierWithExtendedExpiredAt = JWT
-        .require(Algorithm.HMAC256(jwtConfig.secret))
-        .withIssuer(jwtConfig.issuer)
-        .withAudience(jwtConfig.audience)
+        .require(Algorithm.HMAC256(jwtProperties.secret))
+        .withIssuer(jwtProperties.issuer)
+        .withAudience(jwtProperties.audience)
         .withClaim("type", ACCESS_TOKEN)
-        .acceptExpiresAt(jwtConfig.refreshExp.toLong())
+        .acceptExpiresAt(jwtProperties.refreshExp.toLong())
         .build()
 
     fun createToken(id: Long, tokenExpiredAt: LocalDateTime): String {
         return JWT.create().apply {
-            this.withIssuer(jwtConfig.issuer)
-            this.withAudience(jwtConfig.audience)
+            this.withIssuer(jwtProperties.issuer)
+            this.withAudience(jwtProperties.audience)
             this.withClaim("id", id)
             this.withClaim("type", ACCESS_TOKEN)
             this.withExpiresAt(Date.from(tokenExpiredAt.toInstant()))
-        }.sign(Algorithm.HMAC256(jwtConfig.secret))
+        }.sign(Algorithm.HMAC256(jwtProperties.secret))
     }
 
     fun verifyToken(token: AuthUserToken): AuthUserTokenPayload {
