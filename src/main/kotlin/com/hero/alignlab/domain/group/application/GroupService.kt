@@ -55,9 +55,21 @@ class GroupService(
         return findByIdOrNull(id) ?: throw NotFoundException(ErrorCode.NOT_FOUND_GROUP_ERROR)
     }
 
+    suspend fun existsById(id: Long): Boolean {
+        return withContext(Dispatchers.IO) { groupRepository.existsById(id) }
+    }
+
     suspend fun findByIdOrNull(id: Long): Group? {
         return withContext(Dispatchers.IO) {
             groupRepository.findByIdOrNull(id)
         }
+    }
+
+    fun deleteByIdSync(id: Long) {
+        groupRepository.deleteById(id)
+    }
+
+    fun saveSync(group: Group): Group {
+        return groupRepository.save(group)
     }
 }

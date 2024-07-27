@@ -1,10 +1,17 @@
 package com.hero.alignlab.domain.group.application
 
+import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.GroupUser
 import com.hero.alignlab.domain.group.infrastructure.GroupUserRepository
+import com.hero.alignlab.domain.group.model.response.GroupUserResponse
+import com.hero.alignlab.exception.ErrorCode
+import com.hero.alignlab.exception.NotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class GroupUserService(
@@ -22,5 +29,44 @@ class GroupUserService(
 
     fun findAllByGroupIdAndUids(groupId: Long, uids: Set<Long>): List<GroupUser> {
         return groupUserRepository.findAllByGroupIdAndUidIn(groupId, uids)
+    }
+
+    suspend fun findTop1ByGroupIdOrderByCreatedAtAsc(groupId: Long): GroupUser? {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.findTop1ByGroupIdOrderByCreatedAtAsc(groupId)
+        }
+    }
+
+    @Transactional
+    fun deleteBySync(groupId: Long, uid: Long) {
+        groupUserRepository.deleteByGroupIdAndUid(groupId, uid)
+    }
+
+    @Transactional
+    fun saveSync(groupId: Long, uid: Long): GroupUser {
+        return groupUserRepository.save(GroupUser(groupId = groupId, uid = uid))
+    }
+
+    suspend fun existsByGroupIdAndUid(groupId: Long, uid: Long): Boolean {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.existsByGroupIdAndUid(groupId, uid)
+        }
+    }
+
+    suspend fun getGroupUsers(user: AuthUser, groupId: Long, pageable: Pageable): Page<GroupUserResponse> {
+        val exists = existsByGroupIdAndUid(groupId, user.uid)
+
+        if (!exists) {
+            throw NotFoundException(ErrorCode.NOT_FOUND_GROUP_ERROR)
+        }
+
+        return findAllByGroupId(groupId, pageable)
+            .map { groupUser -> GroupUserResponse(groupUser.id, groupUser.uid) }
+    }
+
+    private suspend fun findAllByGroupId(groupId: Long, pageable: Pageable): Page<GroupUser> {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.findAllByGroupId(groupId, pageable)
+        }
     }
 }

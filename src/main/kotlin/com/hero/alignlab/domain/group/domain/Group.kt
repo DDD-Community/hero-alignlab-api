@@ -17,5 +17,5 @@ data class Group(
     val description: String?,
 
     @Column(name = "owner_uid")
-    val ownerUid: Long,
+    var ownerUid: Long,
 ) : BaseEntity()
