@@ -2,6 +2,7 @@ package com.hero.alignlab.domain.group.resource
 
 import com.hero.alignlab.common.extension.wrapCreated
 import com.hero.alignlab.common.extension.wrapOk
+import com.hero.alignlab.common.extension.wrapVoid
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.application.GroupFacade
 import com.hero.alignlab.domain.group.application.GroupService
@@ -30,7 +31,7 @@ class GroupResource(
     suspend fun withdrawGroup(
         user: AuthUser,
         @PathVariable id: Long
-    ) = groupFacade.withdraw(user, id).wrapOk()
+    ) = groupFacade.withdraw(user, id).wrapVoid()
 
     @Operation(summary = "그룹 들어가기")
     @PostMapping("/api/v1/groups/{groupId}/join")
