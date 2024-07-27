@@ -18,4 +18,10 @@ data class Group(
 
     @Column(name = "owner_uid")
     var ownerUid: Long,
+
+    @Column(name = "is_hidden")
+    val isHidden: Boolean,
+
+    @Column(name = "join_code")
+    val joinCode: String
 ) : BaseEntity()

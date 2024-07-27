@@ -33,11 +33,19 @@ class GroupFacade(
         }
     }
 
-    suspend fun joinGroup(user: AuthUser, groupId: Long): JoinGroupResponse {
+    suspend fun joinGroup(
+        user: AuthUser,
+        groupId: Long,
+        joinCode: String?
+    ): JoinGroupResponse {
         return parZip(
             { groupService.findByIdOrThrow(groupId) },
             { groupUserService.findAllByUid(user.uid).associateBy { it.groupId } }
         ) { group, groupUsers ->
+            if (group.isHidden && group.joinCode != joinCode) {
+                throw InvalidRequestException(ErrorCode.IMPOSSIBLE_TO_JOIN_GROUP_ERROR)
+            }
+
             val groupUser = groupUsers[groupId]
 
             if (groupUser == null && groupUsers.isNotEmpty()) {

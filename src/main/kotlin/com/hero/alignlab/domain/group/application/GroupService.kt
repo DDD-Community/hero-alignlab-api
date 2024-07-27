@@ -16,6 +16,7 @@ import kotlinx.coroutines.withContext
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class GroupService(
@@ -33,7 +34,9 @@ class GroupService(
                 Group(
                     name = request.name,
                     description = request.description,
-                    ownerUid = user.uid
+                    ownerUid = user.uid,
+                    isHidden = request.isHidden,
+                    joinCode = request.joinCode ?: UUID.randomUUID().toString().replace("-", "")
                 )
             )
 

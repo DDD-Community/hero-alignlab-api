@@ -36,6 +36,11 @@ class GroupResource(
     @PostMapping("/api/v1/groups/{groupId}/join")
     suspend fun joinGroup(
         user: AuthUser,
-        @PathVariable groupId: Long
-    ) = groupFacade.joinGroup(user, groupId).wrapOk()
+        @PathVariable groupId: Long,
+        @RequestParam(required = false) joinCode: String?,
+    ) = groupFacade.joinGroup(
+        user = user,
+        groupId = groupId,
+        joinCode = joinCode
+    ).wrapOk()
 }

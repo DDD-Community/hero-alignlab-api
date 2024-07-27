@@ -34,6 +34,7 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
     /** Group Error Code */
     DUPLICATE_GROUP_NAME_ERROR(HttpStatus.BAD_REQUEST, "중복된 그룹명입니다."),
     NOT_FOUND_GROUP_ERROR(HttpStatus.NOT_FOUND, "그룹 정보를 찾을 수 없습니다."),
+    IMPOSSIBLE_TO_JOIN_GROUP_ERROR(HttpStatus.BAD_REQUEST, "그룹에 들어갈 수 없습니다."),
 
     /** Group User Error Code */
     DUPLICATE_GROUP_JOIN_ERROR(HttpStatus.BAD_REQUEST, "한개의 그룹만 참여 가능합니다."),
