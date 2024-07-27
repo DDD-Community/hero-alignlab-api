@@ -9,4 +9,6 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 interface GroupRepository : JpaRepository<Group, Long> {
     fun existsByName(name: String): Boolean
+
+    fun findByIdAndOwnerUid(id: Long, ownerUid: Long): Group?
 }

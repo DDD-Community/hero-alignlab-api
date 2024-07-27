@@ -11,17 +11,17 @@ data class Group(
     val id: Long = -1,
 
     @Column(name = "name")
-    val name: String,
+    var name: String,
 
     @Column(name = "description")
-    val description: String?,
+    var description: String?,
 
     @Column(name = "owner_uid")
     var ownerUid: Long,
 
     @Column(name = "is_hidden")
-    val isHidden: Boolean,
+    var isHidden: Boolean,
 
     @Column(name = "join_code")
-    val joinCode: String
+    var joinCode: String
 ) : BaseEntity()

@@ -4,9 +4,11 @@ import arrow.fx.coroutines.parZip
 import com.hero.alignlab.common.extension.executes
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
+import com.hero.alignlab.domain.group.model.response.GetGroupResponse
 import com.hero.alignlab.domain.group.model.response.JoinGroupResponse
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
+import com.hero.alignlab.exception.NotFoundException
 import org.springframework.stereotype.Service
 
 @Service
@@ -69,6 +71,24 @@ class GroupFacade(
                 uid = createdGroupUser.uid,
                 groupUserId = createdGroupUser.id
             )
+        }
+    }
+
+    suspend fun getGroup(user: AuthUser, groupId: Long): GetGroupResponse {
+        return parZip(
+            { groupService.findByIdOrThrow(groupId) },
+            { groupUserService.existsByGroupIdAndUid(groupId, user.uid) },
+        ) { group, includeGroup ->
+            if (!includeGroup) {
+                throw NotFoundException(ErrorCode.NOT_FOUND_GROUP_ERROR)
+            }
+
+            GetGroupResponse.from(group).run {
+                when (group.ownerUid == user.uid) {
+                    true -> this
+                    false -> this.copy(joinCode = null)
+                }
+            }
         }
     }
 }
