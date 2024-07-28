@@ -5,6 +5,7 @@ import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.infrastructure.GroupRepository
+import com.hero.alignlab.domain.group.infrastructure.GroupUserRepository
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.request.UpdateGroupRequest
 import com.hero.alignlab.domain.group.model.response.CreateGroupResponse
@@ -23,12 +24,17 @@ import java.util.*
 @Service
 class GroupService(
     private val groupRepository: GroupRepository,
+    private val groupUserRepository: GroupUserRepository,
     private val txTemplates: TransactionTemplates,
     private val publisher: ApplicationEventPublisher,
 ) {
     suspend fun createGroup(user: AuthUser, request: CreateGroupRequest): CreateGroupResponse {
         if (existsByName(request.name)) {
             throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_NAME_ERROR)
+        }
+
+        if (withContext(Dispatchers.IO) { groupUserRepository.findAllByUid(user.uid) }.isNotEmpty()) {
+            throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_JOIN_ERROR)
         }
 
         val createdGroup = txTemplates.writer.executes {
