@@ -15,7 +15,7 @@ class KakaoOAuthService(
 ) {
     suspend fun getOAuthAuthorizeCode(redirectUrl: String? = null) {
         withContext(Dispatchers.IO) {
-            kaKaoOAuthClient.getOAuthAuthorizeCode()
+            kaKaoOAuthClient.getOAuthAuthorizeCode(redirectUrl)
         }
     }
 
