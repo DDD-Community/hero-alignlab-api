@@ -10,7 +10,7 @@ class NotFoundException(errorCode: ErrorCode) : AlignlabException(errorCode)
 
 class InvalidTokenException(errorCode: ErrorCode) : AlignlabException(errorCode)
 
-class InvalidRequestException(errorCode: ErrorCode) : AlignlabException(errorCode)
+class InvalidRequestException(errorCode: ErrorCode, message: String? = null) : AlignlabException(errorCode, message)
 
 class FailToCreateException(errorCode: ErrorCode) : AlignlabException(errorCode)
 

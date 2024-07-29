@@ -58,6 +58,9 @@ jobs:
           encrypt.algorithm: ${{ secrets.ENCRYPT_ALGORITHM }}
           # dev resource 환경 변수 주입
           hero-alignlab.dev.resource.key: ${{ secrets.HERO_ALIGNLAB_DEV_RESOURCE_KEY }}
+          # OAuth-Kakao 환경 변수 주입
+          oauth.kakao.rest-api-key: ${{ secrets.OAUTH_KAKAO_REST_API_KEY }}
+          oauth.kakao.client-secret-code: ${{ secrets.OAUTH_KAKAO_CLIENT_SECRET_CODE }}
 
       # Secret Setup - application-prod.yml
       - name: Inject env-values to application-prod.yml

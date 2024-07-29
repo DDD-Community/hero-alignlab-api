@@ -28,6 +28,9 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
     INVALID_OAUTH_PROVIDER(HttpStatus.BAD_REQUEST, "잘못된 oauth 벤더입니다."),
     DUPLICATED_USERNAME_ERROR(HttpStatus.BAD_REQUEST, "중복된 아이디 입니다."),
 
+    /** OAuth Error Code */
+    NOT_FOUND_OAUTH_PROVIDER_ERROR(HttpStatus.NOT_FOUND, "현재 미지원하는 제공자입니다."),
+
     /** User Error Code */
     NOT_FOUND_USER_ERROR(HttpStatus.NOT_FOUND, "유저 정보를 찾을 수 없습니다."),
 

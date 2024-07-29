@@ -47,6 +47,15 @@ auth:
   jwt:
     secret:
 
+oauth:
+  kakao:
+    url: https://kauth.kakao.com/oauth
+    rest-api-key:
+    client-secret-code:
+    # redirect url for get OAuth Authorize Code
+    redirect-url: http://localhost:3000
+    dev-redirect-url: https://api.alignlab.site/api/dev/v1/oauth/kakao/authorize/redirected
+
 encrypt:
   key:
   algorithm:
