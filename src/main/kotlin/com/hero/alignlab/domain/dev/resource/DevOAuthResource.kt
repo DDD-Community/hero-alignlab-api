@@ -5,7 +5,6 @@ import com.hero.alignlab.domain.auth.model.OAuthProvider
 import com.hero.alignlab.domain.auth.model.request.OAuthAuthorizedRequest
 import com.hero.alignlab.domain.dev.application.DevOAuthService
 import com.hero.alignlab.domain.dev.model.request.DevRedirectedRequest
-import com.hero.alignlab.domain.dev.model.response.DevRedirectedResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springdoc.core.annotations.ParameterObject
@@ -29,10 +28,7 @@ class DevOAuthResource(
     suspend fun redirectedDevOAuthAuthorizeCode(
         @PathVariable provider: OAuthProvider,
         @ParameterObject request: DevRedirectedRequest,
-    ) = DevRedirectedResponse(
-        provider = provider,
-        requestParams = request,
-    ).wrapOk()
+    ) = devOAuthService.redirectTest(provider, request).wrapOk()
 
     @Operation(summary = "OAuth Token Generate")
     @PostMapping("/api/dev/v1/oauth/{provider}/token")
