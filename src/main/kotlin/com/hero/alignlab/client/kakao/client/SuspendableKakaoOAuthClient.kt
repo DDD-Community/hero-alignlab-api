@@ -4,7 +4,6 @@ import com.hero.alignlab.client.kakao.SuspendableClient
 import com.hero.alignlab.client.kakao.config.KakaoOAuthClientConfig
 import com.hero.alignlab.client.kakao.model.request.GenerateKakaoOAuthTokenRequest
 import com.hero.alignlab.client.kakao.model.response.GenerateKakaoOAuthTokenResponse
-import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 
 class SuspendableKakaoOAuthClient(
@@ -26,8 +25,15 @@ class SuspendableKakaoOAuthClient(
     override suspend fun generateOAuthToken(request: GenerateKakaoOAuthTokenRequest): GenerateKakaoOAuthTokenResponse {
         return client
             .post()
-            .uri("/token")
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .uri("/token") { builder ->
+                builder
+                    .queryParam("grant_type", "authorization_code")
+                    .queryParam("client_id", request.clientId)
+                    .queryParam("redirect_uri", request.redirectUri)
+                    .queryParam("code", request.code)
+                    .queryParam("client_secret", request.clientSecret)
+                    .build()
+            }
             .bodyValue(request)
             .request()
     }
