@@ -27,14 +27,13 @@ class SuspendableKakaoOAuthClient(
             .post()
             .uri("/token") { builder ->
                 builder
-                    .queryParam("grant_type", "authorization_code")
+                    .queryParam("grant_type", request.grantType)
                     .queryParam("client_id", request.clientId)
                     .queryParam("redirect_uri", request.redirectUri)
                     .queryParam("code", request.code)
                     .queryParam("client_secret", request.clientSecret)
                     .build()
             }
-            .bodyValue(request)
             .request()
     }
 }

@@ -28,6 +28,7 @@ class KakaoOAuthService(
             clientId = config.clientSecretCode,
             redirectUri = redirectUri ?: config.redirectUrl,
             code = code,
+            clientSecret = config.clientSecretCode
         )
 
         return generateOAuthToken(request)
