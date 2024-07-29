@@ -14,7 +14,7 @@ class KakaoOAuthService(
     private val config: KakaoOAuthClientConfig.Config
 ) {
     suspend fun getOAuthLoginLinkDev(): String {
-        return config.url + "?client_id=${config.restApiKey}&redirect_uri=${config.redirectUrl}&response_type=code"
+        return config.url + String.format(config.redirectUrl, config.restApiKey, config.redirectUrl)
     }
 
     suspend fun getOAuthAuthorizeCode(redirectUrl: String? = null) {

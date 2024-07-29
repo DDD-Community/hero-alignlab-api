@@ -46,5 +46,7 @@ class KakaoOAuthClientConfig {
         var clientSecretCode: String = "",
         @field:NotBlank
         var redirectUrl: String = "",
+        @field:NotBlank
+        var authorizedUrl: String = "",
     )
 }
