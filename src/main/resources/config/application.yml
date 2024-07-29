@@ -53,8 +53,7 @@ oauth:
     rest-api-key:
     client-secret-code:
     # redirect url for get OAuth Authorize Code
-    redirect-url: http://localhost:3000
-    dev-redirect-url: https://api.alignlab.site/api/dev/v1/oauth/kakao/authorize/redirected
+    redirect-url: https://api.alignlab.site/api/dev/v1/oauth/kakao/token
 
 encrypt:
   key:
