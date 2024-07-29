@@ -25,7 +25,7 @@ class DevOAuthResource(
     ) = devOAuthService.getOAuthAuthorizeCode(provider).wrapOk()
 
     @Operation(summary = "OAuth Redirect Test")
-    @PostMapping("/api/dev/v1/oauth/{provider}/authorize/redirected")
+    @GetMapping("/api/dev/v1/oauth/{provider}/authorize/redirected")
     suspend fun redirectedDevOAuthAuthorizeCode(
         @PathVariable provider: OAuthProvider,
         @ParameterObject request: DevRedirectedRequest,
