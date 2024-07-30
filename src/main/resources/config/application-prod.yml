@@ -39,6 +39,7 @@ hero:
       hikari:
         minimum-idle: 10
         maximum-pool-size: 15
+        max-lifetime: 900000
   jpa:
     properties:
       hibernate.hbm2ddl.auto: none
