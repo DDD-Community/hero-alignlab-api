@@ -59,4 +59,31 @@ CREATE TABLE `group_user`
 ) ENGINE=InnoDB AUTO_INCREMENT=200000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='그룹 유저';
 
 CREATE UNIQUE INDEX uidx__group_id__uid ON group_user (group_id, uid);
-CREATE INDEX uidx__uid ON group_user (uid);
+CREATE INDEX idx__uid ON group_user (uid);
+
+-- 포즈 스냅샵
+CREATE TABLE `pose_snapshot`
+(
+    `id`          bigint          NOT NULL AUTO_INCREMENT COMMENT 'pose snapshot id',
+    `uid`         bigint          NOT NULL COMMENT 'uid',
+    `score`       DECIMAL(20, 16) NOT NULL COMMENT '포즈 신뢰도 종합',
+    `created_at`  datetime DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    `modified_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='포즈 스냅샷';
+CREATE INDEX idx__uid ON pose_snapshot (uid);
+
+-- 포즈 key point 스냅샷
+CREATE TABLE `pose_key_point_snapshot`
+(
+    `id`               bigint          NOT NULL AUTO_INCREMENT COMMENT 'pose key point snapshot id',
+    `pose_snapshot_id` bigint          NOT NULL COMMENT 'post snapshot id',
+    `position`         VARCHAR(32)     NOT NULL COMMENT '스냅샷 위치',
+    `x`                DECIMAL(20, 16) NOT NULL COMMENT 'x 좌표',
+    `y`                DECIMAL(20, 16) NOT NULL COMMENT 'y 좌표',
+    `confidence`       DECIMAL(20, 16) NOT NULL COMMENT '신뢰도',
+    `created_at`       datetime DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    `modified_at`      datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='포즈 key point';
+CREATE INDEX uidx__pose_snapshot_id__position ON pose_key_point_snapshot (pose_snapshot_id, position);

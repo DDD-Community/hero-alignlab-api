@@ -27,7 +27,6 @@ suspend fun <RETURN> TransactionTemplate.coExecuteOrNull(
     }
 }
 
-
 fun <RETURN> TransactionTemplate.executes(
     actions: TransactionCallback<RETURN>,
 ): RETURN {
@@ -36,7 +35,6 @@ fun <RETURN> TransactionTemplate.executes(
     return transactionTemplate.execute(actions)
         ?: throw FailToExecuteException(ErrorCode.FAIL_TO_TRANSACTION_TEMPLATE_EXECUTE_ERROR)
 }
-
 
 fun <RETURN> TransactionTemplate.executesOrNull(
     actions: TransactionCallback<RETURN>,
