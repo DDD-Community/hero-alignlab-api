@@ -56,6 +56,10 @@ oauth:
     authorized-url: /authorize?client_id=%s&redirect_uri=%s&response_type=code
     redirect-url: https://api.alignlab.site/api/dev/v1/oauth/kakao/token
 
+client:
+  kakao-info:
+    url: https://kapi.kakao.com
+
 encrypt:
   key:
   algorithm:

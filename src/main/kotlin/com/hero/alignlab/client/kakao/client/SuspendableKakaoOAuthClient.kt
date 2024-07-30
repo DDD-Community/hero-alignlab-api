@@ -1,15 +1,11 @@
 package com.hero.alignlab.client.kakao.client
 
 import com.hero.alignlab.client.kakao.SuspendableClient
-import com.hero.alignlab.client.kakao.config.KakaoOAuthClientConfig
 import com.hero.alignlab.client.kakao.model.request.GenerateKakaoOAuthTokenRequest
 import com.hero.alignlab.client.kakao.model.response.GenerateKakaoOAuthTokenResponse
 import org.springframework.web.reactive.function.client.WebClient
 
-class SuspendableKakaoOAuthClient(
-    client: WebClient,
-    private val config: KakaoOAuthClientConfig.Config,
-) : KaKaoOAuthClient, SuspendableClient(client) {
+class SuspendableKakaoOAuthClient(client: WebClient) : KaKaoOAuthClient, SuspendableClient(client) {
     override suspend fun getOAuthAuthorizeCode(clientId: String, redirectUri: String) {
         client
             .get()

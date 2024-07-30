@@ -26,4 +26,10 @@ class DevOAuthResource(
         @PathVariable provider: OAuthProvider,
         @RequestParam code: String,
     ) = devOAuthService.resolveOAuth(provider, code).wrapOk()
+
+    @Operation(summary = "사용자 정보 조회")
+    @GetMapping("/api/dev/v1/oauth/user")
+    suspend fun getOAuthUserInfos(
+        @RequestParam accessToken: String
+    ) = devOAuthService.getUserInfo(accessToken).wrapOk()
 }

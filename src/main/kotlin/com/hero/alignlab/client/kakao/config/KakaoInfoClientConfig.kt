@@ -1,8 +1,9 @@
 package com.hero.alignlab.client.kakao.config
 
 import com.hero.alignlab.client.WebClientFactory
+import com.hero.alignlab.client.kakao.client.KaKaoInfoClient
 import com.hero.alignlab.client.kakao.client.KaKaoOAuthClient
-import com.hero.alignlab.client.kakao.client.SuspendableKakaoOAuthClient
+import com.hero.alignlab.client.kakao.client.SuspendableKakaoInfoClient
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
@@ -16,37 +17,29 @@ import org.springframework.validation.annotation.Validated
 
 @Validated
 @Configuration
-class KakaoOAuthClientConfig {
+class KakaoInfoClientConfig {
     private val logger = KotlinLogging.logger { }
 
     @Bean
-    @ConditionalOnProperty(prefix = "oauth.kakao", name = ["url"])
-    @ConfigurationProperties(prefix = "oauth.kakao")
-    fun kakaoOAuthConfig() = Config()
+    @ConditionalOnProperty(prefix = "client.kakao-info", name = ["url"])
+    @ConfigurationProperties(prefix = "client.kakao-info")
+    fun kakaoInfoConfig() = Config()
 
     @Bean
-    @ConditionalOnBean(name = ["kakaoOAuthConfig"])
+    @ConditionalOnBean(name = ["kakaoInfoConfig"])
     @ConditionalOnMissingBean(KaKaoOAuthClient::class)
-    fun kakaoOAuthClient(
-        @Valid kakaoOAuthConfig: Config
-    ): KaKaoOAuthClient {
-        logger.info { "initialized kakaoOAuthClient. $kakaoOAuthConfig" }
+    fun kakaoInfoClient(
+        @Valid kakaoInfoConfig: Config
+    ): KaKaoInfoClient {
+        logger.info { "initialized KaKaoInfoClient. $kakaoInfoConfig" }
 
-        val webclient = WebClientFactory.generate(kakaoOAuthConfig.url)
+        val webclient = WebClientFactory.generate(kakaoInfoConfig.url)
 
-        return SuspendableKakaoOAuthClient(webclient)
+        return SuspendableKakaoInfoClient(webclient)
     }
 
     data class Config(
         @field:NotBlank
         var url: String = "",
-        @field:NotBlank
-        var restApiKey: String = "",
-        @field:NotBlank
-        var clientSecretCode: String = "",
-        @field:NotBlank
-        var redirectUrl: String = "",
-        @field:NotBlank
-        var authorizedUrl: String = "",
     )
 }
