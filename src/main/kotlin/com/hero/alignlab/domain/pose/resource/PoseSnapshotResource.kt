@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class PoseSnapshotResource(
     private val poseSnapshotFacade: PoseSnapshotFacade,
 ) {
-    @Operation(summary = "post snapshot 저장")
+    @Operation(summary = "pose snapshot 저장")
     @PostMapping("/api/v1/pose-snapshots")
     suspend fun loadPoseSnapshot(
         user: AuthUser,

@@ -81,9 +81,7 @@ CREATE TABLE `pose_key_point_snapshot`
     `position`         VARCHAR(32)     NOT NULL COMMENT '스냅샷 위치',
     `x`                DECIMAL(20, 16) NOT NULL COMMENT 'x 좌표',
     `y`                DECIMAL(20, 16) NOT NULL COMMENT 'y 좌표',
-    `confidence`       DECIMAL(20, 16) NOT NULL COMMENT '신뢰도',
-    `created_at`       datetime DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
-    `modified_at`      datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    `confidence`       DECIMAL(20, 16) NOT NULL COMMENT '신뢰도'
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='포즈 key point';
 CREATE INDEX uidx__pose_snapshot_id__position ON pose_key_point_snapshot (pose_snapshot_id, position);

@@ -1,6 +1,5 @@
 package com.hero.alignlab.domain.pose.domain
 
-import com.hero.alignlab.domain.common.domain.BaseEntity
 import jakarta.persistence.*
 import java.math.BigDecimal
 
@@ -27,4 +26,4 @@ class PoseKeyPointSnapshot(
 
     @Column(name = "confidence")
     val confidence: BigDecimal,
-) : BaseEntity()
+)
