@@ -39,9 +39,10 @@ hero:
       hikari:
         minimum-idle: 10
         maximum-pool-size: 15
-        max-lifetime: 900000
+        max-lifetime: 600000
+        pool-name: hero-hikari-cp
   jpa:
     properties:
       hibernate.hbm2ddl.auto: none
       hibernate.criteria.literal_handling_mode: bind
-  maximum-jdbc-thread-pool-size:
+  maximum-jdbc-thread-pool-size: 30

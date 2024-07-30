@@ -35,13 +35,13 @@ hero:
       hibernate.cache.use_query_cache: false
       hibernate.order_inserts: true
       hibernate.order_updates: true
-      hibrenate.jdbc.batch_size: 50
+      hibernate.jdbc.batch_size: 50
       hibernate.jdbc.batch_versioned_data: true
       hibernate.jdbc.time_zone: Asia/Seoul
       hibernate.hbm2ddl.auto: none
     show-sql: false
     database: mysql
-    database-platform: org.hibernate.dialect.MySQLDialect
+    database-platform: com.hero.alignlab.config.database.CustomMySQLDialect
 
 auth:
   jwt:
