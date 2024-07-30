@@ -10,14 +10,14 @@ class SuspendableKakaoOAuthClient(
     client: WebClient,
     private val config: KakaoOAuthClientConfig.Config,
 ) : KaKaoOAuthClient, SuspendableClient(client) {
-    override suspend fun getOAuthAuthorizeCode(redirectUrl: String?) {
+    override suspend fun getOAuthAuthorizeCode(clientId: String, redirectUri: String) {
         client
             .get()
             .uri("/authorize") { builder ->
                 builder
                     .queryParam("response_type", "code")
-                    .queryParam("client_id", config.restApiKey)
-                    .queryParam("redirect_uri", redirectUrl ?: config.redirectUrl)
+                    .queryParam("client_id", clientId)
+                    .queryParam("redirect_uri", redirectUri)
                     .build()
             }.requestOrNull<Any>()
     }
@@ -27,7 +27,7 @@ class SuspendableKakaoOAuthClient(
             .post()
             .uri("/token") { builder ->
                 builder
-                    .queryParam("grant_type", request.grantType)
+                    .queryParam("grant_type", "authorization_code")
                     .queryParam("client_id", request.clientId)
                     .queryParam("redirect_uri", request.redirectUri)
                     .queryParam("code", request.code)

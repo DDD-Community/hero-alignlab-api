@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class GenerateKakaoOAuthTokenRequest(
-    val grantType: String = "authorization_code",
     val clientId: String,
     val redirectUri: String,
     val code: String,
