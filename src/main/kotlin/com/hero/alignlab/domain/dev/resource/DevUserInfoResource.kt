@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 class DevUserInfoResource(
     private val userInfoService: UserInfoService,
 ) {
-    @Operation(summary = "유저 정보 조회")
+    @Operation(summary = "[DEV] 유저 정보 조회")
     @GetMapping("/api/dev/v1/users/{id}")
     suspend fun getUserInfo(
         @PathVariable id: Long,

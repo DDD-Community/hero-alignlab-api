@@ -2,8 +2,11 @@ package com.hero.alignlab.domain.group.application
 
 import arrow.fx.coroutines.parZip
 import com.hero.alignlab.common.extension.executes
+import com.hero.alignlab.common.extension.executesOrNull
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
+import com.hero.alignlab.domain.group.domain.Group
+import com.hero.alignlab.domain.group.domain.GroupUser
 import com.hero.alignlab.domain.group.model.response.GetGroupResponse
 import com.hero.alignlab.domain.group.model.response.JoinGroupResponse
 import com.hero.alignlab.exception.ErrorCode
@@ -20,17 +23,33 @@ class GroupFacade(
     suspend fun withdraw(user: AuthUser, groupId: Long) {
         val group = groupService.findByIdOrThrow(groupId)
 
-        if (group.ownerUid == user.uid) {
-            val groupUser = groupUserService.findTop1ByGroupIdOrderByCreatedAtAsc(groupId)
+        when (group.ownerUid == user.uid) {
+            true -> withdrawGroupOwner(group)
+            false -> withdrawGroupUser(groupId, user)
+        }
+    }
 
-            if (groupUser == null) {
-                groupService.deleteByIdSync(groupId)
-            } else {
-                group.apply {
-                    this.ownerUid = groupUser.uid
-                }.run { groupService.saveSync(this) }
-            }
-        } else {
+    private suspend fun withdrawGroupOwner(group: Group) {
+        val groupUser = groupUserService.findTop1ByGroupIdOrderByCreatedAtAsc(group.id)
+
+        when (groupUser == null) {
+            true -> groupService.deleteByIdSync(group.id)
+            false -> succeedGroupOwner(group, groupUser)
+        }
+    }
+
+    private fun succeedGroupOwner(group: Group, groupUser: GroupUser) {
+        val succeedGroup = group.apply {
+            this.ownerUid = groupUser.uid
+        }
+
+        txTemplates.writer.executesOrNull {
+            groupService.saveSync(succeedGroup)
+        }
+    }
+
+    private suspend fun withdrawGroupUser(groupId: Long, user: AuthUser) {
+        txTemplates.writer.executesOrNull {
             groupUserService.deleteBySync(groupId, user.uid)
         }
     }
@@ -50,27 +69,34 @@ class GroupFacade(
 
             val groupUser = groupUsers[groupId]
 
-            if (groupUser == null && groupUsers.isNotEmpty()) {
-                throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_JOIN_ERROR)
-            }
+            when {
+                /** 이미 다른 그룹에 속해있는 유저 */
+                groupUser == null && groupUsers.isNotEmpty() -> {
+                    throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_JOIN_ERROR)
+                }
 
-            if (groupUser != null) {
-                JoinGroupResponse(
-                    groupId = group.id,
-                    uid = groupUser.uid,
-                    groupUserId = groupUser.id
-                )
-            }
+                /** 이미 그룹원인 경우 */
+                groupUser != null -> {
+                    JoinGroupResponse(
+                        groupId = group.id,
+                        uid = groupUser.uid,
+                        groupUserId = groupUser.id
+                    )
+                }
 
-            val createdGroupUser = txTemplates.writer.executes {
-                groupUserService.saveSync(groupId, user.uid)
-            }
+                /** 그룹에 조인 */
+                else -> {
+                    val createdGroupUser = txTemplates.writer.executes {
+                        groupUserService.saveSync(groupId, user.uid)
+                    }
 
-            JoinGroupResponse(
-                groupId = createdGroupUser.groupId,
-                uid = createdGroupUser.uid,
-                groupUserId = createdGroupUser.id
-            )
+                    JoinGroupResponse(
+                        groupId = createdGroupUser.groupId,
+                        uid = createdGroupUser.uid,
+                        groupUserId = createdGroupUser.id
+                    )
+                }
+            }
         }
     }
 
@@ -78,8 +104,8 @@ class GroupFacade(
         return parZip(
             { groupService.findByIdOrThrow(groupId) },
             { groupUserService.existsByGroupIdAndUid(groupId, user.uid) },
-        ) { group, includeGroup ->
-            if (!includeGroup) {
+        ) { group, joinedGroup ->
+            if (!joinedGroup) {
                 throw NotFoundException(ErrorCode.NOT_FOUND_GROUP_ERROR)
             }
 

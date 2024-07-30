@@ -84,7 +84,7 @@ class AuthFacade(
         val userInfo = txTemplates.writer.coExecute {
             val userInfo = userInfoService.saveSync(UserInfo(nickname = request.username))
 
-            credentialUserInfoService.save(
+            credentialUserInfoService.saveSync(
                 CredentialUserInfo(
                     uid = userInfo.id,
                     username = request.username,

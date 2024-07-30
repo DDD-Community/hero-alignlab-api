@@ -40,11 +40,15 @@ class UserInfoService(
 
     suspend fun findByCredential(username: String, password: String): UserInfo {
         return withContext(Dispatchers.IO) {
-            userInfoRepository.findByCredential(
-                username = username,
-                password = EncryptData.enc(password, encryptor)
-            )
+            findByCredentialSync(username, password)
         } ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
+    }
+
+    private fun findByCredentialSync(username: String, password: String): UserInfo? {
+        return userInfoRepository.findByCredential(
+            username = username,
+            password = EncryptData.enc(password, encryptor)
+        )
     }
 
     fun findAllByIds(ids: List<Long>): List<UserInfo> {

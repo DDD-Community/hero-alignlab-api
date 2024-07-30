@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 class DevWebsocketResource(
     private val reactiveConcurrentUserWebSocketHandler: ReactiveConcurrentUserWebSocketHandler
 ) {
-    @Operation(summary = "websocket connection closed")
+    @Operation(summary = "[DEV] websocket connection closed")
     @PostMapping("/api/dev/v1/websocket/connection-closed")
     suspend fun closedConnection(
         @RequestHeader("X-HERO-DEV-TOKEN") token: String
