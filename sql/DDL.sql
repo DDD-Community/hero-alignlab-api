@@ -96,3 +96,19 @@ CREATE TABLE `pose_key_point_snapshot`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='포즈 key point';
 CREATE INDEX uidx__pose_snapshot_id__position ON pose_key_point_snapshot (pose_snapshot_id, position);
+
+-- system log
+CREATE TABLE `system_action_log`
+(
+    `id`          bigint NOT NULL AUTO_INCREMENT,
+    `host`        varchar(256)                    DEFAULT NULL,
+    `http_method` varchar(256)                    DEFAULT NULL,
+    `ip_address`  varchar(256)                    DEFAULT NULL,
+    `path`        varchar(256)                    DEFAULT NULL,
+    `referer`     varchar(512)                    DEFAULT NULL,
+    `user_agent`  varchar(256)                    DEFAULT NULL,
+    `extra`       text COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `created_at`  datetime                        DEFAULT CURRENT_TIMESTAMP,
+    `modified_at` datetime                        DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'system log';
