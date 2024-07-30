@@ -14,6 +14,9 @@ object DependencyVersion {
     /** auth0-jwt */
     const val AUTH_JWT = "4.4.0"
 
+    /** ㅁㅈㄴ */
+    const val AWS_S3_SDK_VERSION = "1.12.351"
+
     /** test */
     const val TEST_CONTAINER_MYSQL = "1.19.8"
     const val P6SPY_LOG = "1.9.1"

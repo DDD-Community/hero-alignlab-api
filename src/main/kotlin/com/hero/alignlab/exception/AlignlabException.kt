@@ -21,3 +21,6 @@ class NoAuthorityException(errorCode: ErrorCode) : AlignlabException(errorCode)
 class FailToExecuteException(errorCode: ErrorCode) : AlignlabException(errorCode)
 
 class RedisPubSubException(errorCode: ErrorCode) : AlignlabException(errorCode)
+
+/** Image Exception */
+class ImageUploadException : AlignlabException(ErrorCode.IMAGE_CLIENT_UPLOAD_ERROR)

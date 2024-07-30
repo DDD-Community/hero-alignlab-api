@@ -49,8 +49,8 @@ jobs:
           files: ./src/main/resources/config/application.yml
         env:
           # Aws Credentials 환경 변수 주입
-          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          cloud.aws.credentials.secretKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           # Jwt Secret Key 환경 변수 주입
           auth.jwt.secret: ${{ secrets.AUTH_JWT_SECRET }}
           # Encrypt 환경 변수 주입
