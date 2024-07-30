@@ -22,4 +22,9 @@ class OAuthUserInfoService(
             oAuthUserInfoRepository.existsByOauthIdAndProvider(oauthId, provider)
         }
     }
+
+    @Transactional
+    fun deleteSync(provider: OAuthProvider, oauthId: String) {
+        oAuthUserInfoRepository.deleteByOauthIdAndProvider(oauthId, provider)
+    }
 }

@@ -35,11 +35,13 @@ class KakaoInfoClientConfig {
 
         val webclient = WebClientFactory.generate(kakaoInfoConfig.url)
 
-        return SuspendableKakaoInfoClient(webclient)
+        return SuspendableKakaoInfoClient(webclient, kakaoInfoConfig)
     }
 
     data class Config(
         @field:NotBlank
         var url: String = "",
+        @field:NotBlank
+        var unlinkPath: String = "",
     )
 }

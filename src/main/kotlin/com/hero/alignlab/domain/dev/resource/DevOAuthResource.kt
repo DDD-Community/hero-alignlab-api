@@ -33,4 +33,16 @@ class DevOAuthResource(
     suspend fun getOAuthUserInfos(
         @RequestParam accessToken: String
     ) = devOAuthService.getUserInfo(accessToken).wrapOk()
+
+    @Operation(summary = "[DEV] 회원 탈퇴")
+    @GetMapping("/api/dev/v1/oauth/{provider}/withdraw")
+    suspend fun withdraw(
+        @PathVariable provider: OAuthProvider,
+        @RequestParam accessToken: String,
+        @RequestParam oauthId: String,
+    ) = devOAuthService.withdraw(
+        provider = provider,
+        accessToken = accessToken,
+        oauthId = oauthId
+    ).wrapOk()
 }

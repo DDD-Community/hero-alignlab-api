@@ -10,4 +10,6 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 interface OAuthUserInfoRepository : JpaRepository<OAuthUserInfo, Long> {
     fun existsByOauthIdAndProvider(oauthId: String, provider: OAuthProvider): Boolean
+
+    fun deleteByOauthIdAndProvider(oauthId: String, provider: OAuthProvider)
 }

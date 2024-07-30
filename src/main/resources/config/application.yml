@@ -60,6 +60,7 @@ oauth:
     url: https://kauth.kakao.com/oauth
     rest-api-key:
     client-secret-code:
+    admin-key:
     # redirect url for get OAuth Authorize Code
     authorized-url: /authorize?client_id=%s&redirect_uri=%s&response_type=code
     redirect-url: https://api.alignlab.site/api/dev/v1/oauth/kakao/token
@@ -67,6 +68,7 @@ oauth:
 client:
   kakao-info:
     url: https://kapi.kakao.com
+    unlink-path: /v1/user/unlink
 
 encrypt:
   key:

@@ -1,6 +1,8 @@
 package com.hero.alignlab.client.kakao
 
 import com.hero.alignlab.client.kakao.client.KakaoInfoClient
+import com.hero.alignlab.client.kakao.model.request.KakaoOAuthUnlinkRequest
+import com.hero.alignlab.client.kakao.model.response.KakaoOAuthUnlinkResponse
 import com.hero.alignlab.client.kakao.model.response.KakaoOAuthUserInfoResponse
 import com.hero.alignlab.common.extension.resolveCancellation
 import com.hero.alignlab.domain.auth.model.OAuthProvider
@@ -31,6 +33,16 @@ class KakaoInfoService(
         return runCatching {
             withContext(Dispatchers.IO) {
                 kaKaoInfoClient.getUserInfo(accessToken)
+            }
+        }.onFailure { e ->
+            logger.resolveCancellation("getUserInfo", e)
+        }.getOrThrow()
+    }
+
+    suspend fun unlink(accessToken: String, request: KakaoOAuthUnlinkRequest): KakaoOAuthUnlinkResponse {
+        return runCatching {
+            withContext(Dispatchers.IO) {
+                kaKaoInfoClient.unlink(accessToken, request)
             }
         }.onFailure { e ->
             logger.resolveCancellation("getUserInfo", e)

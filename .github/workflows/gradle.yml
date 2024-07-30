@@ -61,6 +61,7 @@ jobs:
           # OAuth-Kakao 환경 변수 주입
           oauth.kakao.rest-api-key: ${{ secrets.OAUTH_KAKAO_REST_API_KEY }}
           oauth.kakao.client-secret-code: ${{ secrets.OAUTH_KAKAO_CLIENT_SECRET_CODE }}
+          oauth.kakao.admin-key: ${{ secrets.OAUTH_KAKAO_ADMIN_KEY }}
 
       # Secret Setup - application-prod.yml
       - name: Inject env-values to application-prod.yml
