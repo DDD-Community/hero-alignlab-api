@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserInfoService(
@@ -60,5 +61,10 @@ class UserInfoService(
         return withContext(Dispatchers.IO) {
             userInfoRepository.findByOAuth(provider, oauthId)
         } ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
+    }
+
+    @Transactional
+    fun deleteBySync(id: Long) {
+        userInfoRepository.deleteById(id)
     }
 }

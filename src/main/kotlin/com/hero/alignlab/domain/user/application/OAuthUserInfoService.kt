@@ -27,4 +27,10 @@ class OAuthUserInfoService(
     fun deleteSync(provider: OAuthProvider, oauthId: String) {
         oAuthUserInfoRepository.deleteByOauthIdAndProvider(oauthId, provider)
     }
+
+    suspend fun findByProviderAndOauthId(provider: OAuthProvider, oauthId: String): OAuthUserInfo? {
+        return withContext(Dispatchers.IO) {
+            oAuthUserInfoRepository.findByProviderAndOauthId(provider, oauthId)
+        }
+    }
 }

@@ -10,6 +10,7 @@ import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.OAuthProvider
 import com.hero.alignlab.domain.dev.model.response.DevOAuthCodeResponse
 import com.hero.alignlab.domain.user.application.OAuthUserInfoService
+import com.hero.alignlab.domain.user.application.UserInfoService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 
@@ -18,6 +19,7 @@ class DevOAuthService(
     private val kakaoOAuthService: KakaoOAuthService,
     private val kakaoInfoService: KakaoInfoService,
     private val oAuthUserInfoService: OAuthUserInfoService,
+    private val userInfoService: UserInfoService,
     private val txTemplates: TransactionTemplates,
 ) {
     private val logger = KotlinLogging.logger { }
@@ -45,9 +47,12 @@ class DevOAuthService(
             OAuthProvider.kakao -> kakaoInfoService.unlink(accessToken, KakaoOAuthUnlinkRequest(targetId = oauthId))
         }
 
-        if (oAuthUserInfoService.existsByOauthIdAndProvider(oauthId, provider.toProvider())) {
+        val oauthUser = oAuthUserInfoService.findByProviderAndOauthId(provider.toProvider(), oauthId)
+
+        if (oauthUser != null) {
             txTemplates.writer.executes {
                 oAuthUserInfoService.deleteSync(provider.toProvider(), oauthId)
+                userInfoService.deleteBySync(oauthUser.uid)
             }
 
             return true
