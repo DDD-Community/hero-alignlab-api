@@ -1,8 +1,8 @@
 package com.hero.alignlab.client.kakao.config
 
 import com.hero.alignlab.client.WebClientFactory
-import com.hero.alignlab.client.kakao.client.KaKaoInfoClient
-import com.hero.alignlab.client.kakao.client.KaKaoOAuthClient
+import com.hero.alignlab.client.kakao.client.KakaoInfoClient
+import com.hero.alignlab.client.kakao.client.KakaoOAuthClient
 import com.hero.alignlab.client.kakao.client.SuspendableKakaoInfoClient
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.validation.Valid
@@ -27,10 +27,10 @@ class KakaoInfoClientConfig {
 
     @Bean
     @ConditionalOnBean(name = ["kakaoInfoConfig"])
-    @ConditionalOnMissingBean(KaKaoOAuthClient::class)
+    @ConditionalOnMissingBean(KakaoOAuthClient::class)
     fun kakaoInfoClient(
         @Valid kakaoInfoConfig: Config
-    ): KaKaoInfoClient {
+    ): KakaoInfoClient {
         logger.info { "initialized KaKaoInfoClient. $kakaoInfoConfig" }
 
         val webclient = WebClientFactory.generate(kakaoInfoConfig.url)

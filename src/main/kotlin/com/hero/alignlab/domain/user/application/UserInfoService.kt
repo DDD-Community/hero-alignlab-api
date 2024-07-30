@@ -2,6 +2,7 @@ package com.hero.alignlab.domain.user.application
 
 import com.hero.alignlab.common.encrypt.EncryptData
 import com.hero.alignlab.common.encrypt.Encryptor
+import com.hero.alignlab.domain.user.domain.OAuthProvider
 import com.hero.alignlab.domain.user.domain.UserInfo
 import com.hero.alignlab.domain.user.infrastructure.UserInfoRepository
 import com.hero.alignlab.domain.user.model.response.UserInfoResponse
@@ -53,5 +54,11 @@ class UserInfoService(
 
     fun findAllByIds(ids: List<Long>): List<UserInfo> {
         return userInfoRepository.findAllById(ids)
+    }
+
+    suspend fun findByOAuthOrThrow(provider: OAuthProvider, oauthId: String): UserInfo {
+        return withContext(Dispatchers.IO) {
+            userInfoRepository.findByOAuth(provider, oauthId)
+        } ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
     }
 }

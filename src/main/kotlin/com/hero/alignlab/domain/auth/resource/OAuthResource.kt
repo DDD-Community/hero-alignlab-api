@@ -1,6 +1,10 @@
 package com.hero.alignlab.domain.auth.resource
 
+import com.hero.alignlab.common.extension.wrapOk
 import com.hero.alignlab.domain.auth.application.OAuthFacade
+import com.hero.alignlab.domain.auth.model.OAuthProvider
+import com.hero.alignlab.domain.auth.model.request.OAuthLoginRequest
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
@@ -14,5 +18,17 @@ import org.springframework.web.bind.annotation.*
 class OAuthResource(
     private val oAuthFacade: OAuthFacade,
 ) {
+    @Operation(summary = "회원가입 여부 확인")
+    @GetMapping("/api/v1/oauth/{provider}/sign-up/check")
+    suspend fun checkSignUp(
+        @PathVariable provider: OAuthProvider,
+        @RequestParam accessToken: String,
+    ) = oAuthFacade.checkSignUp(provider, accessToken).wrapOk()
 
+    @Operation(summary = "로그인")
+    @PostMapping("/api/v1/oauth/{provider}/sign-in")
+    suspend fun signIn(
+        @PathVariable provider: OAuthProvider,
+        @RequestBody request: OAuthLoginRequest,
+    ) = oAuthFacade.signIn(provider, request).wrapOk()
 }

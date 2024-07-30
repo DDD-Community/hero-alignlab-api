@@ -10,12 +10,12 @@ data class KakaoOAuthUserInfoResponse(
     val hasSignedUp: Boolean?,
     val connectedAt: LocalDateTime?,
     val synchedAt: LocalDateTime?,
-    val kakaoAccount: KakaoAccount?,
+    val kakaoAccount: KakaoAccount,
 ) {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class KakaoAccount(
         val profileNeedsAgreement: Boolean?,
-        val profile: Profile?,
+        val profile: Profile,
         val nameNeedsAgreement: Boolean?,
         val name: String?,
         val emailNeedsAgreement: Boolean?,
@@ -40,7 +40,7 @@ data class KakaoOAuthUserInfoResponse(
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class Profile(
-        val nickname: String?,
+        val nickname: String,
         val thumbnailImageUrl: String?,
         val profileImageUrl: String?,
         val isDefaultImage: Boolean?,

@@ -1,9 +1,7 @@
 package com.hero.alignlab.domain.user.infrastructure
 
 import com.hero.alignlab.common.encrypt.EncryptData
-import com.hero.alignlab.domain.user.domain.QCredentialUserInfo
-import com.hero.alignlab.domain.user.domain.QUserInfo
-import com.hero.alignlab.domain.user.domain.UserInfo
+import com.hero.alignlab.domain.user.domain.*
 import com.querydsl.jpa.impl.JPAQuery
 import jakarta.persistence.EntityManager
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,6 +18,8 @@ interface UserInfoRepository : JpaRepository<UserInfo, Long>, UserInfoQRepositor
 @Transactional(readOnly = true)
 interface UserInfoQRepository {
     fun findByCredential(username: String, password: EncryptData): UserInfo?
+
+    fun findByOAuth(provider: OAuthProvider, oauthId: String): UserInfo?
 }
 
 class UserInfoQRepositoryImpl : UserInfoQRepository, QuerydslRepositorySupport(UserInfo::class.java) {
@@ -31,8 +31,10 @@ class UserInfoQRepositoryImpl : UserInfoQRepository, QuerydslRepositorySupport(U
 
     private val qUserInfo = QUserInfo.userInfo
     private val qCredentialUserInfo = QCredentialUserInfo.credentialUserInfo
+    private val qOAuthUserInfo = QOAuthUserInfo.oAuthUserInfo
 
     override fun findByCredential(username: String, password: EncryptData): UserInfo? {
+        QOAuthUserInfo.oAuthUserInfo
         return JPAQuery<UserInfo>(entityManager)
             .select(qUserInfo)
             .from(qUserInfo)
@@ -40,6 +42,17 @@ class UserInfoQRepositoryImpl : UserInfoQRepository, QuerydslRepositorySupport(U
             .where(
                 qCredentialUserInfo.username.eq(username),
                 qCredentialUserInfo.password.eq(password)
+            ).fetchFirst()
+    }
+
+    override fun findByOAuth(provider: OAuthProvider, oauthId: String): UserInfo? {
+        return JPAQuery<UserInfo>(entityManager)
+            .select(qUserInfo)
+            .from(qUserInfo)
+            .join(qOAuthUserInfo).on(qUserInfo.id.eq(qOAuthUserInfo.uid))
+            .where(
+                qOAuthUserInfo.provider.eq(provider),
+                qOAuthUserInfo.oauthId.eq(oauthId)
             ).fetchFirst()
     }
 }

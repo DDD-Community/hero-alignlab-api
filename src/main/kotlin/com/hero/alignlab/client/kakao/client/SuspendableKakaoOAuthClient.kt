@@ -5,7 +5,7 @@ import com.hero.alignlab.client.kakao.model.request.GenerateKakaoOAuthTokenReque
 import com.hero.alignlab.client.kakao.model.response.GenerateKakaoOAuthTokenResponse
 import org.springframework.web.reactive.function.client.WebClient
 
-class SuspendableKakaoOAuthClient(client: WebClient) : KaKaoOAuthClient, SuspendableClient(client) {
+class SuspendableKakaoOAuthClient(client: WebClient) : KakaoOAuthClient, SuspendableClient(client) {
     override suspend fun getOAuthAuthorizeCode(clientId: String, redirectUri: String) {
         client
             .get()

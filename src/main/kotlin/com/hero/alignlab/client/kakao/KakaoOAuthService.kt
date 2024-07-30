@@ -1,6 +1,6 @@
 package com.hero.alignlab.client.kakao
 
-import com.hero.alignlab.client.kakao.client.KaKaoOAuthClient
+import com.hero.alignlab.client.kakao.client.KakaoOAuthClient
 import com.hero.alignlab.client.kakao.config.KakaoOAuthClientConfig
 import com.hero.alignlab.client.kakao.model.request.GenerateKakaoOAuthTokenRequest
 import com.hero.alignlab.client.kakao.model.response.GenerateKakaoOAuthTokenResponse
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class KakaoOAuthService(
-    private val kaKaoOAuthClient: KaKaoOAuthClient,
+    private val kakaoOAuthClient: KakaoOAuthClient,
     private val config: KakaoOAuthClientConfig.Config
 ) {
     private val logger = KotlinLogging.logger {}
@@ -28,7 +28,7 @@ class KakaoOAuthService(
     suspend fun getOAuthAuthorizeCode(clientId: String, redirectUri: String) {
         runCatching {
             withContext(Dispatchers.IO) {
-                kaKaoOAuthClient.getOAuthAuthorizeCode(clientId, redirectUri)
+                kakaoOAuthClient.getOAuthAuthorizeCode(clientId, redirectUri)
             }
         }.onFailure { e ->
             logger.resolveCancellation("getOAuthAuthorizeCode", e)
@@ -49,7 +49,7 @@ class KakaoOAuthService(
     suspend fun generateOAuthToken(request: GenerateKakaoOAuthTokenRequest): GenerateKakaoOAuthTokenResponse {
         return runCatching {
             withContext(Dispatchers.IO) {
-                kaKaoOAuthClient.generateOAuthToken(request)
+                kakaoOAuthClient.generateOAuthToken(request)
             }
         }.onFailure { e ->
             logger.resolveCancellation("generateOAuthToken", e)
