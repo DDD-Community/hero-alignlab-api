@@ -36,7 +36,7 @@ class GroupResource(
     suspend fun createGroup(
         user: AuthUser,
         @RequestBody request: CreateGroupRequest
-    ) = groupService.createGroup(user, request).wrapCreated()
+    ) = groupFacade.createGroup(user, request).wrapCreated()
 
     @Operation(summary = "그룹 수정하기")
     @PutMapping("/api/v1/groups/{id}")

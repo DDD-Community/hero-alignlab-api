@@ -17,6 +17,12 @@ import org.springframework.transaction.annotation.Transactional
 class GroupUserService(
     private val groupUserRepository: GroupUserRepository,
 ) {
+    suspend fun existsByUid(uid: Long): Boolean {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.existsByUid(uid)
+        }
+    }
+
     suspend fun findAllByUid(uid: Long): List<GroupUser> {
         return withContext(Dispatchers.IO) {
             findAllByUid(uid)

@@ -38,7 +38,7 @@ hero:
       password:
       hikari:
         minimum-idle: 10
-        maximum-pool-size: 20
+        maximum-pool-size: 15
   jpa:
     properties:
       hibernate.hbm2ddl.auto: none

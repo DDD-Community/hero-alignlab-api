@@ -7,19 +7,57 @@ import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.domain.GroupUser
+import com.hero.alignlab.domain.group.model.CreateGroupContext
+import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
+import com.hero.alignlab.domain.group.model.response.CreateGroupResponse
 import com.hero.alignlab.domain.group.model.response.GetGroupResponse
 import com.hero.alignlab.domain.group.model.response.JoinGroupResponse
+import com.hero.alignlab.event.model.CreateGroupEvent
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.NotFoundException
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class GroupFacade(
     private val groupService: GroupService,
     private val groupUserService: GroupUserService,
     private val txTemplates: TransactionTemplates,
+    private val publisher: ApplicationEventPublisher,
 ) {
+    suspend fun createGroup(user: AuthUser, request: CreateGroupRequest): CreateGroupResponse {
+        return parZip(
+            { groupService.existsByName(request.name) },
+            { groupUserService.existsByUid(user.uid) }
+        ) { existsByName, existsByUid ->
+            if (existsByName) {
+                throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_NAME_ERROR)
+            }
+
+            if (existsByUid) {
+                throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_JOIN_ERROR)
+            }
+
+            val group = CreateGroupContext(user, request).create()
+
+            val createdGroup = createGroup(user, group)
+
+            CreateGroupResponse.from(createdGroup)
+        }
+    }
+
+    fun createGroup(user: AuthUser, group: Group): Group {
+        return txTemplates.writer.executes {
+            val createdGroup = groupService.saveSync(group)
+
+            publisher.publishEvent(CreateGroupEvent(createdGroup))
+
+            createdGroup
+        }
+    }
+
     suspend fun withdraw(user: AuthUser, groupId: Long) {
         val group = groupService.findByIdOrThrow(groupId)
 

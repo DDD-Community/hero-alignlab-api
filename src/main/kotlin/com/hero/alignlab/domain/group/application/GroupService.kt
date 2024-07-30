@@ -5,67 +5,26 @@ import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.infrastructure.GroupRepository
-import com.hero.alignlab.domain.group.infrastructure.GroupUserRepository
-import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
+import com.hero.alignlab.domain.group.model.UpdateGroupContext
 import com.hero.alignlab.domain.group.model.request.UpdateGroupRequest
-import com.hero.alignlab.domain.group.model.response.CreateGroupResponse
 import com.hero.alignlab.domain.group.model.response.UpdateGroupResponse
-import com.hero.alignlab.event.model.CreateGroupEvent
 import com.hero.alignlab.exception.ErrorCode
-import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.NotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class GroupService(
     private val groupRepository: GroupRepository,
-    private val groupUserRepository: GroupUserRepository,
     private val txTemplates: TransactionTemplates,
-    private val publisher: ApplicationEventPublisher,
 ) {
-    suspend fun createGroup(user: AuthUser, request: CreateGroupRequest): CreateGroupResponse {
-        if (existsByName(request.name)) {
-            throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_NAME_ERROR)
-        }
-
-        if (withContext(Dispatchers.IO) { groupUserRepository.findAllByUid(user.uid) }.isNotEmpty()) {
-            throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_JOIN_ERROR)
-        }
-
-        val createdGroup = txTemplates.writer.executes {
-            val group = groupRepository.save(
-                Group(
-                    name = request.name,
-                    description = request.description,
-                    ownerUid = user.uid,
-                    isHidden = request.isHidden,
-                    joinCode = request.joinCode ?: UUID.randomUUID().toString().replace("-", "")
-                )
-            )
-
-            publisher.publishEvent(CreateGroupEvent(group))
-
-            group
-        }
-
-        return CreateGroupResponse.from(createdGroup)
-    }
-
     suspend fun updateGroup(user: AuthUser, id: Long, request: UpdateGroupRequest): UpdateGroupResponse {
         val group = findByIdAndOwnerUidOrThrow(id, user.uid)
 
         val updatedGroup = txTemplates.writer.executes {
-            group.apply {
-                this.name = request.name
-                this.description = request.description
-                this.isHidden = request.isHidden
-                this.joinCode = request.joinCode ?: UUID.randomUUID().toString().replace("-", "")
-            }.run { groupRepository.save(this) }
+            groupRepository.save(UpdateGroupContext(group, request).update())
         }
 
         return UpdateGroupResponse.from(updatedGroup)

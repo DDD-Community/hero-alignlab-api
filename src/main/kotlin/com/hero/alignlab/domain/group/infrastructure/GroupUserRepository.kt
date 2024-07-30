@@ -21,4 +21,6 @@ interface GroupUserRepository : JpaRepository<GroupUser, Long> {
     fun existsByGroupIdAndUid(groupId: Long, uid: Long): Boolean
 
     fun findAllByGroupId(groupId: Long, pageable: Pageable): Page<GroupUser>
+
+    fun existsByUid(uid: Long): Boolean
 }
