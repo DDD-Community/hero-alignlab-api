@@ -22,6 +22,9 @@ spring:
   config:
     import:
       - classpath:/config/hero-alignlab-config.yml
+  output:
+    ansi:
+      enabled: always
 
 # DATABASE
 hero:
