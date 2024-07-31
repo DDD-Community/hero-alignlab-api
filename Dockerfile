@@ -1,7 +1,9 @@
-FROM corretto:17
+FROM amazoncorretto:17
 
-ARG JAR_FILE=build/libs/*.jar
+ARG JAR_FILE=./api/build/libs/*.jar
+COPY ${JAR_FILE} app.jar
 
-COPY build/libs/* application.jar
+ARG PROFILE=prod
+ENV PROFILE=${PROFILE}
 
-CMD ["java", "-Dfile.encoding=UTF-8", "-jar", "application.jar"]
+ENTRYPOINT ["java","-Dspring.profiles.active=${PROFILE}", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
