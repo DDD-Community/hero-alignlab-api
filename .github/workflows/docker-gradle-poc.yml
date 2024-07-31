@@ -83,9 +83,8 @@ jobs:
         run: ./gradlew clean --stacktrace --info build
         shell: bash
 
-      # Docker 이미지 빌드
-      - name: docker image build
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api
+      - name: Make image tag
+        run: echo "IMAGE_TAG=$ACTIVE_PROFILE-${GITHUB_SHA::7}" >> $GITHUB_ENV # activeProfile-커밋 hash 값
 
       # DockerHub 로그인
       - name: docker login
@@ -94,9 +93,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
+      # Docker 이미지 빌드
+      - name: docker image build
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}} .
+
       #  Docker Hub 이미지 푸시
       - name: docker Hub push
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
 
       # Deploy Service
       - name: Deploy and Start Spring Boot Application
@@ -106,10 +109,11 @@ jobs:
           username: ubuntu
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
+            sudo echo "IMAGE_TAG=${{ env.IMAGE_TAG }}" >> .env
             echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             sudo docker ps
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
             sudo docker stop server || true
             sudo docker rm server || true # 중복된 이름 문제 해결
-            sudo docker run -d -p 8080:8080 --name server ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api
+            sudo docker run -d -p 8080:8080 --name server ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
             sudo docker image prune -f
