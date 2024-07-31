@@ -99,7 +99,7 @@ jobs:
       - name: docker Hub push
         run: docker push ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api
 
-      # Deploy
+      # Deploy Service
       - name: Deploy and Start Spring Boot Application
         uses: appleboy/ssh-action@master
         with:
