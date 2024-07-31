@@ -98,3 +98,19 @@ jobs:
       #  Docker Hub 이미지 푸시
       - name: docker Hub push
         run: docker push ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api
+
+      # Deploy
+      - name: Deploy and Start Spring Boot Application
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_PROD }}
+          username: ubuntu
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+            sudo docker ps
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api
+            sudo docker stop server || true
+            sudo docker rm server || true # 중복된 이름 문제 해결
+            sudo docker run -d -p 8080:8080 --name server ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api
+            sudo docker image prune -f
