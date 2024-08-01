@@ -15,6 +15,7 @@ on:
 
 # 해당 스크립트에서 사용될 환경 변수
 env:
+  ACTIVE_PROFILE: "prod"
   AWS_REGION: ap-northeast-2
   PROJECT_NAME: hero-alignlab-api
   S3_BUCKET_NAME: alignlab
@@ -84,7 +85,7 @@ jobs:
         shell: bash
 
       - name: Make image tag
-        run: echo "IMAGE_TAG=v${{ GITHUB_SHA::7 }}" >> $GITHUB_ENV # v-커밋 hash 값
+        run: echo "IMAGE_TAG=$ACTIVE_PROFILE-${GITHUB_SHA::7}" >> $GITHUB_ENV # activeProfile-커밋 hash 값
 
       # DockerHub 로그인
       - name: docker login
@@ -95,11 +96,11 @@ jobs:
 
       # Docker 이미지 빌드
       - name: docker image build
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{ env.IMAGE_TAG }} .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}} .
 
-      # Docker Hub 이미지 푸시
+      #  Docker Hub 이미지 푸시
       - name: docker Hub push
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{ env.IMAGE_TAG }}
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
 
       # Deploy Hero Service
       - name: Deploy and Start Spring Boot Application
@@ -112,8 +113,8 @@ jobs:
             sudo echo "IMAGE_TAG=${{ env.IMAGE_TAG }}" >> .env
             echo "${{ secrets.DOCKER_TOKEN }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             sudo docker ps
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{ env.IMAGE_TAG }}
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
             sudo docker stop server || true
             sudo docker rm server || true # 중복된 이름 문제 해결
-            sudo docker run -d -p 8080:8080 --name server ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{ env.IMAGE_TAG }}
+            sudo docker run -d -p 8080:8080 --name server ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
             sudo docker image prune -f
