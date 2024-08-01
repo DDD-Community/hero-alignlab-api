@@ -1,3 +1,4 @@
+# jdk setup
 FROM amazoncorretto:17
 
 # JAR 파일 경로와 파일명
