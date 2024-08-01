@@ -110,7 +110,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
             sudo echo "IMAGE_TAG=${{ env.IMAGE_TAG }}" >> .env
-            echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+            echo "${{ secrets.DOCKER_TOKEN }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
             sudo docker stop server || true
