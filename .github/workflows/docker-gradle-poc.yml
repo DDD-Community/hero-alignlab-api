@@ -114,8 +114,7 @@ jobs:
             echo "${{ secrets.DOCKER_TOKEN }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
-            sudo docker stop $(sudo docker ps -a -q)
-            sudo docker rm $(sudo docker ps -a -q)
-            sudo docker rmi $(sudo docker images -q)
+            if [ $(sudo docker ps -q) ]; then sudo docker stop $(sudo docker ps -q); fi
+            if [ $(sudo docker ps -aq) ]; then sudo docker rm $(sudo docker ps -aq); fi
             sudo docker run -d -p 8080:8080 --name hero-alignlab-api-${{env.IMAGE_TAG}} ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
             sudo docker image prune -f
