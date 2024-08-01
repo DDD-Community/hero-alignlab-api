@@ -8,4 +8,4 @@ COPY ${JAR_FILE} app.jar
 
 # 어플리케이션 실행 및 로그 출력
 #CMD nohup java -jar /app.jar > stdout.log 2> stderr.log &
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-Dspring.profiles.active=prod","-jar","/app.jar"]
