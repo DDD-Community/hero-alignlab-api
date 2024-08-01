@@ -114,7 +114,7 @@ jobs:
             echo "${{ secrets.DOCKER_TOKEN }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
-            sudo docker stop server || true
-            sudo docker rm server || true # 중복된 이름 문제 해결
-            sudo docker run -d -p 8080:8080 --name server ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
+            sudo docker stop hero-alignlab-api || true
+            sudo docker rm hero-alignlab-api || true # 중복된 이름 문제 해결
+            sudo docker run -d -p 8080:8080 --name hero-alignlab-api ${{ secrets.DOCKER_USERNAME }}/hero-alignlab-api:${{env.IMAGE_TAG}}
             sudo docker image prune -f
