@@ -18,7 +18,6 @@ import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.NotFoundException
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class GroupFacade(
@@ -154,5 +153,15 @@ class GroupFacade(
                 }
             }
         }
+    }
+
+    suspend fun deleteGroupUser(user: AuthUser, groupUserId: Long) {
+        val groupUser = groupUserService.findByIdOrNull(groupUserId)
+            ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
+
+        groupService.findByIdAndOwnerUid(groupUser.groupId, user.uid)
+            ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
+
+        groupUserService.deleteSync(groupUserId)
     }
 }

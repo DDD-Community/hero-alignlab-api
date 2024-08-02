@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -74,5 +75,15 @@ class GroupUserService(
         return withContext(Dispatchers.IO) {
             groupUserRepository.findAllByGroupId(groupId, pageable)
         }
+    }
+
+    suspend fun findByIdOrNull(groupUserId: Long): GroupUser? {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.findByIdOrNull(groupUserId)
+        }
+    }
+
+    fun deleteSync(groupUserId: Long) {
+        groupUserRepository.deleteById(groupUserId)
     }
 }
