@@ -37,8 +37,8 @@ hero:
       username:
       password:
       hikari:
-        minimum-idle: 10
-        maximum-pool-size: 15
+        minimum-idle: 15
+        maximum-pool-size: 25
         max-lifetime: 600000
         pool-name: hikaricp.hero.master
   jpa:
