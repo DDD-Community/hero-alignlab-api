@@ -6,7 +6,7 @@ import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.application.PoseKeyPointSnapshotService
 import com.hero.alignlab.domain.pose.domain.PoseCount
 import com.hero.alignlab.domain.pose.domain.PoseKeyPointSnapshot
-import com.hero.alignlab.domain.pose.domain.PoseTotalCount
+import com.hero.alignlab.domain.pose.domain.vo.PoseTotalCount
 import com.hero.alignlab.event.model.LoadPoseSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

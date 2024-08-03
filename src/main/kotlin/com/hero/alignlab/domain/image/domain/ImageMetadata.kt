@@ -1,6 +1,7 @@
 package com.hero.alignlab.domain.image.domain
 
 import com.hero.alignlab.domain.common.domain.BaseEntity
+import com.hero.alignlab.domain.image.domain.vo.ImageType
 import jakarta.persistence.*
 
 @Entity

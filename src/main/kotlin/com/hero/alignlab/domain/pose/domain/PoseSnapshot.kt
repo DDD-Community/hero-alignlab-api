@@ -1,6 +1,7 @@
 package com.hero.alignlab.domain.pose.domain
 
 import com.hero.alignlab.domain.common.domain.BaseEntity
+import com.hero.alignlab.domain.pose.domain.vo.PoseType
 import jakarta.persistence.*
 import java.math.BigDecimal
 

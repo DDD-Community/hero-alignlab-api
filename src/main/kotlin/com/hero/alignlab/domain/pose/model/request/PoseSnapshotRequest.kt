@@ -1,6 +1,6 @@
 package com.hero.alignlab.domain.pose.model.request
 
-import com.hero.alignlab.domain.pose.domain.PoseType
+import com.hero.alignlab.domain.pose.domain.vo.PoseType
 import com.hero.alignlab.domain.pose.model.PoseSnapshotModel
 
 data class PoseSnapshotRequest(

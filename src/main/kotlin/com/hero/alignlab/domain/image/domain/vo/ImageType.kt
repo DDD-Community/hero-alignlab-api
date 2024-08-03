@@ -1,4 +1,4 @@
-package com.hero.alignlab.domain.image.domain
+package com.hero.alignlab.domain.image.domain.vo
 
 /**
  * Image Upload Type

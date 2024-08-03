@@ -1,6 +1,7 @@
 package com.hero.alignlab.domain.discussion.domain
 
 import com.hero.alignlab.domain.common.domain.BaseEntity
+import com.hero.alignlab.domain.discussion.domain.vo.DiscussionType
 import jakarta.persistence.*
 
 @Entity

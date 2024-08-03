@@ -1,5 +1,7 @@
 package com.hero.alignlab.domain.pose.domain
 
+import com.hero.alignlab.domain.pose.domain.vo.PoseTotalCount
+import com.hero.alignlab.domain.pose.domain.vo.PoseTotalCountConverter
 import jakarta.persistence.*
 import java.time.LocalDate
 

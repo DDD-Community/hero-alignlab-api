@@ -1,4 +1,4 @@
-package com.hero.alignlab.domain.pose.domain
+package com.hero.alignlab.domain.pose.domain.vo
 
 enum class PosePosition {
     NOSE,

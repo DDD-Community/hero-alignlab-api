@@ -1,7 +1,7 @@
 package com.hero.alignlab.domain.pose.model.response
 
 import com.hero.alignlab.domain.pose.domain.PoseSnapshot
-import com.hero.alignlab.domain.pose.domain.PoseType
+import com.hero.alignlab.domain.pose.domain.vo.PoseType
 import java.time.LocalDateTime
 
 data class PoseSnapshotResponse(

@@ -1,7 +1,7 @@
 package com.hero.alignlab.domain.discussion.model.response
 
 import com.hero.alignlab.domain.discussion.domain.Discussion
-import com.hero.alignlab.domain.discussion.domain.DiscussionType
+import com.hero.alignlab.domain.discussion.domain.vo.DiscussionType
 import java.time.LocalDateTime
 
 data class DiscussionResponse(

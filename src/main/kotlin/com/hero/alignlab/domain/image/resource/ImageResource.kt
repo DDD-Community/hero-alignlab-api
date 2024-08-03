@@ -3,7 +3,7 @@ package com.hero.alignlab.domain.image.resource
 import com.hero.alignlab.common.extension.wrapCreated
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.image.application.ImageService
-import com.hero.alignlab.domain.image.domain.ImageType
+import com.hero.alignlab.domain.image.domain.vo.ImageType
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType

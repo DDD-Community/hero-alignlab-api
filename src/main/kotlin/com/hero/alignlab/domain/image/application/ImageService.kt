@@ -5,7 +5,7 @@ import com.hero.alignlab.common.extension.executes
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.image.domain.ImageMetadata
-import com.hero.alignlab.domain.image.domain.ImageType
+import com.hero.alignlab.domain.image.domain.vo.ImageType
 import com.hero.alignlab.domain.image.infrastructure.ImageMetadataRepository
 import com.hero.alignlab.domain.image.model.response.ImageResponse
 import io.github.oshai.kotlinlogging.KotlinLogging

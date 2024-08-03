@@ -1,5 +1,6 @@
 package com.hero.alignlab.domain.pose.domain
 
+import com.hero.alignlab.domain.pose.domain.vo.PosePosition
 import jakarta.persistence.*
 import java.math.BigDecimal
 

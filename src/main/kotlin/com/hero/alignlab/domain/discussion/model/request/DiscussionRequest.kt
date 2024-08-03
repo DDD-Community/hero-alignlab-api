@@ -1,6 +1,6 @@
 package com.hero.alignlab.domain.discussion.model.request
 
-import com.hero.alignlab.domain.discussion.domain.DiscussionType
+import com.hero.alignlab.domain.discussion.domain.vo.DiscussionType
 
 data class DiscussionRequest(
     /** 문의하기 유형 */

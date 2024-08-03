@@ -1,4 +1,4 @@
-package com.hero.alignlab.domain.pose.domain
+package com.hero.alignlab.domain.pose.domain.vo
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.hero.alignlab.common.extension.mapper

@@ -36,25 +36,25 @@ data class PoseSnapshotModel(
         right_ankle,
         ;
 
-        fun toPosition(): com.hero.alignlab.domain.pose.domain.PosePosition {
+        fun toPosition(): com.hero.alignlab.domain.pose.domain.vo.PosePosition {
             return when (this) {
-                nose -> com.hero.alignlab.domain.pose.domain.PosePosition.NOSE
-                left_eye -> com.hero.alignlab.domain.pose.domain.PosePosition.LEFT_EYE
-                right_eye -> com.hero.alignlab.domain.pose.domain.PosePosition.RIGHT_EYE
-                left_ear -> com.hero.alignlab.domain.pose.domain.PosePosition.LEFT_EAR
-                right_ear -> com.hero.alignlab.domain.pose.domain.PosePosition.RIGHT_EAR
-                left_shoulder -> com.hero.alignlab.domain.pose.domain.PosePosition.LEFT_SHOULDER
-                right_shoulder -> com.hero.alignlab.domain.pose.domain.PosePosition.RIGHT_SHOULDER
-                left_elbow -> com.hero.alignlab.domain.pose.domain.PosePosition.LEFT_ELBOW
-                right_elbow -> com.hero.alignlab.domain.pose.domain.PosePosition.RIGHT_ELBOW
-                left_wrist -> com.hero.alignlab.domain.pose.domain.PosePosition.LEFT_WRIST
-                right_wrist -> com.hero.alignlab.domain.pose.domain.PosePosition.RIGHT_WRIST
-                left_hip -> com.hero.alignlab.domain.pose.domain.PosePosition.LEFT_HIP
-                right_hip -> com.hero.alignlab.domain.pose.domain.PosePosition.RIGHT_HIP
-                left_knee -> com.hero.alignlab.domain.pose.domain.PosePosition.LEFT_KNEE
-                right_knee -> com.hero.alignlab.domain.pose.domain.PosePosition.RIGHT_KNEE
-                left_ankle -> com.hero.alignlab.domain.pose.domain.PosePosition.LEFT_ANKLE
-                right_ankle -> com.hero.alignlab.domain.pose.domain.PosePosition.RIGHT_ANKLE
+                nose -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.NOSE
+                left_eye -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.LEFT_EYE
+                right_eye -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.RIGHT_EYE
+                left_ear -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.LEFT_EAR
+                right_ear -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.RIGHT_EAR
+                left_shoulder -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.LEFT_SHOULDER
+                right_shoulder -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.RIGHT_SHOULDER
+                left_elbow -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.LEFT_ELBOW
+                right_elbow -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.RIGHT_ELBOW
+                left_wrist -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.LEFT_WRIST
+                right_wrist -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.RIGHT_WRIST
+                left_hip -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.LEFT_HIP
+                right_hip -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.RIGHT_HIP
+                left_knee -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.LEFT_KNEE
+                right_knee -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.RIGHT_KNEE
+                left_ankle -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.LEFT_ANKLE
+                right_ankle -> com.hero.alignlab.domain.pose.domain.vo.PosePosition.RIGHT_ANKLE
             }
         }
     }
