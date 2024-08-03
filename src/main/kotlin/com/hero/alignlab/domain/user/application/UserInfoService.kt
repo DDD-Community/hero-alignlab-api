@@ -53,7 +53,13 @@ class UserInfoService(
         )
     }
 
-    fun findAllByIds(ids: List<Long>): List<UserInfo> {
+    suspend fun findAllByIds(ids: List<Long>): List<UserInfo> {
+        return withContext(Dispatchers.IO) {
+            findAllByIdsSync(ids)
+        }
+    }
+
+    fun findAllByIdsSync(ids: List<Long>): List<UserInfo> {
         return userInfoRepository.findAllById(ids)
     }
 

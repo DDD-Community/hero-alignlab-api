@@ -1,5 +1,6 @@
-package com.hero.alignlab.config.web
+package com.hero.alignlab.ws.config
 
+import com.hero.alignlab.ws.handler.ReactiveConcurrentUserWebSocketHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.HandlerMapping

@@ -2,6 +2,8 @@ package com.hero.alignlab.domain.auth.model
 
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.NoAuthorityException
+import com.hero.alignlab.exception.NotFoundException
+import org.springframework.http.HttpHeaders
 
 /** 최상위 인증 및 인가 인터페이스 */
 interface AuthUser {
@@ -62,6 +64,21 @@ data class AuthUserToken(
                 key = AUTH_TOKEN_KEY,
                 value = value
             )
+        }
+
+        fun HttpHeaders.resolve(): AuthUserToken {
+            return this.asSequence()
+                .filter { header -> isTokenHeader(header.key) }
+                .mapNotNull { header ->
+                    header.value
+                        .firstOrNull()
+                        ?.takeIf { token -> token.isNotBlank() }
+                        ?.let { token -> from(token) }
+                }.firstOrNull() ?: throw NotFoundException(ErrorCode.NOT_FOUND_TOKEN_ERROR)
+        }
+
+        fun isTokenHeader(headerKey: String): Boolean {
+            return AUTH_TOKEN_KEY.equals(headerKey, ignoreCase = true)
         }
     }
 }

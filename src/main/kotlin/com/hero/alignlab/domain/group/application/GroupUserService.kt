@@ -34,7 +34,11 @@ class GroupUserService(
         return groupUserRepository.findAllByUid(uid)
     }
 
-    fun findAllByGroupIdAndUids(groupId: Long, uids: Set<Long>): List<GroupUser> {
+    suspend fun findAllByGroupIdAndUids(groupId: Long, uids: Set<Long>): List<GroupUser> {
+        return findAllByGroupIdAndUidsSync(groupId, uids)
+    }
+
+    fun findAllByGroupIdAndUidsSync(groupId: Long, uids: Set<Long>): List<GroupUser> {
         return groupUserRepository.findAllByGroupIdAndUidIn(groupId, uids)
     }
 

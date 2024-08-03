@@ -1,11 +1,11 @@
 package com.hero.alignlab.domain.auth.resource
 
+import com.hero.alignlab.common.extension.wrapCreated
+import com.hero.alignlab.common.extension.wrapOk
 import com.hero.alignlab.domain.auth.application.AuthFacade
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.auth.model.request.SignInRequest
 import com.hero.alignlab.domain.auth.model.request.SignUpRequest
-import com.hero.alignlab.common.extension.wrapCreated
-import com.hero.alignlab.common.extension.wrapOk
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
