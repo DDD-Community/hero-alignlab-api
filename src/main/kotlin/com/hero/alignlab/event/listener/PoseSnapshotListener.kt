@@ -31,7 +31,7 @@ class PoseSnapshotListener(
             }
 
             txTemplates.writer.executesOrNull {
-                poseKeyPointSnapshotService.saveAllSync(keyPoints)
+                poseKeyPointSnapshotService.bulkSave(keyPoints)
             }
         }
     }
