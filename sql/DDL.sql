@@ -78,11 +78,13 @@ CREATE TABLE `pose_snapshot`
     `id`          bigint          NOT NULL AUTO_INCREMENT COMMENT 'pose snapshot id',
     `uid`         bigint          NOT NULL COMMENT 'uid',
     `score`       DECIMAL(20, 16) NOT NULL COMMENT '포즈 신뢰도 종합',
+    `type`        VARCHAR(32)     NOT NULL COMMENT '포즈 타입',
     `created_at`  datetime DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
     `modified_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='포즈 스냅샷';
 CREATE INDEX idx__uid ON pose_snapshot (uid);
+CREATE INDEX idx__created_at ON pose_snapshot (created_at);
 
 -- 포즈 key point 스냅샷
 CREATE TABLE `pose_key_point_snapshot`

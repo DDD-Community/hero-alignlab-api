@@ -17,4 +17,7 @@ data class PoseSnapshot(
 
     @Column(name = "score")
     val score: BigDecimal,
+
+    @Column(name = "type")
+    val type: PoseType,
 ) : BaseEntity()

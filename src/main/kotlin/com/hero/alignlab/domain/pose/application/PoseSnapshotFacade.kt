@@ -21,7 +21,8 @@ class PoseSnapshotFacade(
             val createdPoseSnapshot = poseSnapshotService.saveSync(
                 PoseSnapshot(
                     uid = user.uid,
-                    score = request.snapshot.score
+                    score = request.snapshot.score,
+                    type = request.type,
                 )
             )
 
