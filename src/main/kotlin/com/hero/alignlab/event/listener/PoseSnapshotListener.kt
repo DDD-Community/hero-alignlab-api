@@ -1,9 +1,12 @@
 package com.hero.alignlab.event.listener
 
-import com.hero.alignlab.common.extension.executesOrNull
+import com.hero.alignlab.common.extension.coExecuteOrNull
 import com.hero.alignlab.config.database.TransactionTemplates
+import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.application.PoseKeyPointSnapshotService
+import com.hero.alignlab.domain.pose.domain.PoseCount
 import com.hero.alignlab.domain.pose.domain.PoseKeyPointSnapshot
+import com.hero.alignlab.domain.pose.domain.PoseTotalCount
 import com.hero.alignlab.event.model.LoadPoseSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +18,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class PoseSnapshotListener(
     private val poseKeyPointSnapshotService: PoseKeyPointSnapshotService,
+    private val poseCountService: PoseCountService,
     private val txTemplates: TransactionTemplates,
 ) {
     @TransactionalEventListener
@@ -30,8 +34,27 @@ class PoseSnapshotListener(
                 )
             }
 
-            txTemplates.writer.executesOrNull {
+            val targetDate = event.poseSnapshot.createdAt.toLocalDate()
+
+            /** 집계 데이터 처리 */
+            val poseCount = targetDate
+                .run { poseCountService.findByDateOrNull(this) }
+                ?.apply {
+                    val typeCount = this.totalCount.count[event.poseSnapshot.type] ?: 0
+                    this.totalCount.count[event.poseSnapshot.type] = typeCount + 1
+                } ?: PoseCount(
+                uid = event.poseSnapshot.uid,
+                totalCount = PoseTotalCount(
+                    count = mutableMapOf(
+                        event.poseSnapshot.type to 1
+                    )
+                ),
+                date = targetDate
+            )
+
+            txTemplates.writer.coExecuteOrNull {
                 poseKeyPointSnapshotService.bulkSave(keyPoints)
+                poseCountService.saveSync(poseCount)
             }
         }
     }

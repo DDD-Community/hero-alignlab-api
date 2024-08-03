@@ -6,5 +6,5 @@ import java.io.Serializable
 /** 집계 데이터를 관리 */
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class PoseTotalCount(
-    val count: Map<PoseType, Int>,
+    val count: MutableMap<PoseType, Int>,
 ) : Serializable
