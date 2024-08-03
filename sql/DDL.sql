@@ -127,8 +127,7 @@ CREATE TABLE `image_metadata`
     `modified_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=200000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-CREATE INDEX uid ON image_metadata (uid);
-CREATE INDEX type ON image_metadata (type);
+CREATE INDEX idx__uid__type ON image_metadata (uid, type);
 
 -- 문의하기
 CREATE TABLE `discussion`
@@ -142,8 +141,7 @@ CREATE TABLE `discussion`
     `modified_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=200000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-CREATE INDEX uid ON discussion (uid);
-
+CREATE INDEX idx__uid ON discussion (uid);
 
 -- 문의하기 답변
 CREATE TABLE `discussion_comment`
@@ -157,5 +155,17 @@ CREATE TABLE `discussion_comment`
     `modified_at`   datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=200000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-CREATE INDEX discussion_id ON discussion_comment (discussion_id);
-CREATE INDEX uid ON discussion_comment (uid);
+CREATE INDEX idx__discussion_id ON discussion_comment (discussion_id);
+CREATE INDEX idx__uid ON discussion_comment (uid);
+
+-- 포즈 카운트 집계
+CREATE TABLE `pose_count`
+(
+    `id`          bigint NOT NULL AUTO_INCREMENT,
+    `uid`         bigint NOT NULL COMMENT 'uid',
+    `total_count` text   NOT NULL COMMENT '집계 데이터',
+    `date`        datetime DEFAULT CURRENT_TIMESTAMP COMMENT '기준 날짜',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE INDEX idx__uid__date ON pose_count (uid, date);
+CREATE INDEX idx__date ON pose_count (date);
