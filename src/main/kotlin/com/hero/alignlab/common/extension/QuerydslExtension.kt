@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.*
 import com.querydsl.jpa.impl.JPAQuery
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.support.Querydsl
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 fun <T> Querydsl?.execute(query: JPAQuery<T>, pageable: Pageable): Page<T> {
@@ -79,5 +80,13 @@ fun DateTimePath<LocalDateTime>.isGoe(parameter: LocalDateTime?): BooleanExpress
 }
 
 fun DateTimePath<LocalDateTime>.isLoe(parameter: LocalDateTime?): BooleanExpression? {
+    return parameter?.let { param -> this.loe(param) }
+}
+
+fun DatePath<LocalDate>.isGoe(parameter: LocalDate?): BooleanExpression? {
+    return parameter?.let { param -> this.goe(param) }
+}
+
+fun DatePath<LocalDate>.isLoe(parameter: LocalDate?): BooleanExpression? {
     return parameter?.let { param -> this.loe(param) }
 }

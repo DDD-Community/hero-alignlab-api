@@ -1,0 +1,33 @@
+package com.hero.alignlab.domain.pose.resource
+
+import com.hero.alignlab.common.extension.wrapPage
+import com.hero.alignlab.common.model.AlignlabPageRequest
+import com.hero.alignlab.domain.auth.model.AuthUser
+import com.hero.alignlab.domain.pose.application.PoseCountService
+import com.hero.alignlab.domain.pose.model.request.PoseSearchRequest
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
+import org.springdoc.core.annotations.ParameterObject
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+
+@Tag(name = "Pose API")
+@RestController
+@RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
+class PoseCountResource(
+    private val poseCountService: PoseCountService,
+) {
+    @Operation(summary = "pose 정보 검색")
+    @GetMapping("/api/v1/pose-counts")
+    suspend fun search(
+        user: AuthUser,
+        @ParameterObject request: PoseSearchRequest,
+        @ParameterObject pageRequest: AlignlabPageRequest,
+    ) = poseCountService.search(
+        user = user,
+        request = request,
+        pageRequest = pageRequest
+    ).wrapPage()
+}
