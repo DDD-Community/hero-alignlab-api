@@ -1,5 +1,6 @@
 package com.hero.alignlab.domain.pose.resource
 
+import com.hero.alignlab.common.extension.wrapOk
 import com.hero.alignlab.common.extension.wrapPage
 import com.hero.alignlab.common.model.AlignlabPageRequest
 import com.hero.alignlab.domain.auth.model.AuthUser
@@ -11,7 +12,9 @@ import org.springdoc.core.annotations.ParameterObject
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 
 @Tag(name = "Pose API")
 @RestController
@@ -19,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 class PoseCountResource(
     private val poseCountService: PoseCountService,
 ) {
-    @Operation(summary = "pose 정보 검색")
+    @Operation(summary = "pose 통계 정보 검색")
     @GetMapping("/api/v1/pose-counts")
     suspend fun search(
         user: AuthUser,
@@ -30,4 +33,12 @@ class PoseCountResource(
         request = request,
         pageRequest = pageRequest
     ).wrapPage()
+
+    /** date 조건이 없는 경우, 현재 시간을 기준으로 조회 */
+    @Operation(summary = "daily pose 정보 조회")
+    @GetMapping("/api/v1/pose-counts/daily")
+    suspend fun dailyPoseCount(
+        user: AuthUser,
+        @RequestParam(required = false) date: LocalDate?
+    ) = poseCountService.getDailyPoseCount(user, date).wrapOk()
 }

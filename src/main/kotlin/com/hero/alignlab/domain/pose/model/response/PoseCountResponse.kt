@@ -5,5 +5,10 @@ import java.time.LocalDate
 
 data class PoseCountResponse(
     val date: LocalDate,
-    val count: Map<PoseType, Int>
-)
+    val count: List<PoseCountModel> = emptyList()
+) {
+    data class PoseCountModel(
+        val type: PoseType,
+        val count: Int,
+    )
+}

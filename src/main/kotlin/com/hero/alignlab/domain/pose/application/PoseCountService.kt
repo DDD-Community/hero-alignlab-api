@@ -24,9 +24,9 @@ class PoseCountService(
         return poseCountRepository.save(poseCount)
     }
 
-    suspend fun findByDateOrNull(date: LocalDate): PoseCount? {
+    suspend fun findByUidAndDateOrNull(uid: Long, date: LocalDate): PoseCount? {
         return withContext(Dispatchers.IO) {
-            poseCountRepository.findByDate(date)
+            poseCountRepository.findByUidAndDate(uid, date)
         }
     }
 
@@ -43,12 +43,32 @@ class PoseCountService(
         )
 
         return search(searchSpec, pageable)
-            .map { count -> PoseCountResponse(count.date, count.totalCount.count) }
+            .map { count ->
+                val counts = count.totalCount.count
+                    .map { (type, count) -> PoseCountResponse.PoseCountModel(type, count) }
+
+                PoseCountResponse(count.date, counts)
+            }
     }
 
     suspend fun search(spec: PostCountSearchSpec, pageable: Pageable): Page<PoseCount> {
         return withContext(Dispatchers.IO) {
             poseCountRepository.search(spec, pageable)
         }
+    }
+
+    suspend fun getDailyPoseCount(user: AuthUser, date: LocalDate?): PoseCountResponse {
+        val targetDate = date ?: LocalDate.now()
+
+        val poseCount = findByUidAndDateOrNull(user.uid, targetDate)
+
+        return PoseCountResponse(
+            date = targetDate,
+            count = when (poseCount == null) {
+                true -> emptyList()
+                false -> poseCount.totalCount.count
+                    .map { (type, count) -> PoseCountResponse.PoseCountModel(type, count) }
+            }
+        )
     }
 }
