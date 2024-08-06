@@ -79,6 +79,7 @@ CREATE TABLE `pose_snapshot`
     `uid`         bigint          NOT NULL COMMENT 'uid',
     `score`       DECIMAL(20, 16) NOT NULL COMMENT '포즈 신뢰도 종합',
     `type`        VARCHAR(32)     NOT NULL COMMENT '포즈 타입',
+    `image_url`   VARCHAR(512)    NOT NULL COMMENT '포즈 이미지 url',
     `created_at`  datetime DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
     `modified_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
     PRIMARY KEY (`id`)

@@ -21,4 +21,7 @@ data class PoseSnapshot(
 
     @Column(name = "type")
     val type: PoseType,
+
+    @Column(name = "image_url")
+    val imageUrl: String? = null,
 ) : BaseEntity()
