@@ -6,6 +6,7 @@ import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.application.PoseSnapshotService
 import com.hero.alignlab.domain.pose.domain.vo.PoseTotalCount
 import com.hero.alignlab.domain.user.application.UserInfoService
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
@@ -16,11 +17,15 @@ class PoseCountUpdateJob(
     private val userInfoService: UserInfoService,
     private val txTemplates: TransactionTemplates,
 ) {
+    private val logger = KotlinLogging.logger { }
+
     /**
      * **전날 종합 데이터 업데이트**
      * - 전날 데이터의 싱크가 틀린 경우가 발생했을 때를 대비하여, 새벽에 이전 데이터 정합도를 다시 한번 체크한다.
      */
     suspend fun run() {
+        logger.info { "start PoseCountUpdateJob.run()" }
+
         val targetDate = LocalDate.now().minusDays(1)
 
         val uids = userInfoService.findAllUids()
@@ -28,7 +33,7 @@ class PoseCountUpdateJob(
         uids
             .chunked(20)
             .forEach { targetUids ->
-                val totalCountByUid = poseSnapshotService.countByTypeAndDate(targetUids, targetDate)
+                val totalCountByUid = poseSnapshotService.countByUidsAndDate(targetUids, targetDate)
                     .groupBy { totalCount -> totalCount.uid }
 
                 val poseCounts = poseCountService.findAllByUidIn(targetUids)
@@ -46,5 +51,7 @@ class PoseCountUpdateJob(
                     poseCountService.saveAllSync(poseCounts)
                 }
             }
+
+        logger.info { "finished PoseCountUpdateJob.run()" }
     }
 }

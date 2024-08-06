@@ -18,9 +18,9 @@ class PoseSnapshotService(
         return poseSnapshotRepository.save(poseSnapshot)
     }
 
-    suspend fun countByTypeAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel> {
+    suspend fun countByUidsAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel> {
         return withContext(Dispatchers.IO) {
-            poseSnapshotRepository.countByTypeAndDate(uids, date)
+            poseSnapshotRepository.countByUidsAndDate(uids, date)
         }
     }
 }

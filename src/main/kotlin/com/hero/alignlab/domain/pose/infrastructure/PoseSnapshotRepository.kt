@@ -20,7 +20,7 @@ interface PoseSnapshotRepository : JpaRepository<PoseSnapshot, Long>, PoseSnapsh
 
 @Transactional(readOnly = true)
 interface PoseSnapshotQRepository {
-    fun countByTypeAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel>
+    fun countByUidsAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel>
 }
 
 class PoseSnapshotRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositorySupport(PoseSnapshot::class.java) {
@@ -32,7 +32,7 @@ class PoseSnapshotRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositorySu
 
     private val qPoseSnapshot = QPoseSnapshot.poseSnapshot
 
-    override fun countByTypeAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel> {
+    override fun countByUidsAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel> {
         return JPAQuery<QPoseSnapshot>(entityManager)
             .select(
                 QPoseTypeCountModel(
