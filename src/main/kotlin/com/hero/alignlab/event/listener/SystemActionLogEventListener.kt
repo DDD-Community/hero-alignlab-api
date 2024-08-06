@@ -17,15 +17,22 @@ class SystemActionLogEventListener(
     @EventListener
     fun subscribe(event: SystemActionLogEvent) {
         CoroutineScope(Dispatchers.IO + Job()).launch {
-            SystemActionLog(
-                ipAddress = event.ipAddress,
-                path = event.path,
-                httpMethod = event.method,
-                userAgent = event.userAgent,
-                host = event.host,
-                referer = event.referer,
-                extra = event.extra
-            ).run { systemActionLogService.record(this) }
+            if (filterLog(event)) {
+                SystemActionLog(
+                    ipAddress = event.ipAddress,
+                    path = event.path,
+                    httpMethod = event.method,
+                    userAgent = event.userAgent,
+                    host = event.host,
+                    referer = event.referer,
+                    extra = event.extra
+                ).run { systemActionLogService.record(this) }
+            }
         }
+    }
+
+    /** 불필요한 로그는 적재하지 않는다. */
+    private fun filterLog(event: SystemActionLogEvent): Boolean {
+        return !event.path.equals("/api/v1/health")
     }
 }
