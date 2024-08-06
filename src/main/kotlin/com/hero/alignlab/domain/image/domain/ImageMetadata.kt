@@ -17,6 +17,7 @@ class ImageMetadata(
     @Column(name = "filename")
     val filename: String,
 
+    /** cdn image url을 저장 */
     @Column(name = "image_url")
     val imageUrl: String,
 

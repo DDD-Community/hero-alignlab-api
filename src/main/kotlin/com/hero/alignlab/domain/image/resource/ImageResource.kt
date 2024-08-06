@@ -32,7 +32,7 @@ class ImageResource(
     /** 이미지 업로드시 type을 꼭 명시해야 한다. */
     @Operation(summary = "이미지 벌크 업로드")
     @PostMapping(path = ["/api/v1/images/bulk"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-    suspend fun uploadImage(
+    suspend fun bulkUploadImage(
         user: AuthUser,
         @RequestParam type: ImageType,
         @RequestPart("images") images: List<FilePart>,

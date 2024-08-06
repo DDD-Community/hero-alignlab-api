@@ -29,5 +29,9 @@ class S3Properties {
     @field:NotBlank
     @Value("\${cloud.aws.s3.bucketUrl}")
     var bucketUrl: String? = null
+
+    @field:NotBlank
+    @Value("\${cloud.aws.s3.cdnUrl}")
+    var cdnUrl: String? = null
 }
 

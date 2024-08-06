@@ -28,7 +28,7 @@ class S3Client(
                     runCatching {
                         resolveRequest(filePart, dataBuffer)
                             .run { amazonS3.putObject(this) }
-                        imageUrl(filePart.filename())
+                        cdnImageUrl(filePart.filename())
                     }.fold(
                         onSuccess = { url ->
                             Mono.just(url)
@@ -67,5 +67,9 @@ class S3Client(
 
     fun imageUrl(filename: String): String {
         return "${s3Properties.bucketUrl}/images/${filename.encodeURL()}"
+    }
+
+    fun cdnImageUrl(filename: String): String {
+        return "${s3Properties.cdnUrl}/images/${filename.encodeURL()}"
     }
 }

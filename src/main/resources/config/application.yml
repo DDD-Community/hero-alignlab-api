@@ -87,6 +87,7 @@ cloud:
     s3:
       bucket: alignlab-public-s3
       bucketUrl: https://alignlab-public-s3.s3.ap-northeast-2.amazonaws.com
+      cdnUrl: https://cdn.alignlab.site
     region:
       static: ap-northeast-2
     stack:
