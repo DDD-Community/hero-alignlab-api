@@ -20,6 +20,8 @@ interface UserInfoQRepository {
     fun findByCredential(username: String, password: EncryptData): UserInfo?
 
     fun findByOAuth(provider: OAuthProvider, oauthId: String): UserInfo?
+
+    fun findAllUids(): List<Long>
 }
 
 class UserInfoQRepositoryImpl : UserInfoQRepository, QuerydslRepositorySupport(UserInfo::class.java) {
@@ -54,5 +56,12 @@ class UserInfoQRepositoryImpl : UserInfoQRepository, QuerydslRepositorySupport(U
                 qOAuthUserInfo.provider.eq(provider),
                 qOAuthUserInfo.oauthId.eq(oauthId)
             ).fetchFirst()
+    }
+
+    override fun findAllUids(): List<Long> {
+        return JPAQuery<UserInfo>(entityManager)
+            .select(qUserInfo.id)
+            .from(qUserInfo)
+            .fetch()
     }
 }

@@ -24,6 +24,11 @@ class PoseCountService(
         return poseCountRepository.save(poseCount)
     }
 
+    @Transactional
+    fun saveAllSync(poseCounts: List<PoseCount>): List<PoseCount> {
+        return poseCountRepository.saveAll(poseCounts)
+    }
+
     suspend fun findByUidAndDateOrNull(uid: Long, date: LocalDate): PoseCount? {
         return withContext(Dispatchers.IO) {
             poseCountRepository.findByUidAndDate(uid, date)
@@ -70,5 +75,11 @@ class PoseCountService(
                     .map { (type, count) -> PoseCountResponse.PoseCountModel(type, count) }
             }
         )
+    }
+
+    suspend fun findAllByUidIn(uids: List<Long>): List<PoseCount> {
+        return withContext(Dispatchers.IO) {
+            poseCountRepository.findAllByUidIn(uids)
+        }
     }
 }

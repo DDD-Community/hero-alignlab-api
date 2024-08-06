@@ -73,4 +73,10 @@ class UserInfoService(
     fun deleteBySync(id: Long) {
         userInfoRepository.deleteById(id)
     }
+
+    suspend fun findAllUids(): List<Long> {
+        return withContext(Dispatchers.IO) {
+            userInfoRepository.findAllUids()
+        }
+    }
 }

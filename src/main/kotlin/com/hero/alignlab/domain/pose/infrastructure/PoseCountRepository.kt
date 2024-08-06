@@ -22,6 +22,8 @@ import java.time.LocalDate
 @Repository
 interface PoseCountRepository : JpaRepository<PoseCount, Long>, PostCountQRepository {
     fun findByUidAndDate(uid: Long, date: LocalDate): PoseCount?
+
+    fun findAllByUidIn(uids: List<Long>): List<PoseCount>
 }
 
 @Transactional(readOnly = true)
