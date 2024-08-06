@@ -9,6 +9,9 @@ enum class ImageType {
     /** user */
     USER_PROFILE,
 
+    /** pose snapshot */
+    POSE_SNAPSHOT,
+
     /** misc */
     MISC,
     ;

@@ -8,4 +8,6 @@ data class PoseSnapshotRequest(
     val snapshot: PoseSnapshotModel,
     /** 포즈 타입 */
     val type: PoseType,
+    /** 포즈 이미지 url */
+    val imageUrl: String? = null
 )

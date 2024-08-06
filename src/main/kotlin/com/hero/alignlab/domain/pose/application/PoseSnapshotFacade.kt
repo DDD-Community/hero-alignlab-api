@@ -23,6 +23,7 @@ class PoseSnapshotFacade(
                     uid = user.uid,
                     score = request.snapshot.score,
                     type = request.type,
+                    imageUrl = request.imageUrl
                 )
             )
 
