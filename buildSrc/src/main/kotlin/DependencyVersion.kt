@@ -14,7 +14,7 @@ object DependencyVersion {
     /** auth0-jwt */
     const val AUTH_JWT = "4.4.0"
 
-    /** ㅁㅈㄴ */
+    /** aws */
     const val AWS_S3_SDK_VERSION = "1.12.351"
 
     /** test */
