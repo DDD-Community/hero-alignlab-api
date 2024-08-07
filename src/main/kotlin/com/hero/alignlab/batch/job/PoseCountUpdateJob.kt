@@ -28,18 +28,23 @@ class PoseCountUpdateJob(
 
         val targetDate = LocalDate.now().minusDays(1)
 
+        /** user의 수가 적으므로, 전체 uid를 조회, 만약에 oom이 터진다면, 서비스 대박임 */
         val uids = userInfoService.findAllUids()
 
         uids
             .chunked(20)
             .forEach { targetUids ->
+                /** 전날 카운트 집계 정보를 전체 조회 */
                 val totalCountByUid = poseSnapshotService.countByUidsAndDate(targetUids, targetDate)
                     .groupBy { totalCount -> totalCount.uid }
 
+                /** 집계 처리 데이터 조회 */
                 val poseCounts = poseCountService.findAllByUidIn(targetUids)
                     .mapNotNull { poseCount ->
+                        /** 데이터가 없는 경우, 업데이트를 진행하지 않는다. */
                         val totalCount = totalCountByUid[poseCount.uid] ?: return@mapNotNull null
 
+                        /** 통계 데이터 업데이트 */
                         poseCount.apply {
                             this.totalCount = PoseTotalCount(
                                 count = totalCount.associate { it.type to it.count.toInt() }.toMutableMap()
@@ -47,6 +52,7 @@ class PoseCountUpdateJob(
                         }
                     }
 
+                // TODO : bulk query 방식으로 변경 필요.
                 txTemplates.writer.executesOrNull {
                     poseCountService.saveAllSync(poseCounts)
                 }
