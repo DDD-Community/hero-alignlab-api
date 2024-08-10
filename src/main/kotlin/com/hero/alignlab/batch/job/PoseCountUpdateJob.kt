@@ -52,7 +52,6 @@ class PoseCountUpdateJob(
                         }
                     }
 
-                // TODO : bulk query 방식으로 변경 필요.
                 txTemplates.writer.executesOrNull {
                     poseCountService.saveAllSync(poseCounts)
                 }

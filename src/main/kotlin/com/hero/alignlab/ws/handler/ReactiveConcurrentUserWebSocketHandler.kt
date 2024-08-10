@@ -19,6 +19,8 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.SynchronousSink
 import java.time.Duration
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 @Component
 class ReactiveConcurrentUserWebSocketHandler(
@@ -35,8 +37,9 @@ class ReactiveConcurrentUserWebSocketHandler(
      *      - key : uid
      *      - value : WebSocketSession
      */
-    private val concurrentUserMap: MutableMap<Long, MutableMap<Long, WebSocketSession>> = mutableMapOf()
+    private val concurrentUserByMap: ConcurrentMap<Long, ConcurrentMap<Long, WebSocketSession>> = ConcurrentHashMap()
 
+    /** ping-pong check */
     private val eventFlux: Flux<String> = Flux.generate { sink: SynchronousSink<String> ->
         runCatching {
             mapper.writeValueAsString("ping pong")
@@ -55,30 +58,30 @@ class ReactiveConcurrentUserWebSocketHandler(
         val groupUsers = groupUserService.findAllByUidSync(user.uid)
 
         groupUsers.forEach { groupUser ->
-            val cuser = concurrentUserMap[groupUser.groupId] ?: mutableMapOf()
+            val cuser = concurrentUserByMap[groupUser.groupId] ?: ConcurrentHashMap()
 
             cuser[groupUser.uid] = session
 
-            concurrentUserMap[groupUser.groupId] = cuser
+            concurrentUserByMap[groupUser.groupId] = cuser
         }
 
         logger.info { "concurrent user ${user.uid}" }
 
-        concurrentUserMap.forEach { (groupId, uidBySession) ->
+        concurrentUserByMap.forEach { (groupId, uidBySession) ->
             uidBySession[user.uid] ?: return@forEach
 
             val uids = uidBySession.keys
 
             val userInfoByUid = userInfoService.findAllByIdsSync(uids.toList()).associateBy { it.id }
-
             val groupUserss = groupUserService.findAllByGroupIdAndUidsSync(groupId, userInfoByUid.keys)
                 .associateBy { it.uid }
 
             uidBySession.forEach { (_, websocketSession) ->
                 val message = ConcurrentMessage.of(groupId, userInfoByUid, groupUserss)
+                    .run { mapper.writeValueAsString(this) }
 
                 websocketSession
-                    .send(Mono.just(websocketSession.textMessage(mapper.writeValueAsString(message))))
+                    .send(Mono.just(websocketSession.textMessage(message)))
                     .subscribe()
             }
         }
@@ -93,14 +96,14 @@ class ReactiveConcurrentUserWebSocketHandler(
     }
 
     private fun handleSessionTermination(session: WebSocketSession, uid: Long) {
-        concurrentUserMap.forEach { (groupId, uidBySession) ->
+        concurrentUserByMap.forEach { (groupId, uidBySession) ->
             val removedUser = uidBySession.remove(uid)
 
             if (removedUser != null) {
                 logger.info { "Removed session for user $uid from group $groupId" }
 
                 if (uidBySession.isEmpty()) {
-                    concurrentUserMap.remove(groupId)
+                    concurrentUserByMap.remove(groupId)
                     logger.info { "Removed group $groupId as it has no more users." }
                 } else {
                     CoroutineScope(Dispatchers.IO + Job()).launch {
@@ -116,16 +119,17 @@ class ReactiveConcurrentUserWebSocketHandler(
         val groupUsers = groupUserService.findAllByGroupIdAndUids(groupId, userInfoByUid.keys).associateBy { it.uid }
 
         val message = ConcurrentMessage.of(groupId, userInfoByUid, groupUsers)
+            .run { mapper.writeValueAsString(this) }
 
         uidBySession.forEach { (_, websocketSession) ->
             websocketSession
-                .send(Mono.just(websocketSession.textMessage(mapper.writeValueAsString(message))))
+                .send(Mono.just(websocketSession.textMessage(message)))
                 .subscribe()
         }
     }
 
     fun forceCloseAllWebSocketSessions() {
-        concurrentUserMap.forEach { (_, webSocketSession) ->
+        concurrentUserByMap.forEach { (_, webSocketSession) ->
             webSocketSession.forEach { (_, webSocketSession) ->
                 webSocketSession
                     .close()
@@ -134,6 +138,6 @@ class ReactiveConcurrentUserWebSocketHandler(
         }
 
         /** Websocket Session Release */
-        concurrentUserMap.clear()
+        concurrentUserByMap.clear()
     }
 }
