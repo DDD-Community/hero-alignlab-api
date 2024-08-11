@@ -1,6 +1,6 @@
 package com.hero.alignlab.common.extension
 
-import com.hero.alignlab.exception.AlignlabException
+import com.hero.alignlab.exception.HeroException
 import com.hero.alignlab.exception.ErrorCode
 import com.querydsl.core.types.dsl.*
 import com.querydsl.jpa.impl.JPAQuery
@@ -15,7 +15,7 @@ fun <T> Querydsl?.execute(query: JPAQuery<T>, pageable: Pageable): Page<T> {
             queryDsl.applyPagination(pageable, query).run {
                 PageImpl(this.fetch(), pageable, this.fetchCount())
             }
-        } ?: throw AlignlabException(ErrorCode.QUERY_DSL_NOT_EXISTS_ERROR)
+        } ?: throw HeroException(ErrorCode.QUERY_DSL_NOT_EXISTS_ERROR)
 }
 
 fun <T> Querydsl?.executeSlice(query: JPAQuery<T>, pageable: Pageable): Slice<T> {
@@ -32,7 +32,7 @@ fun <T> Querydsl?.executeSlice(query: JPAQuery<T>, pageable: Pageable): Slice<T>
                 }
                 SliceImpl(this, pageable, hasNext)
             }
-        } ?: throw AlignlabException(ErrorCode.QUERY_DSL_NOT_EXISTS_ERROR)
+        } ?: throw HeroException(ErrorCode.QUERY_DSL_NOT_EXISTS_ERROR)
 }
 
 fun StringPath.isEquals(parameter: String?): BooleanExpression? {

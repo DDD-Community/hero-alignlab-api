@@ -2,7 +2,7 @@ package com.hero.alignlab.domain.pose.resource
 
 import com.hero.alignlab.common.extension.wrapOk
 import com.hero.alignlab.common.extension.wrapPage
-import com.hero.alignlab.common.model.AlignlabPageRequest
+import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.model.request.PoseSearchRequest
@@ -27,7 +27,7 @@ class PoseCountResource(
     suspend fun search(
         user: AuthUser,
         @ParameterObject request: PoseSearchRequest,
-        @ParameterObject pageRequest: AlignlabPageRequest,
+        @ParameterObject pageRequest: HeroPageRequest,
     ) = poseCountService.search(
         user = user,
         request = request,

@@ -2,7 +2,7 @@ package com.hero.alignlab.domain.group.resource
 
 import com.hero.alignlab.common.extension.wrapPage
 import com.hero.alignlab.common.extension.wrapVoid
-import com.hero.alignlab.common.model.AlignlabPageRequest
+import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.application.GroupFacade
 import com.hero.alignlab.domain.group.application.GroupUserService
@@ -24,7 +24,7 @@ class GroupUserResource(
     suspend fun groupUsers(
         user: AuthUser,
         @RequestParam groupId: Long,
-        @ParameterObject pageRequest: AlignlabPageRequest,
+        @ParameterObject pageRequest: HeroPageRequest,
     ) = groupUserService.getGroupUsers(
         user = user,
         groupId = groupId,

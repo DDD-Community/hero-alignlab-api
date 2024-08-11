@@ -4,7 +4,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
-data class AlignlabPageRequest(
+data class HeroPageRequest(
     /** page, 0부터 시작 */
     val page: Int?,
     /** size, default is 10 */

@@ -1,6 +1,6 @@
 package com.hero.alignlab.domain.pose.application
 
-import com.hero.alignlab.common.model.AlignlabPageRequest
+import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.pose.domain.PoseCount
 import com.hero.alignlab.domain.pose.infrastructure.PoseCountRepository
@@ -38,7 +38,7 @@ class PoseCountService(
     suspend fun search(
         user: AuthUser,
         request: PoseSearchRequest,
-        pageRequest: AlignlabPageRequest
+        pageRequest: HeroPageRequest
     ): Page<PoseCountResponse> {
         val pageable = pageRequest.toDefault()
         val searchSpec = PostCountSearchSpec(
