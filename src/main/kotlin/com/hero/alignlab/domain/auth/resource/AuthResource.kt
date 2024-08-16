@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.*
 class AuthResource(
     private val authFacade: AuthFacade,
 ) {
+    /** 일반 회원가입 */
     @Operation(summary = "회원가입")
     @PostMapping("/api/v1/auth/sign-up")
     suspend fun signUp(
         @RequestBody request: SignUpRequest,
     ) = authFacade.signUp(request).wrapCreated()
 
+    /** 일반 로그인 */
     @Operation(summary = "로그인")
     @PostMapping("/api/v1/auth/sign-in")
     suspend fun signUp(
