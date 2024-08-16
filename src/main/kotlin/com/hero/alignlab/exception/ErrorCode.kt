@@ -45,5 +45,8 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
 
     /** Image Client Error Code */
     IMAGE_CLIENT_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, "이미지 업로드 중 오류가 발생했습니다."),
+
+    /** Pose Notification Error Code */
+    NOT_FOUND_POSE_NOTIFICATION_ERROR(HttpStatus.NOT_FOUND, "자세 알림 정보를 찾을 수 없습니다."),
     ;
 }

@@ -170,3 +170,16 @@ CREATE TABLE `pose_count`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 CREATE INDEX idx__uid__date ON pose_count (uid, date);
 CREATE INDEX idx__date ON pose_count (date);
+
+-- 자세 알림
+CREATE TABLE `pose_noti`
+(
+    `id`          bigint      NOT NULL AUTO_INCREMENT,
+    `uid`         bigint      NOT NULL COMMENT 'uid',
+    `is_active`   tinyint     NOT NULL DEFAULT 0 COMMENT '활성화 여부',
+    `duration`    varchar(32) NOT NULL COMMENT '알림 주기',
+    `created_at`  datetime             DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    `modified_at` datetime             DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT '자세 알림';
+CREATE INDEX uidx__uid ON pose_noti (uid);
