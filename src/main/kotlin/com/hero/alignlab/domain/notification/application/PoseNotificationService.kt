@@ -1,6 +1,5 @@
 package com.hero.alignlab.domain.notification.application
 
-import com.hero.alignlab.Application
 import com.hero.alignlab.common.extension.executes
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service
 class PoseNotificationService(
     private val poseNotificationRepository: PoseNotificationRepository,
     private val txTemplates: TransactionTemplates,
-    private val application: Application,
 ) {
     suspend fun getNotification(user: AuthUser): GetPoseNotificationResponse? {
         val poseNotification = findByUidAndIsActiveOrNull(user.uid, true) ?: return null
