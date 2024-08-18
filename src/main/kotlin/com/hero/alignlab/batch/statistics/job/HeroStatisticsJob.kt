@@ -69,8 +69,7 @@ class HeroStatisticsJob(
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
             val message = """
-                $title
-                - targetDate: ${fromDate.format(formatter)} ~ ${toDate.format(formatter)}
+                $title [${fromDate.format(formatter)} ~ ${toDate.format(formatter)}]
                 
                 그룹
                 - 그룹 생성수 : $groupCount

@@ -20,7 +20,7 @@ class HeroStatisticsScheduler(
             val fromDate = LocalDateTime.now().minusHours(1)
 
             heroStatisticsJob.sendHeroStatistics(
-                title = "극락통계 1시간 단위 [$fromDate ~ $toDate]",
+                title = "극락통계 1시간 단위",
                 fromDate = fromDate,
                 toDate = toDate
             )
@@ -34,7 +34,7 @@ class HeroStatisticsScheduler(
             val fromDate = LocalDateTime.now().minusDays(1)
 
             heroStatisticsJob.sendHeroStatistics(
-                title = "극락통계 1일 단위 [$fromDate ~ $toDate]",
+                title = "극락통계 1일 단위",
                 fromDate = fromDate,
                 toDate = toDate
             )
