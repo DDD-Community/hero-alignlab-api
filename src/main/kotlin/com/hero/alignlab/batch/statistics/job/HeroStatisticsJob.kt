@@ -71,15 +71,27 @@ class HeroStatisticsJob(
             val message = """
                 $title
                 - targetDate: ${fromDate.format(formatter)} ~ ${toDate.format(formatter)}
+                
+                그룹
                 - 그룹 생성수 : $groupCount
                 - 그룹 유저 생성수 : $groupUserCount
+                
+                문의하기
                 - 문의하기 생성수 : $discussionCount
+                
+                API
                 - api 호출량 : $syslogCount
+                
+                포즈
                 - 포즈 알림 설정수 : $poseNotificationCount
                 - 포즈 스냅샷 생성수 : $poseSnapshotCount
+                
+                회원
                 - 일반 회원가입수 : $credentialUserInfoCount
                 - OAuth 회원가입수 : $oAuthUserInfoCount
                 - 유저 생성수 : $userInfoCount
+                
+                이미지
                 - 이미지 생성수 : $imageCount
             """.trimIndent()
 
