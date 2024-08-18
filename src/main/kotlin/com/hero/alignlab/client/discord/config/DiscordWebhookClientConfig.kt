@@ -34,19 +34,11 @@ class DiscordWebhookClientConfig {
 
         val webclient = WebClientFactory.generate(discordWebhookConfig.url)
 
-        return SuspendableDiscordWebhookClient(webclient, discordWebhookConfig)
+        return SuspendableDiscordWebhookClient(webclient)
     }
 
     data class Config(
         @field:NotBlank
         var url: String = "",
-        var credential: Map<Int, WebhookContext> = emptyMap()
-    ) {
-        data class WebhookContext(
-            @field:NotBlank
-            var webhookId: Long,
-            @field:NotBlank
-            var webhookToken: String = "",
-        )
-    }
+    )
 }
