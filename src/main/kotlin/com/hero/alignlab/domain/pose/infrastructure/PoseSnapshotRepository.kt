@@ -13,10 +13,13 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Transactional(readOnly = true)
 @Repository
-interface PoseSnapshotRepository : JpaRepository<PoseSnapshot, Long>, PoseSnapshotQRepository
+interface PoseSnapshotRepository : JpaRepository<PoseSnapshot, Long>, PoseSnapshotQRepository {
+    fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
+}
 
 @Transactional(readOnly = true)
 interface PoseSnapshotQRepository {

@@ -1,4 +1,4 @@
-package com.hero.alignlab.batch.job
+package com.hero.alignlab.batch.posecount.job
 
 import com.hero.alignlab.common.extension.executesOrNull
 import com.hero.alignlab.config.database.TransactionTemplates

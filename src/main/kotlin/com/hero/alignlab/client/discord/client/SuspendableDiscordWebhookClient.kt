@@ -8,13 +8,13 @@ import org.springframework.web.reactive.function.client.WebClient
 class SuspendableDiscordWebhookClient(
     client: WebClient,
 ) : DiscordWebhookClient, SuspendableClient(client) {
-    override suspend fun getWebhookWithToken(id: Int): GetWebhookWithTokenResponse {
+    override suspend fun getWebhookWithToken(): GetWebhookWithTokenResponse {
         return client
             .get()
             .request()
     }
 
-    override suspend fun sendMessage(id: Int, request: SendMessageRequest) {
+    override suspend fun sendMessage(request: SendMessageRequest) {
         return client
             .post()
             .bodyValue(request)

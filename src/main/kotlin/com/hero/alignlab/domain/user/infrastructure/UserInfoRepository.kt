@@ -10,10 +10,13 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Transactional(readOnly = true)
 @Repository
-interface UserInfoRepository : JpaRepository<UserInfo, Long>, UserInfoQRepository
+interface UserInfoRepository : JpaRepository<UserInfo, Long>, UserInfoQRepository {
+    fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
+}
 
 @Transactional(readOnly = true)
 interface UserInfoQRepository {

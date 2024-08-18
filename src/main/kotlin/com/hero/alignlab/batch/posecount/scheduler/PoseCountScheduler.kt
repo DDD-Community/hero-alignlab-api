@@ -1,6 +1,6 @@
-package com.hero.alignlab.batch.scheduler
+package com.hero.alignlab.batch.posecount.scheduler
 
-import com.hero.alignlab.batch.job.PoseCountUpdateJob
+import com.hero.alignlab.batch.posecount.job.PoseCountUpdateJob
 import com.hero.alignlab.common.extension.CoroutineExtension.retryOnError
 import com.hero.alignlab.common.extension.resolveCancellation
 import io.github.oshai.kotlinlogging.KotlinLogging
