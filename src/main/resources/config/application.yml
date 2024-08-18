@@ -69,6 +69,13 @@ client:
   kakao-info:
     url: https://kapi.kakao.com
     unlink-path: /v1/user/unlink
+  discord:
+    webhook:
+      url: https://discord.com/api/webhooks
+      credential:
+        1:
+          webhookId:
+          webhookToken:
 
 encrypt:
   key:
