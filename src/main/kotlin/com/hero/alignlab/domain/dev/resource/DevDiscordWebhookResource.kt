@@ -31,10 +31,13 @@ class DevDiscordWebhookResource(
     @PostMapping("/api/dev/v1/discord-webhooks/daily-noti")
     suspend fun sendDailyNoti(
         @RequestHeader("X-HERO-DEV-TOKEN") token: String,
+        @RequestParam fromDateTime: LocalDateTime,
+        @RequestParam toDateTime: LocalDateTime,
     ) = devResource(token) {
-        val toDate = LocalDateTime.now()
-        val fromDate = LocalDateTime.now().minusHours(1)
-
-        statisticsJob.sendHeroStatistics("극락통계 테스트", fromDate, toDate)
+        statisticsJob.sendHeroStatistics(
+            title = "극락통계 테스트",
+            fromDate = fromDateTime,
+            toDate = toDateTime
+        )
     }
 }
