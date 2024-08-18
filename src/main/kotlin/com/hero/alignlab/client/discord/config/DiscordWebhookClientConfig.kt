@@ -44,7 +44,7 @@ class DiscordWebhookClientConfig {
     ) {
         data class WebhookContext(
             @field:NotBlank
-            var webhookId: String = "",
+            var webhookId: Long,
             @field:NotBlank
             var webhookToken: String = "",
         )
