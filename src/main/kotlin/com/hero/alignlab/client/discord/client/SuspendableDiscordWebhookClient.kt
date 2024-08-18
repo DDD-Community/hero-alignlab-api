@@ -17,7 +17,7 @@ class SuspendableDiscordWebhookClient(
             .request()
     }
 
-    override suspend fun sendMessage(id: Int, request: SendMessageRequest): Void {
+    override suspend fun sendMessage(id: Int, request: SendMessageRequest) {
         return client
             .post()
             .discordUri(id)

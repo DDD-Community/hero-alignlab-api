@@ -6,5 +6,5 @@ import com.hero.alignlab.client.discord.model.response.GetWebhookWithTokenRespon
 interface DiscordWebhookClient {
     suspend fun getWebhookWithToken(id: Int): GetWebhookWithTokenResponse
 
-    suspend fun sendMessage(id: Int, request: SendMessageRequest): Void
+    suspend fun sendMessage(id: Int, request: SendMessageRequest)
 }
