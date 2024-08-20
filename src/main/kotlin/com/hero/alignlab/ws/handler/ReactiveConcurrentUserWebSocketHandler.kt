@@ -40,6 +40,8 @@ class ReactiveConcurrentUserWebSocketHandler(
     private val concurrentUserByMap: ConcurrentMap<Long, ConcurrentMap<Long, WebSocketSession>> = ConcurrentHashMap()
 
     override fun handle(session: WebSocketSession): Mono<Void> {
+        println(">> 접속함")
+
         val groupId = session.handshakeInfo.uri.path
             .split("/")
             .lastOrNull { it.matches(Regex("\\d+")) }
@@ -57,6 +59,8 @@ class ReactiveConcurrentUserWebSocketHandler(
 
         val user = authFacade.resolveAuthUser(authUserToken)
 
+        println("concurrent user : ${user.uid}")
+
         val groupUsers = groupUserService.findAllByUidSync(user.uid)
 
         groupUsers.forEach { groupUser ->
@@ -66,6 +70,7 @@ class ReactiveConcurrentUserWebSocketHandler(
 
             concurrentUserByMap[groupUser.groupId] = cuser
         }
+
 
         logger.info { "concurrent user ${user.uid}" }
 
