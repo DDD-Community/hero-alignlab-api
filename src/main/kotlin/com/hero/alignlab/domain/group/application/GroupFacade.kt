@@ -58,11 +58,15 @@ class GroupFacade(
     }
 
     suspend fun withdraw(user: AuthUser, groupId: Long) {
+        withdraw(groupId, user.uid)
+    }
+
+    suspend fun withdraw(groupId: Long, uid: Long) {
         val group = groupService.findByIdOrThrow(groupId)
 
-        when (group.ownerUid == user.uid) {
+        when (group.ownerUid == uid) {
             true -> withdrawGroupOwner(group)
-            false -> withdrawGroupUser(groupId, user)
+            false -> withdrawGroupUser(groupId, uid)
         }
     }
 
@@ -85,9 +89,9 @@ class GroupFacade(
         }
     }
 
-    private suspend fun withdrawGroupUser(groupId: Long, user: AuthUser) {
+    private suspend fun withdrawGroupUser(groupId: Long, uid: Long) {
         txTemplates.writer.executesOrNull {
-            groupUserService.deleteBySync(groupId, user.uid)
+            groupUserService.deleteBySync(groupId, uid)
         }
     }
 

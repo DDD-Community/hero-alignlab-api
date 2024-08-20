@@ -14,4 +14,6 @@ interface GroupRepository : JpaRepository<Group, Long> {
     fun findByIdAndOwnerUid(id: Long, ownerUid: Long): Group?
 
     fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
+
+    fun findByOwnerUid(ownerUid: Long): Group?
 }
