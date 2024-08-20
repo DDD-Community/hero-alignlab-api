@@ -2,6 +2,7 @@ package com.hero.alignlab.domain.auth.resource
 
 import com.hero.alignlab.common.extension.wrapCreated
 import com.hero.alignlab.common.extension.wrapOk
+import com.hero.alignlab.common.extension.wrapVoid
 import com.hero.alignlab.domain.auth.application.OAuthFacade
 import com.hero.alignlab.domain.auth.model.OAuthProvider
 import com.hero.alignlab.domain.auth.model.request.OAuthSignInRequest
@@ -40,4 +41,16 @@ class OAuthResource(
         @PathVariable provider: OAuthProvider,
         @RequestBody request: OAuthSignUpRequest,
     ) = oAuthFacade.signUp(provider, request).wrapCreated()
+
+    @Operation(summary = "탈퇴하기")
+    @DeleteMapping("/api/v1/oauth/{provider}/withdraw")
+    suspend fun withdraw(
+        @PathVariable provider: OAuthProvider,
+        @RequestParam accessToken: String,
+        @RequestParam oauthId: String,
+    ) = oAuthFacade.withdraw(
+        provider = provider,
+        accessToken = accessToken,
+        oauthId = oauthId
+    ).wrapVoid()
 }

@@ -52,3 +52,7 @@ data class SystemActionLogEvent(
         }
     }
 }
+
+data class WithdrawEvent(
+    val uid: Long,
+) : BaseEvent()
