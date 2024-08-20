@@ -13,20 +13,6 @@ import java.time.LocalDateTime
 class HeroStatisticsScheduler(
     private val heroStatisticsJob: HeroStatisticsJob
 ) {
-    @Scheduled(cron = "0 0 0/1 * * *")
-    fun dailyRunJob() {
-        CoroutineScope(Dispatchers.IO + Job()).launch {
-            val toDate = LocalDateTime.now()
-            val fromDate = LocalDateTime.now().minusHours(1)
-
-            heroStatisticsJob.sendHeroStatistics(
-                title = "극락통계 1시간 단위",
-                fromDate = fromDate,
-                toDate = toDate
-            )
-        }
-    }
-
     @Scheduled(cron = "0 0 9 * * *")
     fun runDailySummary() {
         CoroutineScope(Dispatchers.IO + Job()).launch {
