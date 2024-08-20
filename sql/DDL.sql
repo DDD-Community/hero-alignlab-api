@@ -183,3 +183,26 @@ CREATE TABLE `pose_noti`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT '자세 알림';
 CREATE INDEX uidx__uid ON pose_noti (uid);
+
+-- 포즈 레이아웃
+CREATE TABLE `pose_layout`
+(
+    `id`          bigint NOT NULL AUTO_INCREMENT,
+    `uid`         bigint NOT NULL COMMENT 'uid',
+    `created_at`  datetime DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    `modified_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT '포즈 레이아웃';
+CREATE INDEX idx__uid ON pose_layout (uid);
+
+-- 포즈 레이아웃 포인트
+CREATE TABLE `pose_layout_point`
+(
+    `id`             bigint          NOT NULL AUTO_INCREMENT COMMENT 'pose key point snapshot id',
+    `pose_layout_id` bigint          NOT NULL COMMENT 'pose layout id',
+    `position`       VARCHAR(32)     NOT NULL COMMENT '스냅샷 위치',
+    `x`              DECIMAL(20, 16) NOT NULL COMMENT 'x 좌표',
+    `y`              DECIMAL(20, 16) NOT NULL COMMENT 'y 좌표',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='포즈 레이아웃 point';
+CREATE INDEX uidx__pose_snapshot_id__position ON pose_layout_point (pose_layout_id, position);

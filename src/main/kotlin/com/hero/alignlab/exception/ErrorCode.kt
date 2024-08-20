@@ -48,5 +48,8 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
 
     /** Pose Notification Error Code */
     NOT_FOUND_POSE_NOTIFICATION_ERROR(HttpStatus.NOT_FOUND, "자세 알림 정보를 찾을 수 없습니다."),
+
+    /** Pose Layout Error Code */
+    NOT_FOUND_POSE_LAYOUT_ERROR(HttpStatus.NOT_FOUND, "포즈 레이아웃을 찾을 수 없습니다."),
     ;
 }
