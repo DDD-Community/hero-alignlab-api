@@ -31,6 +31,14 @@ class WebFluxConfig(
             .allowedHeaders(CorsConfiguration.ALL)
             .allowCredentials(true)
             .maxAge(3600)
+
+        /** ws registry */
+        registry.addMapping("/ws/**")
+            .allowedOriginPatterns(CorsConfiguration.ALL)
+            .allowedMethods(CorsConfiguration.ALL)
+            .allowedHeaders(CorsConfiguration.ALL)
+            .allowCredentials(true)
+            .maxAge(3600)
     }
 
     override fun configureHttpMessageCodecs(configurer: ServerCodecConfigurer) {
