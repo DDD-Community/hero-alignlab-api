@@ -10,6 +10,7 @@ enum class PoseType(val nameKor: String) {
     TURTLE_NECK("거북목"),
     SHOULDER_TWIST("어깨 틀어짐"),
     CHIN_UTP("턱 괴기"),
+    TAILBONE_SIT("꼬리뼈 앉기"),
 
     /** 예외처리 */
     @JsonEnumDefaultValue
