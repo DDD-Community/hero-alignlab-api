@@ -2,9 +2,12 @@ package com.hero.alignlab.ws.handler
 
 import com.hero.alignlab.common.extension.mapper
 import com.hero.alignlab.domain.auth.application.AuthFacade
-import com.hero.alignlab.domain.auth.model.AuthUserToken.Companion.resolve
+import com.hero.alignlab.domain.auth.model.AUTH_TOKEN_KEY
+import com.hero.alignlab.domain.auth.model.AuthUserToken
 import com.hero.alignlab.domain.group.application.GroupUserService
 import com.hero.alignlab.domain.user.application.UserInfoService
+import com.hero.alignlab.exception.ErrorCode
+import com.hero.alignlab.exception.NotFoundException
 import com.hero.alignlab.ws.model.ConcurrentMessage
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +40,20 @@ class ReactiveConcurrentUserWebSocketHandler(
     private val concurrentUserByMap: ConcurrentMap<Long, ConcurrentMap<Long, WebSocketSession>> = ConcurrentHashMap()
 
     override fun handle(session: WebSocketSession): Mono<Void> {
-        val authUserToken = session.handshakeInfo.headers.resolve()
+        val groupId = session.handshakeInfo.uri.path
+            .split("/")
+            .lastOrNull { it.matches(Regex("\\d+")) }
+
+        val queryParams = session.handshakeInfo.uri.query
+            .split("&")
+            .associate {
+                val (key, value) = it.split("=")
+                key to value
+            }
+
+        val token = queryParams[AUTH_TOKEN_KEY] ?: throw NotFoundException(ErrorCode.NOT_FOUND_TOKEN_ERROR)
+
+        val authUserToken = AuthUserToken(AUTH_TOKEN_KEY, token)
 
         val user = authFacade.resolveAuthUser(authUserToken)
 
