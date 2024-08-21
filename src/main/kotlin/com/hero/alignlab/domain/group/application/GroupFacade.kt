@@ -7,7 +7,6 @@ import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.Group
-import com.hero.alignlab.domain.group.domain.GroupUser
 import com.hero.alignlab.domain.group.model.CreateGroupContext
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.response.CreateGroupResponse
@@ -67,34 +66,38 @@ class GroupFacade(
     suspend fun withdraw(groupId: Long, uid: Long) {
         val group = groupService.findByIdOrThrow(groupId)
 
-        when (group.ownerUid == uid) {
-            true -> withdrawGroupOwner(group)
-            false -> withdrawGroupUser(groupId, uid)
+        /** 그룹 승계 또는 제거 */
+        if (group.ownerUid == uid) {
+            withdrawGroupOwner(group)
         }
+
+        /** 그룹원 제거 */
+        withdrawGroupUser(group, uid)
     }
 
     private suspend fun withdrawGroupOwner(group: Group) {
         val groupUser = groupUserService.findTop1ByGroupIdOrderByCreatedAtAsc(group.id)
 
-        when (groupUser == null) {
-            true -> groupService.deleteByIdSync(group.id)
-            false -> succeedGroupOwner(group, groupUser)
+        txTemplates.writer.executesOrNull {
+            when (groupUser == null) {
+                /** 그룹 제거 */
+                true -> groupService.deleteByIdSync(group.id)
+
+                /** 그룹 승계 */
+                false -> {
+                    val succeedGroup = group.apply {
+                        this.ownerUid = groupUser.uid
+                    }
+                    groupService.saveSync(succeedGroup)
+                }
+            }
         }
     }
 
-    private fun succeedGroupOwner(group: Group, groupUser: GroupUser) {
-        val succeedGroup = group.apply {
-            this.ownerUid = groupUser.uid
-        }
-
+    private suspend fun withdrawGroupUser(group: Group, uid: Long) {
         txTemplates.writer.executesOrNull {
-            groupService.saveSync(succeedGroup)
-        }
-    }
-
-    private suspend fun withdrawGroupUser(groupId: Long, uid: Long) {
-        txTemplates.writer.executesOrNull {
-            groupUserService.deleteBySync(groupId, uid)
+            groupUserService.deleteBySync(group.id, uid)
+            groupService.saveSync(group.apply { this.userCount -= 1 })
         }
     }
 
@@ -131,6 +134,7 @@ class GroupFacade(
                 /** 그룹에 조인 */
                 else -> {
                     val createdGroupUser = txTemplates.writer.executes {
+                        groupService.saveSync(group.apply { this.userCount += 1 })
                         groupUserService.saveSync(groupId, user.uid)
                     }
 
