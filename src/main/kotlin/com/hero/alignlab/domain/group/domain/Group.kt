@@ -23,7 +23,7 @@ data class Group(
     var isHidden: Boolean,
 
     @Column(name = "join_code")
-    var joinCode: String,
+    var joinCode: String?,
 
     @Column(name = "user_count")
     var userCount: Int = 1,
