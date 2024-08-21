@@ -10,10 +10,8 @@ import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.model.CreateGroupContext
 import com.hero.alignlab.domain.group.model.request.CheckGroupRegisterRequest
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
-import com.hero.alignlab.domain.group.model.response.CreateGroupResponse
-import com.hero.alignlab.domain.group.model.response.GetGroupResponse
-import com.hero.alignlab.domain.group.model.response.JoinGroupResponse
-import com.hero.alignlab.domain.group.model.response.SearchGroupResponse
+import com.hero.alignlab.domain.group.model.response.*
+import com.hero.alignlab.domain.user.application.UserInfoService
 import com.hero.alignlab.event.model.CreateGroupEvent
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
@@ -21,11 +19,14 @@ import com.hero.alignlab.exception.NotFoundException
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
+import java.util.concurrent.atomic.AtomicInteger
 
 @Service
 class GroupFacade(
     private val groupService: GroupService,
     private val groupUserService: GroupUserService,
+    private val groupUserScoreService: GroupUserScoreService,
+    private val userInfoService: UserInfoService,
     private val txTemplates: TransactionTemplates,
     private val publisher: ApplicationEventPublisher,
 ) {
@@ -186,5 +187,30 @@ class GroupFacade(
         if (groupService.existsByName(request.name)) {
             throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_NAME_ERROR)
         }
+    }
+
+    suspend fun getGroupRank(user: AuthUser, groupId: Long): GetGroupRanksResponse {
+        val groupUser = groupUserService.findByGroupIdAndUid(groupId, user.uid)
+            ?: throw InvalidRequestException(ErrorCode.NOT_CONTAINS_GROUP_USER_ERROR)
+
+        val groupUserScores = groupUserScoreService.findAllByGroupId(groupId)
+            .filterNot { groupUserScore -> groupUserScore.score == null }
+            .sortedBy { groupUserScore -> groupUserScore.score }
+
+        val userbyId = userInfoService.findAllByIds(groupUserScores.map { it.uid }).associateBy { it.id }
+
+        val rank = AtomicInteger(1)
+
+        return GetGroupRanksResponse(
+            groupId = groupUser.groupId,
+            ranks = groupUserScores.mapNotNull { groupUserScore ->
+                GetGroupRankResponse(
+                    groupUserId = groupUserScore.groupUserId,
+                    name = userbyId[groupUserScore.uid]?.nickname ?: return@mapNotNull null,
+                    rank = rank.getAndIncrement(),
+                    score = groupUserScore.score ?: return@mapNotNull null,
+                )
+            }
+        )
     }
 }

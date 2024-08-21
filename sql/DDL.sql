@@ -74,6 +74,21 @@ CREATE TABLE `group_user`
 CREATE UNIQUE INDEX uidx__group_id__uid ON group_user (group_id, uid);
 CREATE INDEX idx__uid ON group_user (uid);
 
+-- 그룹 유저 스코어
+CREATE TABLE `group_user_score`
+(
+    `id`            bigint NOT NULL AUTO_INCREMENT COMMENT 'group user score id',
+    `group_id`      bigint NOT NULL COMMENT 'group id',
+    `group_user_id` bigint NOT NULL COMMENT 'group user id',
+    `uid`           bigint NOT NULL COMMENT 'uid',
+    `score`         int      DEFAULT NULL COMMENT '스코어',
+    `created_at`    datetime DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    `modified_at`   datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=200000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='그룹 유저 스코어';
+CREATE UNIQUE INDEX uidx__group_user_id ON group_user_score (group_user_id);
+CREATE INDEX idx__group_id__group_user_id ON group_user_score (group_id, group_user_id);
+
 -- 포즈 스냅샵
 CREATE TABLE `pose_snapshot`
 (

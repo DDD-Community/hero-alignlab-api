@@ -13,6 +13,8 @@ data class ConcurrentMessage(
         val groupUserId: Long,
         val uid: Long,
         val nickname: String,
+        val rank: Int,
+        val score: Int,
     )
 
     companion object {
@@ -29,7 +31,10 @@ data class ConcurrentMessage(
                     ConcurrentUser(
                         groupUserId = groupUSer.id,
                         uid = uid,
-                        nickname = info.nickname
+                        nickname = info.nickname,
+                        // 더미 데이터
+                        rank = 1,
+                        score = 1
                     )
                 }
             )

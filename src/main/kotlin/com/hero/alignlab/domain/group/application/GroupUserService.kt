@@ -64,6 +64,12 @@ class GroupUserService(
         }
     }
 
+    suspend fun findByGroupIdAndUid(groupId: Long, uid: Long): GroupUser? {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.findByGroupIdAndUid(groupId, uid)
+        }
+    }
+
     suspend fun getGroupUsers(user: AuthUser, groupId: Long, pageable: Pageable): Page<GroupUserResponse> {
         val exists = existsByGroupIdAndUid(groupId, user.uid)
 
@@ -75,7 +81,7 @@ class GroupUserService(
             .map { groupUser -> GroupUserResponse(groupUser.id, groupUser.uid) }
     }
 
-    private suspend fun findAllByGroupId(groupId: Long, pageable: Pageable): Page<GroupUser> {
+    suspend fun findAllByGroupId(groupId: Long, pageable: Pageable): Page<GroupUser> {
         return withContext(Dispatchers.IO) {
             groupUserRepository.findAllByGroupId(groupId, pageable)
         }
