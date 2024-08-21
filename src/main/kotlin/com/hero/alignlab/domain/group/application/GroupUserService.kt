@@ -34,11 +34,13 @@ class GroupUserService(
         return groupUserRepository.findAllByUid(uid)
     }
 
-    suspend fun findAllByGroupIdAndUids(groupId: Long, uids: Set<Long>): List<GroupUser> {
-        return findAllByGroupIdAndUidsSync(groupId, uids)
+    suspend fun findAllByGroupIdAndUids(groupId: Long, uids: List<Long>): List<GroupUser> {
+        return withContext(Dispatchers.IO) {
+            findAllByGroupIdAndUidsSync(groupId, uids)
+        }
     }
 
-    fun findAllByGroupIdAndUidsSync(groupId: Long, uids: Set<Long>): List<GroupUser> {
+    fun findAllByGroupIdAndUidsSync(groupId: Long, uids: List<Long>): List<GroupUser> {
         return groupUserRepository.findAllByGroupIdAndUidIn(groupId, uids)
     }
 

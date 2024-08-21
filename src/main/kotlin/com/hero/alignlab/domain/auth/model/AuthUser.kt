@@ -53,17 +53,14 @@ data class AuthContextImpl(
 const val AUTH_TOKEN_KEY = "X-HERO-AUTH-TOKEN"
 
 data class AuthUserToken(
-    val key: String,
+    val key: String = AUTH_TOKEN_KEY,
     val value: String,
 ) {
     fun isInvalid() = key.isBlank() || value.isBlank()
 
     companion object {
         fun from(value: String): AuthUserToken {
-            return AuthUserToken(
-                key = AUTH_TOKEN_KEY,
-                value = value
-            )
+            return AuthUserToken(value = value)
         }
 
         fun HttpHeaders.resolve(): AuthUserToken {

@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 interface GroupUserRepository : JpaRepository<GroupUser, Long> {
     fun findAllByUid(uid: Long): List<GroupUser>
 
-    fun findAllByGroupIdAndUidIn(groupId: Long, uids: Set<Long>): List<GroupUser>
+    fun findAllByGroupIdAndUidIn(groupId: Long, uids: List<Long>): List<GroupUser>
 
     fun findTop1ByGroupIdOrderByCreatedAtAsc(groupId: Long): GroupUser?
 

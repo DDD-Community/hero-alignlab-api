@@ -1,6 +1,6 @@
 package com.hero.alignlab.ws.config
 
-import com.hero.alignlab.ws.handler.ReactiveConcurrentUserWebSocketHandler
+import com.hero.alignlab.ws.handler.ReactiveGroupUserWebSocketHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.HandlerMapping
@@ -13,7 +13,7 @@ import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyReques
 class ReactiveWebSocketConfiguration {
     @Bean
     fun reactiveWebSocketHandlerMapping(
-        handler: ReactiveConcurrentUserWebSocketHandler
+        handler: ReactiveGroupUserWebSocketHandler
     ): HandlerMapping {
         val map = mapOf(
             /** 접속 유저 처리, 향후 v2로 업데이트 진행 필요 (v1은 poc 개념) */

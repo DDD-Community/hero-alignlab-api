@@ -1,7 +1,7 @@
 package com.hero.alignlab.domain.dev.application
 
 import com.hero.alignlab.common.extension.CoroutineExtension.retryOnError
-import com.hero.alignlab.ws.handler.ReactiveConcurrentUserWebSocketHandler
+import com.hero.alignlab.ws.handler.ReactiveGroupUserWebSocketHandler
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class DevWebsocketService(
-    private val webSocketHandler: ReactiveConcurrentUserWebSocketHandler
+    private val webSocketHandler: ReactiveGroupUserWebSocketHandler
 ) {
     private val logger = KotlinLogging.logger { }
 

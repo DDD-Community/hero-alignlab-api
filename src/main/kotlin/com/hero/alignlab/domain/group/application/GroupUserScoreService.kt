@@ -39,7 +39,13 @@ class GroupUserScoreService(
         return groupUserScoreRepository.saveAll(groupUserScores)
     }
 
-    fun findAllByGroupIdAndUidsSync(groupId: Long, uids: Set<Long>): List<GroupUserScore> {
+    suspend fun findAllByGroupIdAndUids(groupId: Long, uids: List<Long>): List<GroupUserScore> {
+        return withContext(Dispatchers.IO) {
+            findAllByGroupIdAndUidsSync(groupId, uids)
+        }
+    }
+
+    fun findAllByGroupIdAndUidsSync(groupId: Long, uids: List<Long>): List<GroupUserScore> {
         return groupUserScoreRepository.findAllByGroupIdAndUidIn(groupId, uids)
     }
 }
