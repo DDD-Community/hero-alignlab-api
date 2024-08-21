@@ -26,7 +26,7 @@ class GroupUserService(
 
     suspend fun findAllByUid(uid: Long): List<GroupUser> {
         return withContext(Dispatchers.IO) {
-            findAllByUid(uid)
+            findAllByUidSync(uid)
         }
     }
 

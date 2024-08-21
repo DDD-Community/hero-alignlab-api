@@ -4,6 +4,7 @@ import com.hero.alignlab.common.extension.mapper
 import com.hero.alignlab.domain.auth.application.AuthFacade
 import com.hero.alignlab.domain.auth.model.AUTH_TOKEN_KEY
 import com.hero.alignlab.domain.auth.model.AuthUserToken
+import com.hero.alignlab.domain.group.application.GroupUserScoreService
 import com.hero.alignlab.domain.group.application.GroupUserService
 import com.hero.alignlab.domain.user.application.UserInfoService
 import com.hero.alignlab.exception.ErrorCode
@@ -27,6 +28,7 @@ class ReactiveConcurrentUserWebSocketHandler(
     private val authFacade: AuthFacade,
     private val userInfoService: UserInfoService,
     private val groupUserService: GroupUserService,
+    private val groupUserScoreService: GroupUserScoreService,
 ) : WebSocketHandler {
     private val logger = KotlinLogging.logger { }
 
@@ -78,9 +80,11 @@ class ReactiveConcurrentUserWebSocketHandler(
             val userInfoByUid = userInfoService.findAllByIdsSync(uids.toList()).associateBy { it.id }
             val groupUserss = groupUserService.findAllByGroupIdAndUidsSync(groupId, userInfoByUid.keys)
                 .associateBy { it.uid }
+            val groupUserScores = groupUserScoreService.findAllByGroupIdAndUidsSync(groupId, userInfoByUid.keys)
+                .associateBy { it.uid }
 
             uidBySession.forEach { (_, websocketSession) ->
-                val message = ConcurrentMessage.of(groupId, userInfoByUid, groupUserss)
+                val message = ConcurrentMessage.of(groupId, userInfoByUid, groupUserss, groupUserScores)
                     .run { mapper.writeValueAsString(this) }
 
                 websocketSession
@@ -130,8 +134,10 @@ class ReactiveConcurrentUserWebSocketHandler(
     private suspend fun sendUpdatedGroupStatus(groupId: Long, uidBySession: MutableMap<Long, WebSocketSession>) {
         val userInfoByUid = userInfoService.findAllByIds(uidBySession.keys.toList()).associateBy { it.id }
         val groupUsers = groupUserService.findAllByGroupIdAndUids(groupId, userInfoByUid.keys).associateBy { it.uid }
+        val groupUserScores = groupUserScoreService.findAllByGroupIdAndUidsSync(groupId, userInfoByUid.keys)
+            .associateBy { it.uid }
 
-        val message = ConcurrentMessage.of(groupId, userInfoByUid, groupUsers)
+        val message = ConcurrentMessage.of(groupId, userInfoByUid, groupUsers, groupUserScores)
             .run { mapper.writeValueAsString(this) }
 
         uidBySession.forEach { (_, websocketSession) ->

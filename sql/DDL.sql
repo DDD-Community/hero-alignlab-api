@@ -88,6 +88,7 @@ CREATE TABLE `group_user_score`
 ) ENGINE=InnoDB AUTO_INCREMENT=200000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='그룹 유저 스코어';
 CREATE UNIQUE INDEX uidx__group_user_id ON group_user_score (group_user_id);
 CREATE INDEX idx__group_id__group_user_id ON group_user_score (group_id, group_user_id);
+CREATE INDEX idx__uid ON group_user_score (uid);
 
 -- 포즈 스냅샵
 CREATE TABLE `pose_snapshot`

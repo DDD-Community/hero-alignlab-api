@@ -16,4 +16,8 @@ enum class PoseType(val nameKor: String) {
     @JsonEnumDefaultValue
     UNKNOWN("예외 타입"),
     ;
+
+    companion object {
+        val BAD_POSE = setOf(TURTLE_NECK, SHOULDER_TWIST, CHIN_UTP, TURTLE_NECK)
+    }
 }

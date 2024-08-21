@@ -9,4 +9,10 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 interface GroupUserScoreRepository : JpaRepository<GroupUserScore, Long> {
     fun findAllByGroupId(groupId: Long): List<GroupUserScore>
+
+    fun findByUid(uid: Long): GroupUserScore?
+
+    fun findAllByGroupUserIdIn(groupUserIds: List<Long>): List<GroupUserScore>
+
+    fun findAllByGroupIdAndUidIn(groupId: Long, uids: Set<Long>): List<GroupUserScore>
 }
