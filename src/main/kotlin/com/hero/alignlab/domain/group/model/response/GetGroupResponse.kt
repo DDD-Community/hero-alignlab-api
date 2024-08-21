@@ -10,6 +10,10 @@ data class GetGroupResponse(
     val isHidden: Boolean,
     /** 그룹장만 조회 가능 */
     val joinCode: String?,
+    /** 그룹원 수 */
+    val userCount: Int,
+    /** 그룹 정원 */
+    val userCapacity: Int,
 ) {
     companion object {
         fun from(group: Group): GetGroupResponse {
@@ -19,7 +23,9 @@ data class GetGroupResponse(
                 group.description,
                 group.ownerUid,
                 group.isHidden,
-                group.joinCode
+                group.joinCode,
+                group.userCount,
+                group.userCapacity
             )
         }
     }

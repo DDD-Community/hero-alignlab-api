@@ -8,6 +8,7 @@ import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.application.GroupFacade
 import com.hero.alignlab.domain.group.application.GroupService
+import com.hero.alignlab.domain.group.model.request.CheckGroupRegisterRequest
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.request.UpdateGroupRequest
 import io.swagger.v3.oas.annotations.Operation
@@ -86,4 +87,15 @@ class GroupResource(
         groupId = groupId,
         joinCode = joinCode
     ).wrapOk()
+
+    /**
+     * - 성공 케이스 : noContent로 반환
+     * - 실패 케이스 : 실패한 이유에 대해, errorMessage 제공
+     */
+    @Operation(summary = "그룹 정보 유효성 검사")
+    @PostMapping("/api/v1/groups/check")
+    suspend fun checkGroupName(
+        user: AuthUser,
+        @RequestBody request: CheckGroupRegisterRequest,
+    ) = groupFacade.checkGroupRegisterRequest(user, request).wrapVoid()
 }

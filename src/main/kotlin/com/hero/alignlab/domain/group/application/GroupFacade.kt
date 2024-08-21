@@ -8,6 +8,7 @@ import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.model.CreateGroupContext
+import com.hero.alignlab.domain.group.model.request.CheckGroupRegisterRequest
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.response.CreateGroupResponse
 import com.hero.alignlab.domain.group.model.response.GetGroupResponse
@@ -179,5 +180,11 @@ class GroupFacade(
             ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
 
         groupUserService.deleteSync(groupUserId)
+    }
+
+    suspend fun checkGroupRegisterRequest(user: AuthUser, request: CheckGroupRegisterRequest) {
+        if (groupService.existsByName(request.name)) {
+            throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_NAME_ERROR)
+        }
     }
 }
