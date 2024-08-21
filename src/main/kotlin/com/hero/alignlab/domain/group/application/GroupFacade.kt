@@ -3,6 +3,7 @@ package com.hero.alignlab.domain.group.application
 import arrow.fx.coroutines.parZip
 import com.hero.alignlab.common.extension.executes
 import com.hero.alignlab.common.extension.executesOrNull
+import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.Group
@@ -12,11 +13,13 @@ import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.response.CreateGroupResponse
 import com.hero.alignlab.domain.group.model.response.GetGroupResponse
 import com.hero.alignlab.domain.group.model.response.JoinGroupResponse
+import com.hero.alignlab.domain.group.model.response.SearchGroupResponse
 import com.hero.alignlab.event.model.CreateGroupEvent
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.NotFoundException
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 
 @Service
@@ -157,6 +160,11 @@ class GroupFacade(
                 }
             }
         }
+    }
+
+    suspend fun searchGroup(user: AuthUser, pageRequest: HeroPageRequest): Page<SearchGroupResponse> {
+        return groupService.findAll(pageRequest.toDefault())
+            .map { group -> SearchGroupResponse.from(group) }
     }
 
     suspend fun deleteGroupUser(user: AuthUser, groupUserId: Long) {

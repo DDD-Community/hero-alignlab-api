@@ -12,6 +12,8 @@ import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.NotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -66,5 +68,11 @@ class GroupService(
 
     fun saveSync(group: Group): Group {
         return groupRepository.save(group)
+    }
+
+    suspend fun findAll(pageable: Pageable): Page<Group> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.findAll(pageable)
+        }
     }
 }

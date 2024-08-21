@@ -2,7 +2,9 @@ package com.hero.alignlab.domain.group.resource
 
 import com.hero.alignlab.common.extension.wrapCreated
 import com.hero.alignlab.common.extension.wrapOk
+import com.hero.alignlab.common.extension.wrapPage
 import com.hero.alignlab.common.extension.wrapVoid
+import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.application.GroupFacade
 import com.hero.alignlab.domain.group.application.GroupService
@@ -10,6 +12,7 @@ import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.request.UpdateGroupRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springdoc.core.annotations.ParameterObject
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
@@ -30,6 +33,18 @@ class GroupResource(
         user: AuthUser,
         @PathVariable id: Long
     ) = groupFacade.getGroup(user, id).wrapOk()
+
+    /**
+     * - 정렬 조건
+     *      - 크루원 많은 순 : userCount,desc
+     *      - 최신 생성 크루 순 : createdAt,desc
+     */
+    @Operation(summary = "그룹 전체 보기")
+    @GetMapping("/api/v1/groups")
+    suspend fun searchGroups(
+        user: AuthUser,
+        @ParameterObject pageRequest: HeroPageRequest,
+    ) = groupFacade.searchGroup(user, pageRequest).wrapPage()
 
     @Operation(summary = "그룹 생성")
     @PostMapping("/api/v1/groups")
