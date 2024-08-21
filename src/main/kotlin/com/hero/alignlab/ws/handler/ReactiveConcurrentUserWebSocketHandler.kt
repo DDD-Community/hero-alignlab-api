@@ -40,8 +40,6 @@ class ReactiveConcurrentUserWebSocketHandler(
     private val concurrentUserByMap: ConcurrentMap<Long, ConcurrentMap<Long, WebSocketSession>> = ConcurrentHashMap()
 
     override fun handle(session: WebSocketSession): Mono<Void> {
-        println(">> 접속함")
-
         val groupId = session.handshakeInfo.uri.path
             .split("/")
             .lastOrNull { it.matches(Regex("\\d+")) }
@@ -58,8 +56,6 @@ class ReactiveConcurrentUserWebSocketHandler(
         val authUserToken = AuthUserToken(AUTH_TOKEN_KEY, token)
 
         val user = authFacade.resolveAuthUser(authUserToken)
-
-        println("concurrent user : ${user.uid}")
 
         val groupUsers = groupUserService.findAllByUidSync(user.uid)
 
@@ -95,6 +91,18 @@ class ReactiveConcurrentUserWebSocketHandler(
 
         return session.receive()
             .map(WebSocketMessage::getPayloadAsText)
+            .flatMap { payload ->
+                when {
+                    payload.contains("ping") -> {
+                        session.send(Mono.just(session.textMessage("pong")))
+                    }
+
+                    else -> {
+                        logger.warn { "UNDEFINED WS MESSAGE : $payload" }
+                        Mono.empty()
+                    }
+                }
+            }
             .log()
             .doFinally { handleSessionTermination(session, user.uid) }
             .then()
