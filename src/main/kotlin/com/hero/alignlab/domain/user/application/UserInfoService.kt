@@ -2,7 +2,7 @@ package com.hero.alignlab.domain.user.application
 
 import com.hero.alignlab.common.encrypt.EncryptData
 import com.hero.alignlab.common.encrypt.Encryptor
-import com.hero.alignlab.domain.user.domain.OAuthProvider
+import com.hero.alignlab.domain.user.domain.vo.OAuthProvider
 import com.hero.alignlab.domain.user.domain.UserInfo
 import com.hero.alignlab.domain.user.infrastructure.UserInfoRepository
 import com.hero.alignlab.domain.user.model.response.UserInfoResponse

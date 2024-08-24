@@ -1,6 +1,6 @@
 package com.hero.alignlab.domain.user.infrastructure
 
-import com.hero.alignlab.domain.user.domain.OAuthProvider
+import com.hero.alignlab.domain.user.domain.vo.OAuthProvider
 import com.hero.alignlab.domain.user.domain.OAuthUserInfo
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository

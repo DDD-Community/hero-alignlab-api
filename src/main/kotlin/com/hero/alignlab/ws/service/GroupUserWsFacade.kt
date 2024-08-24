@@ -13,17 +13,17 @@ class GroupUserWsFacade(
     private val groupUserService: GroupUserService,
     private val groupUserScoreService: GroupUserScoreService,
 ) {
-    suspend fun generateGroupUserMessage(groupId: Long, uids: List<Long>): GroupUserEventMessage {
+    suspend fun generateEventMessage(groupId: Long, uids: List<Long>): GroupUserEventMessage {
         return parZip(
-            { userInfoService.findAllByIds(uids).associateBy { userInfo -> userInfo.id } },
-            { groupUserService.findAllByGroupIdAndUids(groupId, uids).associateBy { groupUser -> groupUser.uid } },
-            { groupUserScoreService.findAllByGroupIdAndUids(groupId, uids).associateBy { score -> score.uid } }
+            { userInfoService.findAllByIds(uids) },
+            { groupUserService.findAllByGroupIdAndUids(groupId, uids) },
+            { groupUserScoreService.findAllByGroupIdAndUids(groupId, uids) }
         ) { userInfoByUid, groupUsers, groupUserScores ->
             GroupUserEventMessage.of(
                 groupId = groupId,
-                userInfoByUid = userInfoByUid,
-                groupUserss = groupUsers,
-                groupUserSocres = groupUserScores
+                userInfoByUid = userInfoByUid.associateBy { userInfo -> userInfo.id },
+                groupUserById = groupUsers.associateBy { groupUser -> groupUser.uid },
+                scoreByUid = groupUserScores.associateBy { score -> score.uid }
             )
         }
     }

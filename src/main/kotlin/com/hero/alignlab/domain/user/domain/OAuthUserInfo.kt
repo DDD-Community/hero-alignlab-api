@@ -1,6 +1,7 @@
 package com.hero.alignlab.domain.user.domain
 
 import com.hero.alignlab.domain.common.domain.BaseEntity
+import com.hero.alignlab.domain.user.domain.vo.OAuthProvider
 import jakarta.persistence.*
 
 @Entity

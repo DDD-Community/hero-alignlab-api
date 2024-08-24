@@ -1,6 +1,6 @@
 package com.hero.alignlab.domain.auth.model
 
-import com.hero.alignlab.domain.user.domain.OAuthProvider
+import com.hero.alignlab.domain.user.domain.vo.OAuthProvider
 
 enum class OAuthProvider {
     kakao,

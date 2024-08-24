@@ -2,6 +2,7 @@ package com.hero.alignlab.domain.user.infrastructure
 
 import com.hero.alignlab.common.encrypt.EncryptData
 import com.hero.alignlab.domain.user.domain.*
+import com.hero.alignlab.domain.user.domain.vo.OAuthProvider
 import com.querydsl.jpa.impl.JPAQuery
 import jakarta.persistence.EntityManager
 import org.springframework.beans.factory.annotation.Autowired

@@ -27,12 +27,12 @@ class ReactiveWebSocketConfiguration {
     }
 
     @Bean
-    fun handlerAdapter(): WebSocketHandlerAdapter {
-        return WebSocketHandlerAdapter(webSocketService())
+    fun handshakeWebSocketService(): HandshakeWebSocketService {
+        return HandshakeWebSocketService(ReactorNettyRequestUpgradeStrategy())
     }
 
     @Bean
-    fun webSocketService(): HandshakeWebSocketService {
-        return HandshakeWebSocketService(ReactorNettyRequestUpgradeStrategy())
+    fun webSocketHandlerAdapter(): WebSocketHandlerAdapter {
+        return WebSocketHandlerAdapter(handshakeWebSocketService())
     }
 }

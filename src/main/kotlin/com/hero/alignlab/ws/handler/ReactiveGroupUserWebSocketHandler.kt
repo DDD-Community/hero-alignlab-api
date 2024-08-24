@@ -13,7 +13,6 @@ import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.reactor.mono
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.socket.WebSocketHandler
-import org.springframework.web.reactive.socket.WebSocketMessage
 import org.springframework.web.reactive.socket.WebSocketSession
 import reactor.core.publisher.Mono
 import java.util.concurrent.ConcurrentHashMap
@@ -59,7 +58,7 @@ class ReactiveGroupUserWebSocketHandler(
             }
 
             session.receive()
-                .map(WebSocketMessage::getPayloadAsText)
+                .map { message -> message.payloadAsText }
                 .flatMap { payload -> checkPingPong(payload, session) }
                 .log()
                 .doFinally { handleSessionTermination(user.uid) }
@@ -105,7 +104,6 @@ class ReactiveGroupUserWebSocketHandler(
         }
     }
 
-
     /** 발송되는 순서가 중요하지 않다. */
     private fun launchSendEvent(
         groupId: Long,
@@ -122,7 +120,7 @@ class ReactiveGroupUserWebSocketHandler(
     ) {
         val eventMessage = sessionByUid.keys
             .toList()
-            .let { uids -> groupUserWsFacade.generateGroupUserMessage(groupId, uids) }
+            .let { uids -> groupUserWsFacade.generateEventMessage(groupId, uids) }
 
         sessionByUid.forEach { (_, session) ->
             session

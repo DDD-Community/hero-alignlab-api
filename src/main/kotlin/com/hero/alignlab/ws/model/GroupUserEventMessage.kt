@@ -24,22 +24,22 @@ data class GroupUserEventMessage(
         fun of(
             groupId: Long,
             userInfoByUid: Map<Long, UserInfo>,
-            groupUserss: Map<Long, GroupUser>,
-            groupUserSocres: Map<Long, GroupUserScore>
+            groupUserById: Map<Long, GroupUser>,
+            scoreByUid: Map<Long, GroupUserScore>
         ): GroupUserEventMessage {
             val rank = AtomicInteger(1)
 
             return GroupUserEventMessage(
                 groupId = groupId,
                 groupUsers = userInfoByUid.mapNotNull { (uid, info) ->
-                    val groupUSer = groupUserss[uid] ?: return@mapNotNull null
+                    val groupUSer = groupUserById[uid] ?: return@mapNotNull null
 
                     ConcurrentUser(
                         groupUserId = groupUSer.id,
                         uid = uid,
                         nickname = info.nickname,
                         rank = rank.getAndIncrement(),
-                        score = groupUserSocres[uid]?.score ?: 0,
+                        score = scoreByUid[uid]?.score ?: 0,
                     )
                 }
             )
