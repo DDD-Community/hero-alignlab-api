@@ -22,6 +22,11 @@ import java.time.LocalDate
 class PoseCountResource(
     private val poseCountService: PoseCountService,
 ) {
+    /**
+     * 정렬
+     * - date,desc
+     * - date,asc
+     */
     @Operation(summary = "pose 통계 정보 검색")
     @GetMapping("/api/v1/pose-counts")
     suspend fun search(

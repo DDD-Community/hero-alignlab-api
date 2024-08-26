@@ -24,6 +24,14 @@ data class HeroPageRequest(
         return PageRequest.of(page, size, sort)
     }
 
+    fun toCustom(sort: String): Pageable {
+        val page = this.page ?: 0
+        val size = this.size ?: 10
+        val customSort = sort.parsingSort()
+
+        return PageRequest.of(page, size, customSort)
+    }
+
     fun String?.parsingSort(): Sort {
         val sortSpec = (this ?: "createdAt,desc").trim().split(",")
 
