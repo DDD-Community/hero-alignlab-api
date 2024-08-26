@@ -28,4 +28,6 @@ interface GroupUserRepository : JpaRepository<GroupUser, Long> {
     fun existsByUid(uid: Long): Boolean
 
     fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
+
+    fun findByUid(uid: Long): GroupUser?
 }

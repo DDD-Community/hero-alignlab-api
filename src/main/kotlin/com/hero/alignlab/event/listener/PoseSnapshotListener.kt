@@ -4,7 +4,6 @@ import com.hero.alignlab.common.extension.coExecuteOrNull
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.group.application.GroupUserScoreService
 import com.hero.alignlab.domain.group.application.GroupUserService
-import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.application.PoseKeyPointSnapshotService
 import com.hero.alignlab.domain.pose.domain.PoseCount
@@ -34,8 +33,8 @@ class PoseSnapshotListener(
                 PoseKeyPointSnapshot(
                     poseSnapshotId = event.poseSnapshot.id,
                     position = keyPoint.name.toPosition(),
-                    x = keyPoint.x,
                     y = keyPoint.y,
+                    x = keyPoint.x,
                     confidence = keyPoint.confidence
                 )
             }
@@ -63,23 +62,21 @@ class PoseSnapshotListener(
                 .values
                 .sum()
 
-            val groupUsers = groupUserService.findAllByUid(event.poseSnapshot.uid)
-            val groupUserScore = groupUserScoreService.findAllByGroupUserIdIn(groupUsers.map { it.id })
-                .associateBy { it.groupUserId }
+            val groupUser = groupUserService.findByUid(event.poseSnapshot.uid)
+            val groupUserScore = groupUserScoreService.findByUidOrNull(event.poseSnapshot.uid)
 
-            val needToUpdateScores = groupUsers.map { groupUser ->
-                groupUserScore[groupUser.id] ?: GroupUserScore(
-                    groupId = groupUser.groupId,
-                    groupUserId = groupUser.id,
-                    uid = groupUser.uid,
-                    score = score
-                )
+            val updatedGroupUserScore = when (groupUser != null && groupUserScore != null) {
+                true -> groupUserScore.apply {
+                    this.score = score
+                }
+
+                false -> null
             }
 
             txTemplates.writer.coExecuteOrNull {
-                poseKeyPointSnapshotService.bulkSave(keyPoints)
+                poseKeyPointSnapshotService.saveAllSync(keyPoints)
                 poseCountService.saveSync(poseCount)
-                groupUserScoreService.saveAllSync(needToUpdateScores)
+                updatedGroupUserScore?.run { groupUserScoreService.saveSync(this) }
             }
         }
     }

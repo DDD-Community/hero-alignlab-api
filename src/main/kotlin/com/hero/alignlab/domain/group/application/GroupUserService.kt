@@ -98,4 +98,10 @@ class GroupUserService(
     fun deleteSync(groupUserId: Long) {
         groupUserRepository.deleteById(groupUserId)
     }
+
+    suspend fun findByUid(uid: Long): GroupUser? {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.findByUid(uid)
+        }
+    }
 }

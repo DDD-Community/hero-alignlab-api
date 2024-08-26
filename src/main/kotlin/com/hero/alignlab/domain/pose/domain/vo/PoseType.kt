@@ -18,6 +18,6 @@ enum class PoseType(val nameKor: String) {
     ;
 
     companion object {
-        val BAD_POSE = setOf(TURTLE_NECK, SHOULDER_TWIST, CHIN_UTP, TURTLE_NECK)
+        val BAD_POSE = setOf(TURTLE_NECK, SHOULDER_TWIST, CHIN_UTP, TAILBONE_SIT)
     }
 }
