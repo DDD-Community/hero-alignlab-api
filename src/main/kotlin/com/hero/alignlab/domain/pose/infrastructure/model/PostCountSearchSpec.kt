@@ -4,6 +4,6 @@ import java.time.LocalDate
 
 data class PostCountSearchSpec(
     val uid: Long,
-    val fromDate: LocalDate,
-    val toDate: LocalDate,
+    val fromDate: LocalDate?,
+    val toDate: LocalDate?,
 )

@@ -23,7 +23,7 @@ class PoseCountResource(
     private val poseCountService: PoseCountService,
 ) {
     /**
-     * 정렬
+     * 정렬조건
      * - date,desc
      * - date,asc
      */
