@@ -32,16 +32,20 @@ data class GroupUserEventMessage(
             return GroupUserEventMessage(
                 groupId = groupId,
                 groupUsers = userInfoByUid.mapNotNull { (uid, info) ->
-                    val groupUSer = groupUserById[uid] ?: return@mapNotNull null
+                    val groupUser = groupUserById[uid] ?: return@mapNotNull null
 
                     ConcurrentUser(
-                        groupUserId = groupUSer.id,
+                        groupUserId = groupUser.id,
                         uid = uid,
                         nickname = info.nickname,
-                        rank = rank.getAndIncrement(),
+                        rank = -1,
                         score = scoreByUid[uid]?.score ?: 0,
                     )
-                }
+                }.sortedBy { groupScore ->
+                    groupScore.score
+                }.map { groupScore ->
+                    groupScore.copy(rank = rank.getAndIncrement())
+                }.take(5)
             )
         }
     }
