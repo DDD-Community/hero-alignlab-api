@@ -108,9 +108,17 @@ class GroupFacade(
         groupId: Long,
         joinCode: String?
     ): JoinGroupResponse {
+        return joinGroup(groupId, user.uid, joinCode)
+    }
+
+    suspend fun joinGroup(
+        groupId: Long,
+        uid: Long,
+        joinCode: String?
+    ): JoinGroupResponse {
         return parZip(
             { groupService.findByIdOrThrow(groupId) },
-            { groupUserService.findAllByUid(user.uid).associateBy { it.groupId } }
+            { groupUserService.findAllByUid(uid).associateBy { it.groupId } }
         ) { group, groupUsers ->
             if (group.isHidden && group.joinCode != joinCode) {
                 throw InvalidRequestException(ErrorCode.IMPOSSIBLE_TO_JOIN_GROUP_ERROR)
@@ -137,7 +145,7 @@ class GroupFacade(
                 else -> {
                     val createdGroupUser = txTemplates.writer.executes {
                         groupService.saveSync(group.apply { this.userCount += 1 })
-                        groupUserService.saveSync(groupId, user.uid)
+                        groupUserService.saveSync(groupId, uid)
                     }
 
                     JoinGroupResponse(
