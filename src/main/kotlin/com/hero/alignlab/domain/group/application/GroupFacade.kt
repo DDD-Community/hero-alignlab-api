@@ -103,19 +103,11 @@ class GroupFacade(
         }
     }
 
-    suspend fun joinGroup(
-        user: AuthUser,
-        groupId: Long,
-        joinCode: String?
-    ): JoinGroupResponse {
+    suspend fun joinGroup(user: AuthUser, groupId: Long, joinCode: String?): JoinGroupResponse {
         return joinGroup(groupId, user.uid, joinCode)
     }
 
-    suspend fun joinGroup(
-        groupId: Long,
-        uid: Long,
-        joinCode: String?
-    ): JoinGroupResponse {
+    suspend fun joinGroup(groupId: Long, uid: Long, joinCode: String?): JoinGroupResponse {
         return parZip(
             { groupService.findByIdOrThrow(groupId) },
             { groupUserService.findAllByUid(uid).associateBy { it.groupId } }
