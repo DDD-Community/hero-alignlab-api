@@ -33,6 +33,14 @@ class SystemActionLogEventListener(
 
     /** 불필요한 로그는 적재하지 않는다. */
     private fun filterLog(event: SystemActionLogEvent): Boolean {
-        return !event.path.equals("/api/v1/health")
+        if (event.path.equals("/api/v1/health")) {
+            return false
+        }
+
+        if (event.path?.startsWith("/api/") == true) {
+            return true
+        }
+
+        return false
     }
 }
