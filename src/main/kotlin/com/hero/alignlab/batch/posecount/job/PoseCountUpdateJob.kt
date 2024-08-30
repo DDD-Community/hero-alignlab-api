@@ -23,10 +23,8 @@ class PoseCountUpdateJob(
      * **전날 종합 데이터 업데이트**
      * - 전날 데이터의 싱크가 틀린 경우가 발생했을 때를 대비하여, 새벽에 이전 데이터 정합도를 다시 한번 체크한다.
      */
-    suspend fun run() {
+    suspend fun run(targetDate: LocalDate) {
         logger.info { "start PoseCountUpdateJob.run()" }
-
-        val targetDate = LocalDate.now().minusDays(1)
 
         /** user의 수가 적으므로, 전체 uid를 조회, 만약에 oom이 터진다면, 서비스 대박임 */
         val uids = userInfoService.findAllUids()
