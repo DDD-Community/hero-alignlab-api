@@ -15,6 +15,7 @@ class Discussion(
     val uid: Long,
 
     @Column(name = "type")
+    @Enumerated(EnumType.STRING)
     val type: DiscussionType,
 
     @Column(name = "title")

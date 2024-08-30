@@ -20,6 +20,7 @@ data class PoseSnapshot(
     val score: BigDecimal,
 
     @Column(name = "type")
+    @Enumerated(EnumType.STRING)
     val type: PoseType,
 
     @Column(name = "image_url")

@@ -26,7 +26,7 @@ interface PoseSnapshotQRepository {
     fun countByUidsAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel>
 }
 
-class PoseSnapshotRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositorySupport(PoseSnapshot::class.java) {
+class PoseSnapshotQRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositorySupport(PoseSnapshot::class.java) {
     @Autowired
     @Qualifier("heroEntityManager")
     override fun setEntityManager(entityManager: EntityManager) {
@@ -46,12 +46,12 @@ class PoseSnapshotRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositorySu
             )
             .from(qPoseSnapshot)
             .where(
-                qPoseSnapshot.uid.`in`(uids)
-                    .and(qPoseSnapshot.createdAt.year().eq(date.year))
-                    .and(qPoseSnapshot.createdAt.month().eq(date.monthValue))
-                    .and(qPoseSnapshot.createdAt.dayOfMonth().eq(date.dayOfMonth))
+                qPoseSnapshot.uid.`in`(uids),
+                qPoseSnapshot.createdAt.year().eq(date.year),
+                qPoseSnapshot.createdAt.month().eq(date.monthValue),
+                qPoseSnapshot.createdAt.dayOfMonth().eq(date.dayOfMonth)
             )
-            .groupBy(qPoseSnapshot.type)
+            .groupBy(qPoseSnapshot.uid, qPoseSnapshot.type)
             .fetch()
     }
 }
