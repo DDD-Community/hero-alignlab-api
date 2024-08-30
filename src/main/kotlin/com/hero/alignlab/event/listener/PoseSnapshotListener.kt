@@ -8,7 +8,6 @@ import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.application.PoseKeyPointSnapshotService
 import com.hero.alignlab.domain.pose.domain.PoseCount
 import com.hero.alignlab.domain.pose.domain.PoseKeyPointSnapshot
-import com.hero.alignlab.domain.pose.domain.vo.PoseTotalCount
 import com.hero.alignlab.domain.pose.domain.vo.PoseType.Companion.BAD_POSE
 import com.hero.alignlab.event.model.LoadPoseSnapshot
 import kotlinx.coroutines.CoroutineScope
@@ -44,20 +43,14 @@ class PoseSnapshotListener(
             /** 집계 데이터 처리 */
             val poseCount = targetDate
                 .run { poseCountService.findByUidAndDateOrNull(event.poseSnapshot.uid, this) }
-                ?.apply {
-                    val typeCount = this.totalCount.count[event.poseSnapshot.type] ?: 0
-                    this.totalCount.count[event.poseSnapshot.type] = typeCount + 1
-                } ?: PoseCount(
-                uid = event.poseSnapshot.uid,
-                totalCount = PoseTotalCount(
-                    count = mutableMapOf(
-                        event.poseSnapshot.type to 1
-                    )
-                ),
-                date = targetDate
-            )
+                ?: PoseCount(uid = event.poseSnapshot.uid, date = targetDate)
 
-            val score = poseCount.totalCount.count
+            val updatedPoseCount = poseCount.apply {
+                val typeCount = this.totalCount.count[event.poseSnapshot.type] ?: 0
+                this.totalCount.count[event.poseSnapshot.type] = typeCount + 1
+            }
+
+            val score = updatedPoseCount.totalCount.count
                 .filter { (key, _) -> key in BAD_POSE }
                 .values
                 .sum()
@@ -75,7 +68,7 @@ class PoseSnapshotListener(
 
             txTemplates.writer.coExecuteOrNull {
                 poseKeyPointSnapshotService.saveAllSync(keyPoints)
-                poseCountService.saveSync(poseCount)
+                poseCountService.saveSync(updatedPoseCount)
                 updatedGroupUserScore?.run { groupUserScoreService.saveSync(this) }
             }
         }

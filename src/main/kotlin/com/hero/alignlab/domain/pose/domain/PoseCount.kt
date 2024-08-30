@@ -19,7 +19,7 @@ class PoseCount(
     /** 집계 데이터 */
     @Column(name = "total_count")
     @Convert(converter = PoseTotalCountConverter::class)
-    var totalCount: PoseTotalCount,
+    var totalCount: PoseTotalCount = PoseTotalCount(),
 
     /** 기준 날짜 */
     @Column(name = "`date`")

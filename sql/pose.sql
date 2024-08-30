@@ -35,7 +35,7 @@ CREATE TABLE `pose_count`
     `date`        datetime DEFAULT CURRENT_TIMESTAMP COMMENT '기준 날짜',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-CREATE INDEX idx__uid__date ON pose_count (uid, date);
+CREATE UNIQUE INDEX uidx__uid__date ON pose_count (uid, date);
 CREATE INDEX idx__date ON pose_count (date);
 
 -- 자세 알림
