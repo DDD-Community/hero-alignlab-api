@@ -1,6 +1,8 @@
 package com.hero.alignlab.domain.pose.application
 
+import com.hero.alignlab.common.extension.coExecuteOrNull
 import com.hero.alignlab.common.model.HeroPageRequest
+import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.pose.domain.PoseCount
 import com.hero.alignlab.domain.pose.infrastructure.PoseCountRepository
@@ -18,6 +20,7 @@ import java.time.LocalDate
 @Service
 class PoseCountService(
     private val poseCountRepository: PoseCountRepository,
+    private val txTemplates: TransactionTemplates,
 ) {
     @Transactional
     fun saveSync(poseCount: PoseCount): PoseCount {
@@ -80,6 +83,12 @@ class PoseCountService(
     suspend fun findAllByUidIn(uids: List<Long>): List<PoseCount> {
         return withContext(Dispatchers.IO) {
             poseCountRepository.findAllByUidIn(uids)
+        }
+    }
+
+    suspend fun deleteAll() {
+        txTemplates.writer.coExecuteOrNull {
+            poseCountRepository.deleteAllInBatch()
         }
     }
 }

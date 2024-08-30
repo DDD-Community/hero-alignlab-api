@@ -1,5 +1,7 @@
 package com.hero.alignlab.domain.pose.application
 
+import com.hero.alignlab.common.extension.coExecuteOrNull
+import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.pose.domain.PoseLayout
 import com.hero.alignlab.domain.pose.infrastructure.PoseLayoutRepository
 import com.hero.alignlab.exception.ErrorCode
@@ -11,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PoseLayoutService(
-    private val poseLayoutRepository: PoseLayoutRepository
+    private val poseLayoutRepository: PoseLayoutRepository,
+    private val txTemplates: TransactionTemplates,
 ) {
     suspend fun findTop1ByUidOrderByIdDesc(uid: Long): PoseLayout? {
         return withContext(Dispatchers.IO) {
@@ -32,5 +35,11 @@ class PoseLayoutService(
     @Transactional
     fun saveSync(poseLayout: PoseLayout): PoseLayout {
         return poseLayoutRepository.save(poseLayout)
+    }
+
+    suspend fun deleteAll() {
+        txTemplates.writer.coExecuteOrNull {
+            poseLayoutRepository.deleteAllInBatch()
+        }
     }
 }

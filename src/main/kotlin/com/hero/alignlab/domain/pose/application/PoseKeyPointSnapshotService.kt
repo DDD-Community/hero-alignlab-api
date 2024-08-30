@@ -1,5 +1,7 @@
 package com.hero.alignlab.domain.pose.application
 
+import com.hero.alignlab.common.extension.coExecuteOrNull
+import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.pose.domain.PoseKeyPointSnapshot
 import com.hero.alignlab.domain.pose.infrastructure.PoseKeyPointSnapshotRepository
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 class PoseKeyPointSnapshotService(
     private val heroNamedParameterJdbcTemplate: NamedParameterJdbcTemplate,
     private val poseKeyPointSnapshotRepository: PoseKeyPointSnapshotRepository,
+    private val txTemplates: TransactionTemplates,
 ) {
     @Transactional
     fun bulkSave(poseKeyPointSnapshots: List<PoseKeyPointSnapshot>) {
@@ -27,5 +30,11 @@ class PoseKeyPointSnapshotService(
     @Transactional
     fun saveAllSync(poseKeyPointSnapshots: List<PoseKeyPointSnapshot>): List<PoseKeyPointSnapshot> {
         return poseKeyPointSnapshotRepository.saveAll(poseKeyPointSnapshots)
+    }
+
+    suspend fun deleteAll() {
+        txTemplates.writer.coExecuteOrNull {
+            poseKeyPointSnapshotRepository.deleteAllInBatch()
+        }
     }
 }

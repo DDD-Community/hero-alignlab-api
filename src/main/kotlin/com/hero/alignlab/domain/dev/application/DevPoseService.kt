@@ -3,7 +3,8 @@ package com.hero.alignlab.domain.dev.application
 import com.hero.alignlab.common.extension.executes
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.dev.model.request.DevPoseSnapshotRequest
-import com.hero.alignlab.domain.pose.application.PoseSnapshotService
+import com.hero.alignlab.domain.group.application.GroupUserScoreService
+import com.hero.alignlab.domain.pose.application.*
 import com.hero.alignlab.domain.pose.domain.PoseSnapshot
 import com.hero.alignlab.domain.pose.domain.vo.PoseType
 import com.hero.alignlab.domain.pose.model.PoseSnapshotModel
@@ -15,8 +16,13 @@ import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 
 @Service
-class DevPoseSnapshotService(
+class DevPoseService(
     private val poseSnapshotService: PoseSnapshotService,
+    private val groupUserScoreService: GroupUserScoreService,
+    private val poseCountService: PoseCountService,
+    private val poseKeyPointSnapshotService: PoseKeyPointSnapshotService,
+    private val poseLayoutService: PoseLayoutService,
+    private val poseLayoutPointService: PoseLayoutPointService,
     private val txTemplates: TransactionTemplates,
     private val publisher: ApplicationEventPublisher,
 ) {
@@ -158,5 +164,14 @@ class DevPoseSnapshotService(
             type = PoseType.CHIN_UTP,
             imageUrl = null
         )
+    }
+
+    suspend fun deleteAllPoseData() {
+        groupUserScoreService.deleteAll()
+        poseCountService.deleteAll()
+        poseKeyPointSnapshotService.deleteAll()
+        poseLayoutService.deleteAll()
+        poseLayoutPointService.deleteAll()
+        poseSnapshotService.deleteAll()
     }
 }

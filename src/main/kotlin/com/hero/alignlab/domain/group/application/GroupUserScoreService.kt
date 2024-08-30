@@ -1,5 +1,7 @@
 package com.hero.alignlab.domain.group.application
 
+import com.hero.alignlab.common.extension.coExecuteOrNull
+import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.group.infrastructure.GroupUserScoreRepository
 import kotlinx.coroutines.Dispatchers
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class GroupUserScoreService(
     private val groupUserScoreRepository: GroupUserScoreRepository,
+    private val txTemplates: TransactionTemplates,
 ) {
     suspend fun findAllByGroupId(groupId: Long): List<GroupUserScore> {
         return withContext(Dispatchers.IO) {
@@ -47,5 +50,11 @@ class GroupUserScoreService(
 
     fun findAllByGroupIdAndUidsSync(groupId: Long, uids: List<Long>): List<GroupUserScore> {
         return groupUserScoreRepository.findAllByGroupIdAndUidIn(groupId, uids)
+    }
+
+    suspend fun deleteAll() {
+        txTemplates.writer.coExecuteOrNull {
+            groupUserScoreRepository.deleteAllInBatch()
+        }
     }
 }
