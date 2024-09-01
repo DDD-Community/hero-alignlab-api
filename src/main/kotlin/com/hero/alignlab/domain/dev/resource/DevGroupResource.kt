@@ -1,7 +1,7 @@
 package com.hero.alignlab.domain.dev.resource
 
-import com.hero.alignlab.config.dev.DevResourceCheckConfig.Companion.devResource
 import com.hero.alignlab.config.swagger.SwaggerTag.DEV_TAG
+import com.hero.alignlab.domain.auth.model.DevAuthUser
 import com.hero.alignlab.domain.dev.model.request.DevGroupJoinRequest
 import com.hero.alignlab.domain.group.application.GroupFacade
 import io.swagger.v3.oas.annotations.Operation
@@ -18,14 +18,12 @@ class DevGroupResource(
     @Operation(summary = "그룹 조인하기")
     @PostMapping("/api/dev/v1/groups/{groupId}/join")
     suspend fun joinGroup(
-        @RequestHeader("X-HERO-DEV-TOKEN") token: String,
+        dev: DevAuthUser,
         @PathVariable groupId: Long,
         @RequestBody request: DevGroupJoinRequest,
-    ) = devResource(token) {
-        groupFacade.joinGroup(
-            groupId = groupId,
-            uid = request.uid,
-            joinCode = request.joinCode
-        )
-    }
+    ) = groupFacade.joinGroup(
+        groupId = groupId,
+        uid = request.uid,
+        joinCode = request.joinCode
+    )
 }

@@ -1,7 +1,9 @@
 package com.hero.alignlab.config.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.hero.alignlab.config.dev.DevResourceCheckConfig
 import com.hero.alignlab.domain.auth.application.AuthFacade
+import com.hero.alignlab.domain.auth.resolver.ReactiveDevResolver
 import com.hero.alignlab.domain.auth.resolver.ReactiveUserResolver
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.ReactiveAdapterRegistry
@@ -23,6 +25,7 @@ import java.nio.charset.Charset
 class WebFluxConfig(
     private val objectMapper: ObjectMapper,
     private val authFacade: AuthFacade,
+    private val devResourceCheckConfig: DevResourceCheckConfig,
 ) : WebFluxConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
@@ -51,6 +54,7 @@ class WebFluxConfig(
 
         configurer.addCustomResolver(
             ReactiveUserResolver(registry, authFacade),
+            ReactiveDevResolver(registry, devResourceCheckConfig),
             ReactiveSortHandlerMethodArgumentResolver(),
             ReactivePageableHandlerMethodArgumentResolver()
         )

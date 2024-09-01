@@ -1,8 +1,9 @@
 package com.hero.alignlab.config.swagger
 
-import com.hero.alignlab.config.dev.DevResourceCheckConfig.Companion.DEV_AUTH_TOKEN_KEY
 import com.hero.alignlab.domain.auth.model.AUTH_TOKEN_KEY
 import com.hero.alignlab.domain.auth.model.AuthUser
+import com.hero.alignlab.domain.auth.model.DEV_AUTH_TOKEN_KEY
+import com.hero.alignlab.domain.auth.model.DevAuthUser
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -33,16 +34,15 @@ class SpringDocConfig(
             .addRequestWrapperToIgnore(
                 WebSession::class.java,
                 RequestContext::class.java,
-                AuthUser::class.java
+                AuthUser::class.java,
+                DevAuthUser::class.java,
             )
     }
 
     @Bean
     fun openApi(): OpenAPI {
-        val securityRequirement = SecurityRequirement().addList(AUTH_TOKEN_KEY)
         return OpenAPI()
             .components(authSetting())
-            .security(listOf(securityRequirement))
             .addServersItem(Server().url("/"))
             .info(
                 Info()
@@ -50,6 +50,8 @@ class SpringDocConfig(
                     .version(buildProperties.version)
                     .description("Hero Alignlab Rest API Docs")
             )
+            .addSecurityItem(SecurityRequirement().addList(AUTH_TOKEN_KEY))
+            .addSecurityItem(SecurityRequirement().addList(DEV_AUTH_TOKEN_KEY))
     }
 
     private fun authSetting(): Components {
@@ -57,10 +59,15 @@ class SpringDocConfig(
             .addSecuritySchemes(
                 AUTH_TOKEN_KEY,
                 SecurityScheme()
-                    .description("Access Token")
+                    .name(AUTH_TOKEN_KEY)
                     .type(SecurityScheme.Type.APIKEY)
                     .`in`(SecurityScheme.In.HEADER)
-                    .name(AUTH_TOKEN_KEY)
+            ).addSecuritySchemes(
+                DEV_AUTH_TOKEN_KEY,
+                SecurityScheme()
+                    .name(DEV_AUTH_TOKEN_KEY)
+                    .type(SecurityScheme.Type.APIKEY)
+                    .`in`(SecurityScheme.In.HEADER)
             )
     }
 }
