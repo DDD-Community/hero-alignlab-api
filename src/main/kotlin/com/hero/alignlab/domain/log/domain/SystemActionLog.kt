@@ -10,6 +10,9 @@ class SystemActionLog(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = -1L,
 
+    @Column(name = "uid")
+    val uid: Long? = null,
+
     @Column(name = "ip_address")
     val ipAddress: String? = null,
 

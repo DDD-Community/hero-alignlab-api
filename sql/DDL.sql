@@ -6,6 +6,7 @@ DATABASE hero CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 CREATE TABLE `system_action_log`
 (
     `id`          bigint NOT NULL AUTO_INCREMENT,
+    `uid`         int                             DEFAULT NULL COMMENT 'uid',
     `host`        varchar(256)                    DEFAULT NULL,
     `http_method` varchar(256)                    DEFAULT NULL,
     `ip_address`  varchar(256)                    DEFAULT NULL,

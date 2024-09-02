@@ -2,6 +2,7 @@ package com.hero.alignlab.event.model
 
 import com.hero.alignlab.common.extension.mapper
 import com.hero.alignlab.common.extension.remoteIp
+import com.hero.alignlab.domain.auth.model.AUTH_TOKEN_KEY
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.pose.domain.PoseSnapshot
 import com.hero.alignlab.domain.pose.model.PoseSnapshotModel.KeyPoint
@@ -30,23 +31,28 @@ data class SystemActionLogEvent(
     val userAgent: String?,
     val host: String?,
     val referer: String?,
+    val token: String?,
     val extra: String?,
 ) : BaseEvent() {
     companion object {
-        private const val USER_AGENT = "User-Agent"
-        private const val HOST = "Host"
-        private const val REFERER = "Referer"
+        private const val USER_AGENT = "USER-AGENT"
+        private const val HOST = "HOST"
+        private const val REFERER = "REFERER"
 
         fun from(exchange: ServerWebExchange): SystemActionLogEvent {
             val request = exchange.request
+
+            val headers = exchange.request.headers.toSingleValueMap()
+                .mapKeys { header -> header.key.uppercase() }
 
             return SystemActionLogEvent(
                 ipAddress = request.remoteIp,
                 method = request.method.name(),
                 path = request.uri.path,
-                userAgent = request.headers[USER_AGENT].toString(),
-                host = request.headers[HOST].toString(),
-                referer = request.headers[REFERER].toString(),
+                userAgent = headers[USER_AGENT],
+                host = headers[HOST],
+                referer = headers[REFERER],
+                token = headers[AUTH_TOKEN_KEY],
                 extra = mapper.writeValueAsString(request.headers)
             )
         }
