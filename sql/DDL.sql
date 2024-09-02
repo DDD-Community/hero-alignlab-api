@@ -18,6 +18,7 @@ CREATE TABLE `system_action_log`
     `modified_at` datetime                        DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'system log';
+CREATE INDEX idx__uid ON system_action_log (uid);
 
 -- 이미지
 CREATE TABLE `image_metadata`

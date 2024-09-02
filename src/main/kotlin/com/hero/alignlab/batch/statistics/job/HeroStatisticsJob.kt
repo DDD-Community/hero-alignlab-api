@@ -64,6 +64,9 @@ class HeroStatisticsJob(
             val syslogTotalCount = async(Dispatchers.IO) {
                 systemActionLogRepository.count()
             }
+            val countActiveUserTop3 = async(Dispatchers.IO) {
+                systemActionLogRepository.countActiveUserTop3(fromDate, toDate)
+            }
 
             /** 포즈 */
             val poseNotificationCountByCreatedAt = async(Dispatchers.IO) {
@@ -94,6 +97,7 @@ class HeroStatisticsJob(
             }
             val userInfoCountByCreatedAt = async(Dispatchers.IO) {
                 userInfoRepository.countByCreatedAtBetween(fromDate, toDate)
+
             }
             val userInfoTotalCount = async(Dispatchers.IO) {
                 userInfoRepository.count()
@@ -109,32 +113,38 @@ class HeroStatisticsJob(
 
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
+            val text = countActiveUserTop3.await().joinToString("\n") {
+                "- uid: ${it.uid} / count: ${it.count}"
+            }
+
             val message = """
-                $title [${fromDate.format(formatter)} ~ ${toDate.format(formatter)}]
+                **$title [${fromDate.format(formatter)} ~ ${toDate.format(formatter)}]**
                 
-                그룹
+                **그룹**
                 - 그룹 생성수 : ${groupCountByCreatedAt.await()}건 [총합: ${groupTotalCount.await()}건]
                 - 그룹 유저 생성수 : ${groupUserCountByCreatedAt.await()}건 [총합: ${groupUserTotalCount.await()}건]
                 
-                문의하기
+                **문의하기**
                 - 문의하기 생성수 : ${discussionCountByCreatedAt.await()}건 [총합: ${discussionTotalCount.await()}건]
                 
-                API
+                **API**
                 - api 호출량 : ${syslogCountByCreatedAt.await()}건 [총합: ${syslogTotalCount.await()}건]
                 
-                포즈
+                **포즈**
                 - 포즈 알림 설정수 : ${poseNotificationCountByCreatedAt.await()}건 [총합: ${poseNotificationTotalCount.await()}건]
                 - 포즈 스냅샷 생성수 : ${poseSnapshotCountByCreatedAt.await()}건 [총합: ${poseSnapshotTotalCount.await()}건]
                 
-                회원
+                **회원**
                 - 일반 회원가입수 : ${credentialUserInfoCountByCreatedAt.await()}건 [총합: ${credentialUserInfoCountTotalCount.await()}건]
                 - OAuth 회원가입수 : ${oAuthUserInfoCountByCreatedAt.await()}건 [총합: ${oAuthUserInfoTotalCount.await()}건]
                 - 유저 생성수 : ${userInfoCountByCreatedAt.await()}건 [총합: ${userInfoTotalCount.await()}건]
                 
-                이미지
+                **이미지**
                 - 이미지 생성수 : ${imageCountByCreatedAt.await()}건 [총합: ${imageTotalCount.await()}건]
+                
+                **이용자 현황**
+                - ${countActiveUserTop3.await().joinToString(" | ") { "uid : ${it.uid}  count : ${it.count}" }}
             """.trimIndent()
-
             discordWebhookService.sendMessage(SendMessageRequest(message))
         }
     }
