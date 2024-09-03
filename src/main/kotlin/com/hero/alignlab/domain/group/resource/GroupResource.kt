@@ -25,8 +25,9 @@ class GroupResource(
     private val groupFacade: GroupFacade,
 ) {
     /**
-     * - 속해 있는 그룹의 정보를 조회할 수 있다.
+     * 그룹 상세 조회
      * - 그룹장의 경우, joinCode를 조회할 수 있다.(그룹원은 조회 불가.)
+     * - 그룹에 속해있는 경우에만, 랭킹 정보를 확인 가능하다.
      */
     @Operation(summary = "그룹 조회")
     @GetMapping("/api/v1/groups/{id}")

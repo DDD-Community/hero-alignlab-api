@@ -14,18 +14,19 @@ data class GetGroupResponse(
     val userCount: Int,
     /** 그룹 정원 */
     val userCapacity: Int,
+    val ranks: List<GetGroupRankResponse>? = null
 ) {
     companion object {
         fun from(group: Group): GetGroupResponse {
             return GetGroupResponse(
-                group.id,
-                group.name,
-                group.description,
-                group.ownerUid,
-                group.isHidden,
-                group.joinCode,
-                group.userCount,
-                group.userCapacity
+                id = group.id,
+                name = group.name,
+                description = group.description,
+                ownerUid = group.ownerUid,
+                isHidden = group.isHidden,
+                joinCode = group.joinCode,
+                userCount = group.userCount,
+                userCapacity = group.userCapacity
             )
         }
     }

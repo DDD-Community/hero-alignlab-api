@@ -160,15 +160,42 @@ class GroupFacade(
         return parZip(
             { groupService.findByIdOrThrow(groupId) },
             { groupUserService.existsByGroupIdAndUid(groupId, user.uid) },
-        ) { group, joinedGroup ->
-            if (!joinedGroup) {
-                throw NotFoundException(ErrorCode.NOT_FOUND_GROUP_ERROR)
+            {
+                groupUserScoreService.findAllByGroupId(groupId)
+                    .filterNot { groupUserScore -> groupUserScore.score == null }
+                    .sortedBy { groupUserScore -> groupUserScore.score }
+                    .take(5)
             }
-
+        ) { group, joinedGroup, groupUserScore ->
             GetGroupResponse.from(group).run {
                 when (group.ownerUid == user.uid) {
                     true -> this
                     false -> this.copy(joinCode = null)
+                }
+            }.run {
+                when (joinedGroup) {
+                    true -> {
+                        val uids = groupUserScore.map { it.uid }
+
+                        val userInfo = userInfoService.findAllByIds(uids).associateBy { userInfo -> userInfo.id }
+                        val groupUser = groupUserService.findAllByGroupIdAndUids(groupId, uids)
+                            .associateBy { groupUser -> groupUser.uid }
+
+                        val rank = AtomicInteger(1)
+
+                        val ranks = groupUserScore.mapNotNull { score ->
+                            GetGroupRankResponse(
+                                groupUserId = groupUser[score.uid]?.id ?: return@mapNotNull null,
+                                name = userInfo[score.uid]?.nickname ?: return@mapNotNull null,
+                                rank = rank.getAndIncrement(),
+                                score = score.score ?: 0,
+                            )
+                        }
+
+                        this.copy(ranks = ranks)
+                    }
+
+                    false -> this
                 }
             }
         }
