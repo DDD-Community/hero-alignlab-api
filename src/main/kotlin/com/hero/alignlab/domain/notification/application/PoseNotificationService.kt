@@ -22,14 +22,8 @@ class PoseNotificationService(
     private val txTemplates: TransactionTemplates,
 ) {
     suspend fun getNotification(user: AuthUser): GetPoseNotificationResponse? {
-        val poseNotification = findByUidAndIsActiveOrNull(user.uid, true) ?: return null
+        val poseNotification = findByUidOrNull(user.uid) ?: return null
         return GetPoseNotificationResponse.from(poseNotification)
-    }
-
-    suspend fun findByUidAndIsActiveOrNull(uid: Long, isActive: Boolean): PoseNotification? {
-        return withContext(Dispatchers.IO) {
-            poseNotificationRepository.findByUidAndIsActive(uid, isActive)
-        }
     }
 
     suspend fun registerNotification(
