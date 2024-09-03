@@ -110,17 +110,18 @@ class GroupFacade(
     suspend fun joinGroup(groupId: Long, uid: Long, joinCode: String?): JoinGroupResponse {
         return parZip(
             { groupService.findByIdOrThrow(groupId) },
-            { groupUserService.findAllByUid(uid).associateBy { it.groupId } }
-        ) { group, groupUsers ->
+            { groupUserService.countAllByGroupId(groupId) },
+            { groupUserService.findAllByUid(uid).associateBy { it.groupId } },
+        ) { group, groupUserCount, myGroupUserInfo ->
             if (group.isHidden && group.joinCode != joinCode) {
                 throw InvalidRequestException(ErrorCode.IMPOSSIBLE_TO_JOIN_GROUP_ERROR)
             }
 
-            val groupUser = groupUsers[groupId]
+            val groupUser = myGroupUserInfo[groupId]
 
             when {
                 /** 이미 다른 그룹에 속해있는 유저 */
-                groupUser == null && groupUsers.isNotEmpty() -> {
+                groupUser == null && myGroupUserInfo.isNotEmpty() -> {
                     throw InvalidRequestException(ErrorCode.DUPLICATE_GROUP_JOIN_ERROR)
                 }
 
@@ -135,6 +136,11 @@ class GroupFacade(
 
                 /** 그룹에 조인 */
                 else -> {
+                    /** TODO: 그룹원 조인 진행시, locking 필요. */
+                    if (groupUserCount.toInt() >= group.userCapacity) {
+                        throw InvalidRequestException(ErrorCode.EXCEED_GROUP_USER_COUNT_ERROR)
+                    }
+
                     val createdGroupUser = txTemplates.writer.executes {
                         groupService.saveSync(group.apply { this.userCount += 1 })
                         groupUserService.saveSync(groupId, uid)

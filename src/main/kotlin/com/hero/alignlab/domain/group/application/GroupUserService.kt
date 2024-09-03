@@ -104,4 +104,10 @@ class GroupUserService(
             groupUserRepository.findByUid(uid)
         }
     }
+
+    suspend fun countAllByGroupId(groupId: Long): Long {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.countAllByGroupId(groupId)
+        }
+    }
 }
