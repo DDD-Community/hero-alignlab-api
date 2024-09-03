@@ -4,6 +4,7 @@ import com.hero.alignlab.common.extension.coExecuteOrNull
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.group.application.GroupUserScoreService
 import com.hero.alignlab.domain.group.application.GroupUserService
+import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.application.PoseKeyPointSnapshotService
 import com.hero.alignlab.domain.pose.domain.PoseCount
@@ -55,15 +56,26 @@ class PoseSnapshotListener(
                 .values
                 .sum()
 
+            /** group score 처리 */
             val groupUser = groupUserService.findByUid(event.poseSnapshot.uid)
-            val groupUserScore = groupUserScoreService.findByUidOrNull(event.poseSnapshot.uid)
+            val updatedGroupUserScore = when (groupUser == null) {
+                true -> null
+                false -> {
+                    val groupUserScore = groupUserScoreService.findByUidOrNull(event.poseSnapshot.uid)
 
-            val updatedGroupUserScore = when (groupUser != null && groupUserScore != null) {
-                true -> groupUserScore.apply {
-                    this.score = score
+                    when (groupUserScore != null) {
+                        true -> groupUserScore.apply {
+                            this.score = score
+                        }
+
+                        false -> GroupUserScore(
+                            groupId = groupUser.groupId,
+                            groupUserId = groupUser.id,
+                            uid = groupUser.uid,
+                            score = score
+                        )
+                    }
                 }
-
-                false -> null
             }
 
             txTemplates.writer.coExecuteOrNull {
