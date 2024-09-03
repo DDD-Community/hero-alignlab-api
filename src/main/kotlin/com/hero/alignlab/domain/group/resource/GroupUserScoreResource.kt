@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 class GroupUserScoreResource(
     private val groupFacade: GroupFacade,
 ) {
+    /** 내가 속한 그룹의 전체 랭킹을 조회할 수 있다 */
     @Operation(summary = "바른 자세 랭킹")
     @GetMapping("/api/v1/group-scores")
     suspend fun getScores(

@@ -230,7 +230,7 @@ class GroupFacade(
             .filterNot { groupUserScore -> groupUserScore.score == null }
             .sortedBy { groupUserScore -> groupUserScore.score }
 
-        val userbyId = userInfoService.findAllByIds(groupUserScores.map { it.uid }).associateBy { it.id }
+        val userById = userInfoService.findAllByIds(groupUserScores.map { it.uid }).associateBy { it.id }
 
         val rank = AtomicInteger(1)
 
@@ -239,7 +239,7 @@ class GroupFacade(
             ranks = groupUserScores.mapNotNull { groupUserScore ->
                 GetGroupRankResponse(
                     groupUserId = groupUserScore.groupUserId,
-                    name = userbyId[groupUserScore.uid]?.nickname ?: return@mapNotNull null,
+                    name = userById[groupUserScore.uid]?.nickname ?: return@mapNotNull null,
                     rank = rank.getAndIncrement(),
                     score = groupUserScore.score ?: return@mapNotNull null,
                 )
