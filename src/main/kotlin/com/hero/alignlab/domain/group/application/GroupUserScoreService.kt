@@ -2,6 +2,7 @@ package com.hero.alignlab.domain.group.application
 
 import com.hero.alignlab.common.extension.coExecuteOrNull
 import com.hero.alignlab.config.database.TransactionTemplates
+import com.hero.alignlab.domain.group.domain.GroupUser
 import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.group.infrastructure.GroupUserScoreRepository
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +56,27 @@ class GroupUserScoreService(
     suspend fun deleteAll() {
         txTemplates.writer.coExecuteOrNull {
             groupUserScoreRepository.deleteAllInBatch()
+        }
+    }
+
+    suspend fun createOrUpdateGroupUserScore(groupUser: GroupUser, score: Int) {
+        val groupUserScore = findByUidOrNull(groupUser.uid)
+
+        val createOrUpdateGroupUserScore = when (groupUserScore == null) {
+            true -> GroupUserScore(
+                groupId = groupUser.groupId,
+                groupUserId = groupUser.id,
+                uid = groupUser.uid,
+                score = score
+            )
+
+            false -> groupUserScore.apply {
+                this.score = score
+            }
+        }
+
+        txTemplates.writer.coExecuteOrNull {
+            saveSync(createOrUpdateGroupUserScore)
         }
     }
 }

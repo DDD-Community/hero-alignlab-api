@@ -13,7 +13,7 @@ class MyGroupFacade(
 ) {
     // TODO : 기획 확인후, 코드 변경
     suspend fun getMyGroup(user: AuthUser): MyGroupResponse? {
-        val groupUser = groupUserService.findByUid(user.uid) ?: return null
+        val groupUser = groupUserService.findByUidOrNull(user.uid) ?: return null
         val group = groupService.findByIdOrThrow(groupUser.groupId)
         val groupUserCount = groupUserService.countAllByGroupId(groupUser.groupId)
         val userInfo = userInfoService.findByIdOrThrow(group.ownerUid)

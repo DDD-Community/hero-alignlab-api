@@ -4,7 +4,6 @@ import com.hero.alignlab.common.extension.coExecuteOrNull
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.group.application.GroupUserScoreService
 import com.hero.alignlab.domain.group.application.GroupUserService
-import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.application.PoseKeyPointSnapshotService
 import com.hero.alignlab.domain.pose.domain.PoseCount
@@ -51,37 +50,20 @@ class PoseSnapshotListener(
                 this.totalCount.count[event.poseSnapshot.type] = typeCount + 1
             }
 
-            val score = updatedPoseCount.totalCount.count
-                .filter { (key, _) -> key in BAD_POSE }
-                .values
-                .sum()
-
-            /** group score 처리 */
-            val groupUser = groupUserService.findByUid(event.poseSnapshot.uid)
-            val updatedGroupUserScore = when (groupUser == null) {
-                true -> null
-                false -> {
-                    val groupUserScore = groupUserScoreService.findByUidOrNull(event.poseSnapshot.uid)
-
-                    when (groupUserScore != null) {
-                        true -> groupUserScore.apply {
-                            this.score = score
-                        }
-
-                        false -> GroupUserScore(
-                            groupId = groupUser.groupId,
-                            groupUserId = groupUser.id,
-                            uid = groupUser.uid,
-                            score = score
-                        )
-                    }
-                }
-            }
-
+            /** 포즈에 연관된 데이터 처리 */
             txTemplates.writer.coExecuteOrNull {
                 poseKeyPointSnapshotService.saveAllSync(keyPoints)
                 poseCountService.saveSync(updatedPoseCount)
-                updatedGroupUserScore?.run { groupUserScoreService.saveSync(this) }
+            }
+
+            /** group score 처리 */
+            groupUserService.findByUidOrNull(event.poseSnapshot.uid)?.run {
+                val score = updatedPoseCount.totalCount.count
+                    .filter { (key, _) -> key in BAD_POSE }
+                    .values
+                    .sum()
+
+                groupUserScoreService.createOrUpdateGroupUserScore(this, score)
             }
         }
     }
