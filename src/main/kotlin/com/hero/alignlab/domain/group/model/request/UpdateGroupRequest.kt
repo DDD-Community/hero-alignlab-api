@@ -9,4 +9,6 @@ data class UpdateGroupRequest(
     val isHidden: Boolean,
     /** 참여 코드, 미입력시 자동 생성 */
     val joinCode: String?,
+    /** 정원, 기본값 30 */
+    val userCapacity: Int?,
 )

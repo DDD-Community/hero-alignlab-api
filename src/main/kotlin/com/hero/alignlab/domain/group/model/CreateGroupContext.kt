@@ -25,7 +25,8 @@ class CreateGroupContext(
                 JoinCodeGenerator.joinCode(request.joinCode!!)
             } else {
                 null
-            }
+            },
+            userCount = request.userCapacity ?: 30
         )
     }
 }

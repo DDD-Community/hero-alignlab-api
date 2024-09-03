@@ -29,5 +29,5 @@ data class Group(
     var userCount: Int = 1,
 
     @Column(name = "user_capacity")
-    val userCapacity: Int = 30,
+    var userCapacity: Int = 30,
 ) : BaseEntity()

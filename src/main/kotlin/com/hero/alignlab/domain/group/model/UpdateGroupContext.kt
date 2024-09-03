@@ -24,6 +24,7 @@ class UpdateGroupContext(
             } else {
                 null
             }
+            this.userCapacity = request.userCapacity ?: 30
         }
     }
 }
