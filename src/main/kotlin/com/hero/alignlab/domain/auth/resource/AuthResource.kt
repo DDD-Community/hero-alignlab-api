@@ -4,6 +4,7 @@ import com.hero.alignlab.common.extension.wrapCreated
 import com.hero.alignlab.common.extension.wrapOk
 import com.hero.alignlab.domain.auth.application.AuthFacade
 import com.hero.alignlab.domain.auth.model.AuthUser
+import com.hero.alignlab.domain.auth.model.DevAuthUser
 import com.hero.alignlab.domain.auth.model.request.SignInRequest
 import com.hero.alignlab.domain.auth.model.request.SignUpRequest
 import io.swagger.v3.oas.annotations.Operation
@@ -21,6 +22,7 @@ class AuthResource(
     @Operation(summary = "회원가입")
     @PostMapping("/api/v1/auth/sign-up")
     suspend fun signUp(
+        dev: DevAuthUser,
         @RequestBody request: SignUpRequest,
     ) = authFacade.signUp(request).wrapCreated()
 
@@ -28,6 +30,7 @@ class AuthResource(
     @Operation(summary = "로그인")
     @PostMapping("/api/v1/auth/sign-in")
     suspend fun signUp(
+        dev: DevAuthUser,
         @RequestBody request: SignInRequest,
     ) = authFacade.signIn(request).wrapOk()
 
