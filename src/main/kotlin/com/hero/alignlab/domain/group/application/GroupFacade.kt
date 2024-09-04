@@ -89,6 +89,7 @@ class GroupFacade(
                 false -> {
                     val succeedGroup = group.apply {
                         this.ownerUid = groupUser.uid
+                        this.userCount -= 1
                     }
                     groupService.saveSync(succeedGroup)
                 }
@@ -210,10 +211,13 @@ class GroupFacade(
         val groupUser = groupUserService.findByIdOrNull(groupUserId)
             ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
 
-        groupService.findByIdAndOwnerUid(groupUser.groupId, user.uid)
+        val group = groupService.findByIdAndOwnerUid(groupUser.groupId, user.uid)
             ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
 
-        groupUserService.deleteSync(groupUserId)
+        txTemplates.writer.executesOrNull {
+            groupUserService.deleteSync(groupUserId)
+            groupService.saveSync(group.apply { this.userCount -= 1 })
+        }
     }
 
     suspend fun checkGroupRegisterRequest(user: AuthUser, request: CheckGroupRegisterRequest) {

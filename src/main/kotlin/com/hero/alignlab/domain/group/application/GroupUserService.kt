@@ -95,6 +95,7 @@ class GroupUserService(
         }
     }
 
+    @Transactional
     fun deleteSync(groupUserId: Long) {
         groupUserRepository.deleteById(groupUserId)
     }
