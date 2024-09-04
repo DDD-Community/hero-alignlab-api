@@ -21,9 +21,14 @@ interface PoseSnapshotRepository : JpaRepository<PoseSnapshot, Long>, PoseSnapsh
     fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
 }
 
-@Transactional(readOnly = true)
 interface PoseSnapshotQRepository {
     fun countByUidsAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel>
+
+    fun countByUidAndCreatedAt(
+        uids: List<Long>,
+        fromCreatedAt: LocalDateTime,
+        toCreatedAt: LocalDateTime,
+    ): List<PoseTypeCountModel>
 }
 
 class PoseSnapshotQRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositorySupport(PoseSnapshot::class.java) {
@@ -50,6 +55,28 @@ class PoseSnapshotQRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositoryS
                 qPoseSnapshot.createdAt.year().eq(date.year),
                 qPoseSnapshot.createdAt.month().eq(date.monthValue),
                 qPoseSnapshot.createdAt.dayOfMonth().eq(date.dayOfMonth)
+            )
+            .groupBy(qPoseSnapshot.uid, qPoseSnapshot.type)
+            .fetch()
+    }
+
+    override fun countByUidAndCreatedAt(
+        uids: List<Long>,
+        fromCreatedAt: LocalDateTime,
+        toCreatedAt: LocalDateTime
+    ): List<PoseTypeCountModel> {
+        return JPAQuery<QPoseSnapshot>(entityManager)
+            .select(
+                QPoseTypeCountModel(
+                    qPoseSnapshot.uid,
+                    qPoseSnapshot.type,
+                    qPoseSnapshot.id.count()
+                )
+            )
+            .from(qPoseSnapshot)
+            .where(
+                qPoseSnapshot.uid.`in`(uids),
+                qPoseSnapshot.createdAt.between(fromCreatedAt, toCreatedAt)
             )
             .groupBy(qPoseSnapshot.uid, qPoseSnapshot.type)
             .fetch()

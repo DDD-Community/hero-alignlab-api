@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Service
 class PoseSnapshotService(
@@ -24,6 +25,20 @@ class PoseSnapshotService(
     suspend fun countByUidsAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel> {
         return withContext(Dispatchers.IO) {
             poseSnapshotRepository.countByUidsAndDate(uids, date)
+        }
+    }
+
+    suspend fun countByUidsAndCreatedAtBetween(
+        uids: List<Long>,
+        fromCreatedAt: LocalDateTime,
+        toCreatedAt: LocalDateTime,
+    ): List<PoseTypeCountModel> {
+        return withContext(Dispatchers.IO) {
+            poseSnapshotRepository.countByUidAndCreatedAt(
+                uids = uids,
+                fromCreatedAt = fromCreatedAt,
+                toCreatedAt = toCreatedAt,
+            )
         }
     }
 

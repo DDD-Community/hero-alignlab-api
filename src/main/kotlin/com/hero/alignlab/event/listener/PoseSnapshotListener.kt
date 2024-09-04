@@ -6,6 +6,7 @@ import com.hero.alignlab.domain.group.application.GroupUserScoreService
 import com.hero.alignlab.domain.group.application.GroupUserService
 import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.application.PoseKeyPointSnapshotService
+import com.hero.alignlab.domain.pose.application.PoseSnapshotService
 import com.hero.alignlab.domain.pose.domain.PoseCount
 import com.hero.alignlab.domain.pose.domain.PoseKeyPointSnapshot
 import com.hero.alignlab.domain.pose.domain.vo.PoseType.Companion.BAD_POSE
@@ -19,6 +20,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class PoseSnapshotListener(
+    private val poseSnapshotService: PoseSnapshotService,
     private val poseKeyPointSnapshotService: PoseKeyPointSnapshotService,
     private val poseCountService: PoseCountService,
     private val groupUserScoreService: GroupUserScoreService,
@@ -58,10 +60,14 @@ class PoseSnapshotListener(
 
             /** group score 처리 */
             groupUserService.findByUidOrNull(event.poseSnapshot.uid)?.run {
-                val score = updatedPoseCount.totalCount.count
-                    .filter { (key, _) -> key in BAD_POSE }
-                    .values
-                    .sum()
+                val to = event.poseSnapshot.createdAt
+                val from = to.minusHours(1)
+
+                val score = poseSnapshotService.countByUidsAndCreatedAtBetween(
+                    uids = listOf(event.poseSnapshot.uid),
+                    fromCreatedAt = from,
+                    toCreatedAt = to
+                ).filter { model -> model.type in BAD_POSE }.sumOf { model -> model.count }.toInt()
 
                 groupUserScoreService.createOrUpdateGroupUserScore(this, score)
             }
