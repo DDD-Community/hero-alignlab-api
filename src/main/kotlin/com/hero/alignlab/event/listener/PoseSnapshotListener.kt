@@ -11,6 +11,7 @@ import com.hero.alignlab.domain.pose.domain.PoseCount
 import com.hero.alignlab.domain.pose.domain.PoseKeyPointSnapshot
 import com.hero.alignlab.domain.pose.domain.vo.PoseType.Companion.BAD_POSE
 import com.hero.alignlab.event.model.LoadPoseSnapshot
+import com.hero.alignlab.ws.handler.ReactiveGroupUserWebSocketHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,6 +27,7 @@ class PoseSnapshotListener(
     private val groupUserScoreService: GroupUserScoreService,
     private val groupUserService: GroupUserService,
     private val txTemplates: TransactionTemplates,
+    private val wsHandler: ReactiveGroupUserWebSocketHandler,
 ) {
     @TransactionalEventListener
     fun handle(event: LoadPoseSnapshot) {
@@ -69,7 +71,9 @@ class PoseSnapshotListener(
                     toCreatedAt = to
                 ).filter { model -> model.type in BAD_POSE }.sumOf { model -> model.count }.toInt()
 
-                groupUserScoreService.createOrUpdateGroupUserScore(this, score)
+                val groupUserScore = groupUserScoreService.createOrUpdateGroupUserScore(this, score)
+
+                wsHandler.launchSendEvent(groupUserScore.groupId)
             }
         }
     }

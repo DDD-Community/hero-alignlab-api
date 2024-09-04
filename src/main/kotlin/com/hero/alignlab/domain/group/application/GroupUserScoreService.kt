@@ -1,11 +1,11 @@
 package com.hero.alignlab.domain.group.application
 
+import com.hero.alignlab.common.extension.coExecute
 import com.hero.alignlab.common.extension.coExecuteOrNull
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.group.domain.GroupUser
 import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.group.infrastructure.GroupUserScoreRepository
-import com.hero.alignlab.ws.handler.ReactiveGroupUserWebSocketHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional
 class GroupUserScoreService(
     private val groupUserScoreRepository: GroupUserScoreRepository,
     private val txTemplates: TransactionTemplates,
-    private val wsHandler: ReactiveGroupUserWebSocketHandler,
 ) {
     suspend fun findAllByGroupId(groupId: Long): List<GroupUserScore> {
         return withContext(Dispatchers.IO) {
@@ -61,7 +60,7 @@ class GroupUserScoreService(
         }
     }
 
-    suspend fun createOrUpdateGroupUserScore(groupUser: GroupUser, score: Int) {
+    suspend fun createOrUpdateGroupUserScore(groupUser: GroupUser, score: Int): GroupUserScore {
         val groupUserScore = findByUidOrNull(groupUser.uid)
 
         val createOrUpdateGroupUserScore = when (groupUserScore == null) {
@@ -77,11 +76,9 @@ class GroupUserScoreService(
             }
         }
 
-        txTemplates.writer.coExecuteOrNull {
+        return txTemplates.writer.coExecute {
             saveSync(createOrUpdateGroupUserScore)
         }
-
-        wsHandler.launchSendEvent(groupUser.groupId)
     }
 
     suspend fun findAllByUids(uids: List<Long>): List<GroupUserScore> {
