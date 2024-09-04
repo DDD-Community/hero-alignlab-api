@@ -45,6 +45,11 @@ class PoseNotificationResource(
     @PatchMapping(path = ["/api/v1/pose-notifications/{id}"])
     suspend fun patchPoseNotification(
         user: AuthUser,
+        @PathVariable id: Long,
         @RequestBody request: PatchPoseNotificationRequest,
-    ) = poseNotificationService.patch(user, request).wrapOk()
+    ) = poseNotificationService.patch(
+        user = user,
+        id = id,
+        request = request
+    ).wrapOk()
 }

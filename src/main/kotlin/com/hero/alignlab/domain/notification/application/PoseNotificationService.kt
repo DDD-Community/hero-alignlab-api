@@ -52,12 +52,22 @@ class PoseNotificationService(
         }
     }
 
+    suspend fun findByIdAndUidOrThrow(id: Long, uid: Long): PoseNotification {
+        return findByIdAndUidOrNull(id, uid) ?: throw NotFoundException(ErrorCode.NOT_FOUND_POSE_NOTIFICATION_ERROR)
+    }
+
+    suspend fun findByIdAndUidOrNull(id: Long, uid: Long): PoseNotification? {
+        return withContext(Dispatchers.IO) {
+            poseNotificationRepository.findByIdAndUid(id, uid)
+        }
+    }
+
     suspend fun findByUidOrThrow(uid: Long): PoseNotification {
         return findByUidOrNull(uid) ?: throw NotFoundException(ErrorCode.NOT_FOUND_POSE_NOTIFICATION_ERROR)
     }
 
-    suspend fun patch(user: AuthUser, request: PatchPoseNotificationRequest): PatchPoseNotificationResponse {
-        val poseNotification = findByUidOrThrow(user.uid)
+    suspend fun patch(user: AuthUser, id: Long, request: PatchPoseNotificationRequest): PatchPoseNotificationResponse {
+        val poseNotification = findByIdAndUidOrThrow(id, user.uid)
 
         val updatedPoseNotification = txTemplates.writer.executes {
             poseNotification.apply {
