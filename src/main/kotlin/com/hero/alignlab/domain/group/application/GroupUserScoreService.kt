@@ -79,4 +79,10 @@ class GroupUserScoreService(
             saveSync(createOrUpdateGroupUserScore)
         }
     }
+
+    suspend fun findAllByUids(uids: List<Long>): List<GroupUserScore> {
+        return withContext(Dispatchers.IO) {
+            groupUserScoreRepository.findAllByUidIn(uids)
+        }
+    }
 }

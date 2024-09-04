@@ -111,4 +111,10 @@ class GroupUserService(
             groupUserRepository.countAllByGroupId(groupId)
         }
     }
+
+    suspend fun findAll(): List<GroupUser> {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.findAll()
+        }
+    }
 }

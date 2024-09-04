@@ -104,6 +104,12 @@ class ReactiveGroupUserWebSocketHandler(
         }
     }
 
+    fun launchSendEvent(groupId: Long) {
+        groupUserByMap[groupId]?.let { groupUsers ->
+            launchSendEvent(groupId, groupUsers)
+        }
+    }
+
     /** 발송되는 순서가 중요하지 않다. */
     private fun launchSendEvent(
         groupId: Long,

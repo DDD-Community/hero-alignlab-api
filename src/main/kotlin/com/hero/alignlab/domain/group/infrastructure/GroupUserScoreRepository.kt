@@ -15,4 +15,6 @@ interface GroupUserScoreRepository : JpaRepository<GroupUserScore, Long> {
     fun findAllByGroupUserIdIn(groupUserIds: List<Long>): List<GroupUserScore>
 
     fun findAllByGroupIdAndUidIn(groupId: Long, uids: List<Long>): List<GroupUserScore>
+
+    fun findAllByUidIn(uids: List<Long>): List<GroupUserScore>
 }
