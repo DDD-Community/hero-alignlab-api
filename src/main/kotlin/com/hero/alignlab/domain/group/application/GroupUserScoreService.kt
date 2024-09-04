@@ -5,6 +5,7 @@ import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.group.domain.GroupUser
 import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.group.infrastructure.GroupUserScoreRepository
+import com.hero.alignlab.ws.handler.ReactiveGroupUserWebSocketHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 class GroupUserScoreService(
     private val groupUserScoreRepository: GroupUserScoreRepository,
     private val txTemplates: TransactionTemplates,
+    private val wsHandler: ReactiveGroupUserWebSocketHandler,
 ) {
     suspend fun findAllByGroupId(groupId: Long): List<GroupUserScore> {
         return withContext(Dispatchers.IO) {
@@ -78,6 +80,8 @@ class GroupUserScoreService(
         txTemplates.writer.coExecuteOrNull {
             saveSync(createOrUpdateGroupUserScore)
         }
+
+        wsHandler.launchSendEvent(groupUser.groupId)
     }
 
     suspend fun findAllByUids(uids: List<Long>): List<GroupUserScore> {
