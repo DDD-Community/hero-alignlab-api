@@ -73,7 +73,7 @@ class PoseSnapshotListener(
 
                 val groupUserScore = groupUserScoreService.createOrUpdateGroupUserScore(this, score)
 
-                wsHandler.launchSendEvent(groupUserScore.groupId)
+                wsHandler.launchSendEvent(groupUserScore.uid, groupUserScore.groupId)
             }
         }
     }

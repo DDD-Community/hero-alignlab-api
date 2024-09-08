@@ -1,6 +1,6 @@
 package com.hero.alignlab.batch.grouprank.job
 
-import com.hero.alignlab.common.extension.coExecuteOrNull
+import com.hero.alignlab.common.extension.coExecute
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.group.application.GroupUserScoreService
 import com.hero.alignlab.domain.group.application.GroupUserService
@@ -34,7 +34,7 @@ class GroupRankRefreshJob(
         groupUserScoreService.findAllByUids(uids)
             .groupBy { it.groupId }
             .forEach { (key, value) ->
-                val groupUserScore = value.mapNotNull {
+                val groupUserScores = value.mapNotNull {
                     val score = counts[it.uid]?.count?.toInt() ?: return@mapNotNull null
 
                     it.apply {
@@ -42,11 +42,13 @@ class GroupRankRefreshJob(
                     }
                 }
 
-                txTemplates.writer.coExecuteOrNull {
-                    groupUserScoreService.saveAllSync(groupUserScore)
+                val updatedGroupUserScores = txTemplates.writer.coExecute {
+                    groupUserScoreService.saveAllSync(groupUserScores)
                 }
 
-                wsHandler.launchSendEvent(key)
+                updatedGroupUserScores.forEach { groupUserScore ->
+                    wsHandler.launchSendEvent(groupUserScore.uid, groupUserScore.groupId)
+                }
             }
     }
 }

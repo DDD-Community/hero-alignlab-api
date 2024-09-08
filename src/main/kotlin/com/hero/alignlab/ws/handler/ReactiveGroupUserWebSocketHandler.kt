@@ -54,7 +54,7 @@ class ReactiveGroupUserWebSocketHandler(
             groupUserByMap.forEach { (groupId, sessionByUid) ->
                 sessionByUid[user.uid] ?: return@forEach
 
-                launchSendEvent(groupId, sessionByUid)
+                launchSendEvent(user.uid, groupId, sessionByUid)
             }
 
             session.receive()
@@ -97,36 +97,38 @@ class ReactiveGroupUserWebSocketHandler(
                     }
 
                     false -> {
-                        launchSendEvent(groupId, uidBySession)
+                        launchSendEvent(uid, groupId, uidBySession)
                     }
                 }
             }
         }
     }
 
-    fun launchSendEvent(groupId: Long) {
+    fun launchSendEvent(uid: Long, groupId: Long) {
         groupUserByMap[groupId]?.let { groupUsers ->
-            launchSendEvent(groupId, groupUsers)
+            launchSendEvent(uid, groupId, groupUsers)
         }
     }
 
     /** 발송되는 순서가 중요하지 않다. */
     private fun launchSendEvent(
+        uid: Long,
         groupId: Long,
         sessionByUid: ConcurrentMap<Long, WebSocketSession>
     ) {
         CoroutineScope(Dispatchers.IO + Job()).launch {
-            sendUpdatedGroupStatus(groupId, sessionByUid)
+            sendUpdatedGroupStatus(uid, groupId, sessionByUid)
         }
     }
 
     private suspend fun sendUpdatedGroupStatus(
+        uid: Long,
         groupId: Long,
         sessionByUid: MutableMap<Long, WebSocketSession>
     ) {
         val eventMessage = sessionByUid.keys
             .toList()
-            .let { uids -> groupUserWsFacade.generateEventMessage(groupId, uids) }
+            .let { uids -> groupUserWsFacade.generateEventMessage(uid, groupId, uids) }
 
         sessionByUid.forEach { (_, session) ->
             session
