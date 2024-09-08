@@ -19,6 +19,12 @@ class UserInfoService(
     private val userInfoRepository: UserInfoRepository,
     private val encryptor: Encryptor,
 ) {
+    suspend fun getUserByIdOrThrow(uid: Long): UserInfo {
+        return withContext(Dispatchers.IO) {
+            getUserByIdOrThrowSync(uid)
+        }
+    }
+
     fun getUserByIdOrThrowSync(id: Long): UserInfo {
         return getUserByIdOrNullSync(id)
             ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)

@@ -1,7 +1,7 @@
 package com.hero.alignlab.domain.image.application
 
 import com.hero.alignlab.client.s3.client.S3Client
-import com.hero.alignlab.common.extension.executes
+import com.hero.alignlab.common.extension.coExecute
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.image.domain.ImageMetadata
@@ -51,7 +51,7 @@ class ImageService(
     suspend fun uploadImage(uid: Long, type: ImageType, image: FilePart): ImageMetadata {
         val imageUrl = s3Client.upload(image)
 
-        return txTemplates.writer.executes {
+        return txTemplates.writer.coExecute {
             imageMetadataRepository.save(
                 ImageMetadata(
                     filename = image.filename(),

@@ -20,8 +20,6 @@ import com.hero.alignlab.domain.user.model.response.UserInfoResponse
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.InvalidTokenException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
@@ -109,9 +107,7 @@ class AuthFacade(
     }
 
     suspend fun getUserInfo(user: AuthUser): UserInfoResponse {
-        val userInfo = withContext(Dispatchers.IO) {
-            userInfoService.getUserByIdOrThrowSync(user.uid)
-        }
+        val userInfo = userInfoService.getUserByIdOrThrow(user.uid)
 
         return UserInfoResponse.from(userInfo)
     }

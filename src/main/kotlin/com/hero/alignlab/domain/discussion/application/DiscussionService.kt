@@ -1,6 +1,6 @@
 package com.hero.alignlab.domain.discussion.application
 
-import com.hero.alignlab.common.extension.executes
+import com.hero.alignlab.common.extension.coExecute
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.discussion.domain.Discussion
@@ -22,7 +22,7 @@ class DiscussionService(
             content = request.content,
         )
 
-        val createdDiscussion = txTemplates.writer.executes {
+        val createdDiscussion = txTemplates.writer.coExecute {
             discussionRepository.save(discussion)
         }
 
