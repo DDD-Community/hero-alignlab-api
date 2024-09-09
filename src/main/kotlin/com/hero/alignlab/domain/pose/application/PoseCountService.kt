@@ -43,7 +43,11 @@ class PoseCountService(
         request: PoseSearchRequest,
         pageRequest: HeroPageRequest
     ): Page<PoseCountResponse> {
-        val pageable = pageRequest.toDefault()
+        val pageable = when (pageRequest.sort == null) {
+            true -> pageRequest.toDefault()
+            false -> pageRequest.toCustom("date, desc")
+        }
+
         val searchSpec = PostCountSearchSpec(
             uid = user.uid,
             fromDate = request.fromDate,
