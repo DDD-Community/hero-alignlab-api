@@ -15,6 +15,10 @@ class UpdateGroupContext(
             throw InvalidRequestException(ErrorCode.NOT_FOUND_JOIN_CODE_ERROR)
         }
 
+        if (request.name.length > 16) {
+            throw InvalidRequestException(ErrorCode.OVER_RANGE_GROUP_NAME_ERROR)
+        }
+
         return this.before.apply {
             this.name = request.name
             this.description = request.description
