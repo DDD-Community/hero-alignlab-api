@@ -117,4 +117,10 @@ class GroupUserService(
             groupUserRepository.findAll()
         }
     }
+
+    suspend fun findByUidAndGroupIdIn(uid: Long, groupIds: List<Long>): List<GroupUser> {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.findByUidAndGroupIdIn(uid, groupIds)
+        }
+    }
 }

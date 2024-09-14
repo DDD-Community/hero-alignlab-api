@@ -205,8 +205,17 @@ class GroupFacade(
     }
 
     suspend fun searchGroup(user: AuthUser, pageRequest: HeroPageRequest): Page<SearchGroupResponse> {
-        return groupService.findAll(pageRequest.toDefault())
-            .map { group -> SearchGroupResponse.from(group) }
+        val groups = groupService.findAll(pageRequest.toDefault())
+        
+        val groupUserByUid = groups.content.map { group -> group.id }
+            .run { groupUserService.findByUidAndGroupIdIn(user.uid, this) }
+            .associateBy { groupUser -> groupUser.groupId }
+
+        return groups
+            .map { group ->
+                val hasJoined = groupUserByUid[group.id] != null
+                SearchGroupResponse.from(group, hasJoined)
+            }
     }
 
     suspend fun deleteGroupUser(user: AuthUser, groupUserId: Long) {

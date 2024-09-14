@@ -13,15 +13,18 @@ data class SearchGroupResponse(
     val name: String,
     /** 비밀 그룹 여부 */
     val isHidden: Boolean,
+    /** 그룹에 속해 있는지 여부 */
+    val hasJoined: Boolean,
 ) {
     companion object {
-        fun from(group: Group): SearchGroupResponse {
+        fun from(group: Group, hasJoined: Boolean): SearchGroupResponse {
             return SearchGroupResponse(
                 id = group.id,
                 userCount = group.userCount,
                 userCapacity = group.userCapacity,
                 name = group.name,
                 isHidden = group.isHidden,
+                hasJoined = hasJoined
             )
         }
     }
