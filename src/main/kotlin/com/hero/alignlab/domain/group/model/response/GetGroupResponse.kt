@@ -7,6 +7,8 @@ data class GetGroupResponse(
     val name: String,
     val description: String?,
     val ownerUid: Long,
+    /** 그룹장명 */
+    val ownerName: String,
     val isHidden: Boolean,
     /** 그룹장만 조회 가능 */
     val joinCode: String?,
@@ -17,12 +19,13 @@ data class GetGroupResponse(
     val ranks: List<GetGroupRankResponse>? = null
 ) {
     companion object {
-        fun from(group: Group): GetGroupResponse {
+        fun from(group: Group, ownerName: String): GetGroupResponse {
             return GetGroupResponse(
                 id = group.id,
                 name = group.name,
                 description = group.description,
                 ownerUid = group.ownerUid,
+                ownerName = ownerName,
                 isHidden = group.isHidden,
                 joinCode = group.joinCode,
                 userCount = group.userCount,

@@ -168,7 +168,9 @@ class GroupFacade(
                     .take(5)
             }
         ) { group, joinedGroup, groupUserScore ->
-            GetGroupResponse.from(group).run {
+            val ownerGroupUser = userInfoService.getUserByIdOrThrow(group.ownerUid)
+
+            GetGroupResponse.from(group, ownerGroupUser.nickname).run {
                 when (group.ownerUid == user.uid) {
                     true -> this
                     false -> this.copy(joinCode = null)
