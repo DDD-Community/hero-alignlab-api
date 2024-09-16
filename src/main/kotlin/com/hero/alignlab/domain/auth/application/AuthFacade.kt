@@ -35,14 +35,14 @@ class AuthFacade(
         private val TOKEN_EXPIRED_DATE = LocalDateTime.of(2024, 12, 29, 0, 0, 0)
     }
 
-    fun resolveAuthUser(token: AuthUserToken): AuthUser {
+    suspend fun resolveAuthUser(token: AuthUserToken): AuthUser {
         val payload = jwtTokenService.verifyToken(token)
 
         if (payload.type != "accessToken") {
             throw InvalidTokenException(ErrorCode.INVALID_ACCESS_TOKEN)
         }
 
-        val user = userInfoService.getUserByIdOrThrowSync(payload.id)
+        val user = userInfoService.getUserByIdOrThrow(payload.id)
 
         return AuthUserImpl.from(user)
     }
@@ -86,7 +86,7 @@ class AuthFacade(
     }
 
     suspend fun signIn(request: SignInRequest): SignInResponse {
-        val userInfo = userInfoService.findByCredential(request.username, request.password)
+        val userInfo = userInfoService.findByCredentialOrThrow(request.username, request.password)
 
         val accessToken = jwtTokenService.createToken(userInfo.id, TOKEN_EXPIRED_DATE)
 

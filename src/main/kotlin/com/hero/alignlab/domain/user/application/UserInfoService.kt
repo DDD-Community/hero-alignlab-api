@@ -57,27 +57,19 @@ class UserInfoService(
         return UserInfoResponse.from(userInfo)
     }
 
-    suspend fun findByCredential(username: String, password: String): UserInfo {
+    suspend fun findByCredentialOrThrow(username: String, password: String): UserInfo {
         return withContext(Dispatchers.IO) {
-            findByCredentialSync(username, password)
+            userInfoRepository.findByCredential(
+                username = username,
+                password = EncryptData.enc(password, encryptor)
+            )
         } ?: throw NotFoundException(ErrorCode.NOT_FOUND_USER_ERROR)
-    }
-
-    private fun findByCredentialSync(username: String, password: String): UserInfo? {
-        return userInfoRepository.findByCredential(
-            username = username,
-            password = EncryptData.enc(password, encryptor)
-        )
     }
 
     suspend fun findAllByIds(ids: List<Long>): List<UserInfo> {
         return withContext(Dispatchers.IO) {
-            findAllByIdsSync(ids)
+            userInfoRepository.findAllById(ids)
         }
-    }
-
-    fun findAllByIdsSync(ids: List<Long>): List<UserInfo> {
-        return userInfoRepository.findAllById(ids)
     }
 
     suspend fun findByOAuthOrThrow(provider: OAuthProvider, oauthId: String): UserInfo {
