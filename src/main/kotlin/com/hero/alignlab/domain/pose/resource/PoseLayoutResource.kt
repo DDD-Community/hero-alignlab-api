@@ -2,12 +2,17 @@ package com.hero.alignlab.domain.pose.resource
 
 import com.hero.alignlab.common.extension.wrapCreated
 import com.hero.alignlab.common.extension.wrapOk
+import com.hero.alignlab.common.model.Response
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.pose.application.PoseLayoutFacade
 import com.hero.alignlab.domain.pose.model.request.PoseLayoutRequest
+import com.hero.alignlab.domain.pose.model.response.GetPoseLayoutResponse
+import com.hero.alignlab.domain.pose.model.response.GetRecentPoseLayoutResponse
+import com.hero.alignlab.domain.pose.model.response.RegisterPoseLayoutResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Pose Layout API")
@@ -30,19 +35,25 @@ class PoseLayoutResource(
     @GetMapping("/api/v1/pose-layouts/recent")
     suspend fun getRecentPoseLayout(
         user: AuthUser,
-    ) = poseLayoutFacade.getRecentPoseLayout(user).wrapOk()
+    ): ResponseEntity<Response<GetRecentPoseLayoutResponse>> {
+        return poseLayoutFacade.getRecentPoseLayout(user).wrapOk()
+    }
 
     @Operation(summary = "포즈 레이아웃 조회")
     @GetMapping("/api/v1/pose-layouts/{id}")
     suspend fun getPoseLayout(
         user: AuthUser,
         @PathVariable id: Long,
-    ) = poseLayoutFacade.getPoseLayout(user, id).wrapOk()
+    ): ResponseEntity<Response<GetPoseLayoutResponse>> {
+        return poseLayoutFacade.getPoseLayout(user, id).wrapOk()
+    }
 
     @Operation(summary = "포즈 레이아웃 생성")
     @PostMapping("/api/v1/pose-layouts")
     suspend fun register(
         user: AuthUser,
         @RequestBody request: PoseLayoutRequest,
-    ) = poseLayoutFacade.register(user, request).wrapCreated()
+    ): ResponseEntity<Response<RegisterPoseLayoutResponse>> {
+        return poseLayoutFacade.register(user, request).wrapCreated()
+    }
 }

@@ -20,5 +20,7 @@ class DevWebsocketResource(
     @PostMapping("/api/dev/v1/websocket/connection-closed")
     suspend fun closedConnection(
         dev: DevAuthUser,
-    ) = devWebsocketService.forceCloseAllWebSocketSessions()
+    ) {
+        devWebsocketService.forceCloseAllWebSocketSessions()
+    }
 }

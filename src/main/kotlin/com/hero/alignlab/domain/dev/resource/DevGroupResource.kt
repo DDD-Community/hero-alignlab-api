@@ -4,6 +4,7 @@ import com.hero.alignlab.config.swagger.SwaggerTag.DEV_TAG
 import com.hero.alignlab.domain.auth.model.DevAuthUser
 import com.hero.alignlab.domain.dev.model.request.DevGroupJoinRequest
 import com.hero.alignlab.domain.group.application.GroupFacade
+import com.hero.alignlab.domain.group.model.response.JoinGroupResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
@@ -21,9 +22,11 @@ class DevGroupResource(
         dev: DevAuthUser,
         @PathVariable groupId: Long,
         @RequestBody request: DevGroupJoinRequest,
-    ) = groupFacade.joinGroup(
-        groupId = groupId,
-        uid = request.uid,
-        joinCode = request.joinCode
-    )
+    ): JoinGroupResponse {
+        return groupFacade.joinGroup(
+            groupId = groupId,
+            uid = request.uid,
+            joinCode = request.joinCode
+        )
+    }
 }

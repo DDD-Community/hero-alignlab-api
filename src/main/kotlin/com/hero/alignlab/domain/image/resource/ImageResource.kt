@@ -1,12 +1,15 @@
 package com.hero.alignlab.domain.image.resource
 
 import com.hero.alignlab.common.extension.wrapCreated
+import com.hero.alignlab.common.model.Response
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.image.application.ImageService
 import com.hero.alignlab.domain.image.domain.vo.ImageType
+import com.hero.alignlab.domain.image.model.response.ImageResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.*
 
@@ -23,11 +26,13 @@ class ImageResource(
         user: AuthUser,
         @RequestParam type: ImageType,
         @RequestPart("image") image: FilePart,
-    ) = imageService.uploadImage(
-        user = user,
-        type = type,
-        image = image
-    ).wrapCreated()
+    ): ResponseEntity<Response<ImageResponse>> {
+        return imageService.uploadImage(
+            user = user,
+            type = type,
+            image = image
+        ).wrapCreated()
+    }
 
     /** 이미지 업로드시 type을 꼭 명시해야 한다. */
     @Operation(summary = "이미지 벌크 업로드")
@@ -36,9 +41,11 @@ class ImageResource(
         user: AuthUser,
         @RequestParam type: ImageType,
         @RequestPart("images") images: List<FilePart>,
-    ) = imageService.bulkUploadImage(
-        user = user,
-        type = type,
-        images = images
-    ).wrapCreated()
+    ): ResponseEntity<Response<List<ImageResponse>>> {
+        return imageService.bulkUploadImage(
+            user = user,
+            type = type,
+            images = images
+        ).wrapCreated()
+    }
 }

@@ -26,7 +26,9 @@ class DevDiscordWebhookResource(
     suspend fun sendMessage(
         dev: DevAuthUser,
         @RequestParam message: String,
-    ) = discordWebhookClient.sendMessage(SendMessageRequest(message))
+    ) {
+        discordWebhookClient.sendMessage(SendMessageRequest(message))
+    }
 
     @Operation(summary = "discord webhook daily noti")
     @PostMapping("/api/dev/v1/discord-webhooks/daily-noti")
@@ -34,9 +36,11 @@ class DevDiscordWebhookResource(
         dev: DevAuthUser,
         @RequestParam fromDateTime: LocalDateTime,
         @RequestParam toDateTime: LocalDateTime,
-    ) = statisticsJob.sendHeroStatistics(
-        title = "극락통계 테스트",
-        fromDate = fromDateTime,
-        toDate = toDateTime
-    )
+    ) {
+        statisticsJob.sendHeroStatistics(
+            title = "극락통계 테스트",
+            fromDate = fromDateTime,
+            toDate = toDateTime
+        )
+    }
 }

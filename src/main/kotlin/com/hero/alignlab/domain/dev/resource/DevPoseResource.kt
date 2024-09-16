@@ -9,6 +9,7 @@ import com.hero.alignlab.domain.dev.model.request.DevPoseSnapshotRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
@@ -24,18 +25,24 @@ class DevPoseResource(
     suspend fun createPoseSnapshots(
         dev: DevAuthUser,
         @RequestBody request: DevPoseSnapshotRequest,
-    ) = devPoseService.create(request).wrapVoid()
+    ): ResponseEntity<Unit> {
+        return devPoseService.create(request).wrapVoid()
+    }
 
     @Operation(summary = "[DEV] 포즈 데이터 삭제")
     @DeleteMapping("/api/dev/v1/pose-snapshots/{id}")
     suspend fun deletePoseSnapshots(
         dev: DevAuthUser,
-    ) = devPoseService.deleteAllPoseData()
+    ) {
+        devPoseService.deleteAllPoseData()
+    }
 
     @Operation(summary = "[DEV] 포즈 데이터 통계 처리")
     @PostMapping("/api/dev/v1/pose-counts")
     suspend fun updatePoseCounts(
         dev: DevAuthUser,
         @RequestParam targetDate: LocalDate
-    ) = poseCountUpdateJob.run(targetDate)
+    ) {
+        poseCountUpdateJob.run(targetDate)
+    }
 }

@@ -3,6 +3,7 @@ package com.hero.alignlab.domain.dev.resource
 import com.hero.alignlab.config.swagger.SwaggerTag.DEV_TAG
 import com.hero.alignlab.domain.auth.model.DevAuthUser
 import com.hero.alignlab.domain.user.application.UserInfoService
+import com.hero.alignlab.domain.user.model.response.UserInfoResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
@@ -22,5 +23,7 @@ class DevUserInfoResource(
     suspend fun getUserInfo(
         dev: DevAuthUser,
         @PathVariable id: Long,
-    ) = userInfoService.getUserInfo(id)
+    ): UserInfoResponse {
+        return userInfoService.getUserInfo(id)
+    }
 }

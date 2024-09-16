@@ -5,16 +5,20 @@ import com.hero.alignlab.common.extension.wrapOk
 import com.hero.alignlab.common.extension.wrapPage
 import com.hero.alignlab.common.extension.wrapVoid
 import com.hero.alignlab.common.model.HeroPageRequest
+import com.hero.alignlab.common.model.PageResponse
+import com.hero.alignlab.common.model.Response
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.application.GroupFacade
 import com.hero.alignlab.domain.group.application.GroupService
 import com.hero.alignlab.domain.group.model.request.CheckGroupRegisterRequest
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.request.UpdateGroupRequest
+import com.hero.alignlab.domain.group.model.response.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springdoc.core.annotations.ParameterObject
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @Tag(name = "Group API")
@@ -34,7 +38,9 @@ class GroupResource(
     suspend fun getGroup(
         user: AuthUser,
         @PathVariable id: Long
-    ) = groupFacade.getGroup(user, id).wrapOk()
+    ): ResponseEntity<Response<GetGroupResponse>> {
+        return groupFacade.getGroup(user, id).wrapOk()
+    }
 
     /**
      * - 정렬 조건
@@ -46,14 +52,18 @@ class GroupResource(
     suspend fun searchGroups(
         user: AuthUser,
         @ParameterObject pageRequest: HeroPageRequest,
-    ) = groupFacade.searchGroup(user, pageRequest).wrapPage()
+    ): PageResponse<SearchGroupResponse> {
+        return groupFacade.searchGroup(user, pageRequest).wrapPage()
+    }
 
     @Operation(summary = "그룹 생성")
     @PostMapping("/api/v1/groups")
     suspend fun createGroup(
         user: AuthUser,
         @RequestBody request: CreateGroupRequest
-    ) = groupFacade.createGroup(user, request).wrapCreated()
+    ): ResponseEntity<Response<CreateGroupResponse>> {
+        return groupFacade.createGroup(user, request).wrapCreated()
+    }
 
     @Operation(summary = "그룹 수정하기")
     @PutMapping("/api/v1/groups/{id}")
@@ -61,18 +71,22 @@ class GroupResource(
         user: AuthUser,
         @PathVariable id: Long,
         @RequestBody request: UpdateGroupRequest
-    ) = groupService.updateGroup(
-        user = user,
-        id = id,
-        request = request
-    ).wrapOk()
+    ): ResponseEntity<Response<UpdateGroupResponse>> {
+        return groupService.updateGroup(
+            user = user,
+            id = id,
+            request = request
+        ).wrapOk()
+    }
 
     @Operation(summary = "그룹 탈퇴하기")
     @DeleteMapping("/api/v1/groups/{id}/withdraw")
     suspend fun withdrawGroup(
         user: AuthUser,
         @PathVariable id: Long
-    ) = groupFacade.withdraw(user, id).wrapVoid()
+    ): ResponseEntity<Unit> {
+        return groupFacade.withdraw(user, id).wrapVoid()
+    }
 
     /**
      * - 숨김처리된 그룹의 경우, joinCode가 입력되어야 접속 가능하다.
@@ -83,11 +97,13 @@ class GroupResource(
         user: AuthUser,
         @PathVariable groupId: Long,
         @RequestParam(required = false) joinCode: String?,
-    ) = groupFacade.joinGroup(
-        user = user,
-        groupId = groupId,
-        joinCode = joinCode
-    ).wrapOk()
+    ): ResponseEntity<Response<JoinGroupResponse>> {
+        return groupFacade.joinGroup(
+            user = user,
+            groupId = groupId,
+            joinCode = joinCode
+        ).wrapOk()
+    }
 
     /**
      * - 성공 케이스 : noContent로 반환
@@ -98,5 +114,7 @@ class GroupResource(
     suspend fun checkGroupName(
         user: AuthUser,
         @RequestBody request: CheckGroupRegisterRequest,
-    ) = groupFacade.checkGroupRegisterRequest(user, request).wrapVoid()
+    ): ResponseEntity<Unit> {
+        return groupFacade.checkGroupRegisterRequest(user, request).wrapVoid()
+    }
 }
