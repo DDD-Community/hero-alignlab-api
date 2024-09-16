@@ -4,7 +4,6 @@ import com.hero.alignlab.common.encrypt.EncryptData
 import com.hero.alignlab.common.encrypt.Encryptor
 import com.hero.alignlab.common.extension.coExecute
 import com.hero.alignlab.config.database.TransactionTemplates
-import com.hero.alignlab.domain.auth.model.AuthContextImpl
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.auth.model.AuthUserImpl
 import com.hero.alignlab.domain.auth.model.AuthUserToken
@@ -45,12 +44,7 @@ class AuthFacade(
 
         val user = userInfoService.getUserByIdOrThrowSync(payload.id)
 
-        return AuthUserImpl(
-            uid = user.id,
-            context = AuthContextImpl(
-                name = user.nickname
-            )
-        )
+        return AuthUserImpl.from(user)
     }
 
     fun resolveAuthUser(token: Mono<AuthUserToken>): Mono<Any> {
@@ -63,14 +57,7 @@ class AuthFacade(
 
                 val user = userInfoService.getUserByIdOrThrowSync(payload.id)
 
-                sink.next(
-                    AuthUserImpl(
-                        uid = user.id,
-                        context = AuthContextImpl(
-                            name = user.nickname
-                        )
-                    )
-                )
+                sink.next(AuthUserImpl.from(user))
             }
     }
 

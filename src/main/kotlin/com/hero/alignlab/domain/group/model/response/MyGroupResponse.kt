@@ -17,14 +17,14 @@ data class MyGroupResponse(
     val ownerNickname: String,
 ) {
     companion object {
-        fun of(group: Group, userCount: Int, nickname: String): MyGroupResponse {
+        fun of(group: Group, userCount: Int, ownerNickname: String): MyGroupResponse {
             return MyGroupResponse(
                 id = group.id,
                 name = group.name,
                 description = group.description,
                 userCount = userCount,
                 userCapacity = group.userCapacity,
-                ownerNickname = nickname
+                ownerNickname = ownerNickname
             )
         }
     }

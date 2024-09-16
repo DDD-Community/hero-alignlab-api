@@ -1,5 +1,6 @@
 package com.hero.alignlab.domain.auth.model
 
+import com.hero.alignlab.domain.user.domain.UserInfo
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.NoAuthorityException
 import com.hero.alignlab.exception.NotFoundException
@@ -37,6 +38,17 @@ data class AuthUserImpl(
     override fun isNotAuthorThrow(uid: Long) {
         if (!isAuthor(uid)) {
             throw NoAuthorityException(ErrorCode.NO_AUTHORITY_ERROR)
+        }
+    }
+
+    companion object {
+        fun from(user: UserInfo): AuthUserImpl {
+            return AuthUserImpl(
+                uid = user.id,
+                context = AuthContextImpl(
+                    name = user.nickname
+                )
+            )
         }
     }
 }

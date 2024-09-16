@@ -16,8 +16,8 @@ class MyGroupFacade(
         val groupUser = groupUserService.findByUidOrNull(user.uid) ?: return null
         val group = groupService.findByIdOrThrow(groupUser.groupId)
         val groupUserCount = groupUserService.countAllByGroupId(groupUser.groupId)
-        val userInfo = userInfoService.findByIdOrThrow(group.ownerUid)
+        val ownerUserInfo = userInfoService.findByIdOrThrow(group.ownerUid)
 
-        return MyGroupResponse.of(group, groupUserCount.toInt(), userInfo.nickname)
+        return MyGroupResponse.of(group, groupUserCount.toInt(), ownerUserInfo.nickname)
     }
 }
