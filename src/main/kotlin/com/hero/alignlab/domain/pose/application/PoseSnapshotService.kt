@@ -28,16 +28,16 @@ class PoseSnapshotService(
         }
     }
 
-    suspend fun countByUidsAndCreatedAtBetween(
+    suspend fun countByUidsAndModifiedAtBetween(
         uids: List<Long>,
-        fromCreatedAt: LocalDateTime,
-        toCreatedAt: LocalDateTime,
+        fromModifiedAt: LocalDateTime,
+        toModifiedAt: LocalDateTime,
     ): List<PoseTypeCountModel> {
         return withContext(Dispatchers.IO) {
-            poseSnapshotRepository.countByUidAndCreatedAt(
+            poseSnapshotRepository.countByUidAndModifiedAt(
                 uids = uids,
-                fromCreatedAt = fromCreatedAt,
-                toCreatedAt = toCreatedAt,
+                fromModifiedAt = fromModifiedAt,
+                toModifiedAt = toModifiedAt,
             )
         }
     }

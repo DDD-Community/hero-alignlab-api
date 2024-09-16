@@ -25,20 +25,20 @@ class GroupRankRefreshJob(
 
         val uids = groupUsers.map { it.uid }
 
-        val counts = poseSnapshotService.countByUidsAndCreatedAtBetween(
+        val counts = poseSnapshotService.countByUidsAndModifiedAtBetween(
             uids = uids,
-            fromCreatedAt = from,
-            toCreatedAt = to
+            fromModifiedAt = from,
+            toModifiedAt = to
         ).associateBy { it.uid }
 
         groupUserScoreService.findAllByUids(uids)
-            .groupBy { it.groupId }
-            .forEach { (key, value) ->
-                val groupUserScores = value.mapNotNull {
-                    val score = counts[it.uid]?.count?.toInt() ?: return@mapNotNull null
+            .groupBy { groupUserScore -> groupUserScore.groupId }
+            .forEach { (groupId, scores) ->
+                val groupUserScores = scores.map { groupUserScore ->
+                    val score = counts[groupUserScore.uid]?.count?.toInt() ?: 0
 
-                    it.apply {
-                        it.score = score
+                    groupUserScore.apply {
+                        groupUserScore.score = score
                     }
                 }
 

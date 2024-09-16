@@ -24,10 +24,10 @@ interface PoseSnapshotRepository : JpaRepository<PoseSnapshot, Long>, PoseSnapsh
 interface PoseSnapshotQRepository {
     fun countByUidsAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel>
 
-    fun countByUidAndCreatedAt(
+    fun countByUidAndModifiedAt(
         uids: List<Long>,
-        fromCreatedAt: LocalDateTime,
-        toCreatedAt: LocalDateTime,
+        fromModifiedAt: LocalDateTime,
+        toModifiedAt: LocalDateTime,
     ): List<PoseTypeCountModel>
 }
 
@@ -60,10 +60,10 @@ class PoseSnapshotQRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositoryS
             .fetch()
     }
 
-    override fun countByUidAndCreatedAt(
+    override fun countByUidAndModifiedAt(
         uids: List<Long>,
-        fromCreatedAt: LocalDateTime,
-        toCreatedAt: LocalDateTime
+        fromModifiedAt: LocalDateTime,
+        toModifiedAt: LocalDateTime
     ): List<PoseTypeCountModel> {
         return JPAQuery<QPoseSnapshot>(entityManager)
             .select(
@@ -76,7 +76,7 @@ class PoseSnapshotQRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositoryS
             .from(qPoseSnapshot)
             .where(
                 qPoseSnapshot.uid.`in`(uids),
-                qPoseSnapshot.createdAt.between(fromCreatedAt, toCreatedAt)
+                qPoseSnapshot.modifiedAt.between(fromModifiedAt, toModifiedAt)
             )
             .groupBy(qPoseSnapshot.uid, qPoseSnapshot.type)
             .fetch()
