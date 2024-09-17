@@ -160,14 +160,13 @@ class GroupFacade(
     suspend fun getGroup(user: AuthUser, groupId: Long): GetGroupResponse {
         return parZip(
             { groupService.findByIdOrThrow(groupId) },
-            { groupUserService.existsByGroupIdAndUid(groupId, user.uid) },
             {
                 groupUserScoreService.findAllByGroupId(groupId)
                     .filterNot { groupUserScore -> groupUserScore.score == null }
                     .sortedBy { groupUserScore -> groupUserScore.score }
                     .take(5)
             }
-        ) { group, joinedGroup, groupUserScore ->
+        ) { group, groupUserScore ->
             val ownerGroupUser = userInfoService.getUserByIdOrThrow(group.ownerUid)
 
             GetGroupResponse.from(group, ownerGroupUser.nickname).run {
@@ -176,8 +175,9 @@ class GroupFacade(
                     false -> this.copy(joinCode = null)
                 }
             }.run {
-                when (joinedGroup) {
-                    true -> {
+                when (group.isHidden) {
+                    true -> this
+                    false -> {
                         val uids = groupUserScore.map { it.uid }
 
                         val userInfo = userInfoService.findAllByIds(uids).associateBy { userInfo -> userInfo.id }
@@ -197,8 +197,6 @@ class GroupFacade(
 
                         this.copy(ranks = ranks)
                     }
-
-                    false -> this
                 }
             }
         }
@@ -206,7 +204,7 @@ class GroupFacade(
 
     suspend fun searchGroup(user: AuthUser, pageRequest: HeroPageRequest): Page<SearchGroupResponse> {
         val groups = groupService.findAll(pageRequest.toDefault())
-        
+
         val groupUserByUid = groups.content.map { group -> group.id }
             .run { groupUserService.findByUidAndGroupIdIn(user.uid, this) }
             .associateBy { groupUser -> groupUser.groupId }
