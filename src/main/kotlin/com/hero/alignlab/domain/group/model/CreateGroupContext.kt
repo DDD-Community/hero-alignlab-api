@@ -30,7 +30,8 @@ class CreateGroupContext(
             } else {
                 null
             },
-            userCount = request.userCapacity ?: 30
+            userCapacity = request.userCapacity ?: 30,
+            userCount = 1
         )
     }
 }
