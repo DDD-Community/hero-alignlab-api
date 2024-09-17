@@ -31,11 +31,12 @@ class GroupRankRefreshJob(
             toModifiedAt = to
         ).associateBy { it.uid }
 
+        /** 랭크 업데이트 */
         groupUserScoreService.findAllByUids(uids)
             .groupBy { groupUserScore -> groupUserScore.groupId }
             .forEach { (groupId, scores) ->
-                val groupUserScores = scores.map { groupUserScore ->
-                    val score = counts[groupUserScore.uid]?.count?.toInt() ?: 0
+                val groupUserScores = scores.mapNotNull { groupUserScore ->
+                    val score = counts[groupUserScore.uid]?.count?.toInt() ?: return@mapNotNull null
 
                     groupUserScore.apply {
                         groupUserScore.score = score
@@ -50,5 +51,10 @@ class GroupRankRefreshJob(
                     wsHandler.launchSendEvent(groupUserScore.uid, groupUserScore.groupId)
                 }
             }
+
+        /** 1시간 전에 생성된 랭크 정보는 삭제 */
+        txTemplates.writer.coExecute {
+            groupUserScoreService.deleteAllByModifiedAtBeforeSync(from)
+        }
     }
 }
