@@ -25,10 +25,10 @@ class GroupRankRefreshJob(
 
         val uids = groupUsers.map { it.uid }
 
-        val counts = poseSnapshotService.countByUidsAndModifiedAtBetween(
+        val counts = poseSnapshotService.countByUidsAndCreatedAtBetween(
             uids = uids,
-            fromModifiedAt = from,
-            toModifiedAt = to
+            fromCreatedAt = from,
+            toCreatedAt = to
         ).associateBy { it.uid }
 
         /** 랭크 업데이트 */

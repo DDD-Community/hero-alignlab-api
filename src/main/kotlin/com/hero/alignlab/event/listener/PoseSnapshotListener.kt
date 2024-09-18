@@ -65,10 +65,10 @@ class PoseSnapshotListener(
                 val to = event.poseSnapshot.createdAt
                 val from = to.minusHours(1)
 
-                val score = poseSnapshotService.countByUidsAndModifiedAtBetween(
-                    uids = listOf(event.poseSnapshot.uid),
-                    fromModifiedAt = from,
-                    toModifiedAt = to
+                val score = poseSnapshotService.countByUidAndModifiedAt(
+                    uid = event.poseSnapshot.uid,
+                    fromCreatedAt = from,
+                    toCreatedAt = to
                 ).filter { model -> model.type in BAD_POSE }.sumOf { model -> model.count }.toInt()
 
                 val groupUserScore = groupUserScoreService.createOrUpdateGroupUserScore(this, score)

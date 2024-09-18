@@ -24,10 +24,16 @@ interface PoseSnapshotRepository : JpaRepository<PoseSnapshot, Long>, PoseSnapsh
 interface PoseSnapshotQRepository {
     fun countByUidsAndDate(uids: List<Long>, date: LocalDate): List<PoseTypeCountModel>
 
-    fun countByUidAndModifiedAt(
+    fun countByUidsAndModifiedAt(
         uids: List<Long>,
-        fromModifiedAt: LocalDateTime,
-        toModifiedAt: LocalDateTime,
+        fromCreatedAt: LocalDateTime,
+        toCreatedAt: LocalDateTime,
+    ): List<PoseTypeCountModel>
+
+    fun countByUidAndModifiedAt(
+        uid: Long,
+        fromCreatedAt: LocalDateTime,
+        toCreatedAt: LocalDateTime,
     ): List<PoseTypeCountModel>
 }
 
@@ -60,10 +66,10 @@ class PoseSnapshotQRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositoryS
             .fetch()
     }
 
-    override fun countByUidAndModifiedAt(
+    override fun countByUidsAndModifiedAt(
         uids: List<Long>,
-        fromModifiedAt: LocalDateTime,
-        toModifiedAt: LocalDateTime
+        fromCreatedAt: LocalDateTime,
+        toCreatedAt: LocalDateTime
     ): List<PoseTypeCountModel> {
         return JPAQuery<QPoseSnapshot>(entityManager)
             .select(
@@ -76,9 +82,31 @@ class PoseSnapshotQRepositoryImpl : PoseSnapshotQRepository, QuerydslRepositoryS
             .from(qPoseSnapshot)
             .where(
                 qPoseSnapshot.uid.`in`(uids),
-                qPoseSnapshot.modifiedAt.between(fromModifiedAt, toModifiedAt)
+                qPoseSnapshot.createdAt.between(fromCreatedAt, toCreatedAt)
             )
             .groupBy(qPoseSnapshot.uid, qPoseSnapshot.type)
+            .fetch()
+    }
+
+    override fun countByUidAndModifiedAt(
+        uid: Long,
+        fromCreatedAt: LocalDateTime,
+        toCreatedAt: LocalDateTime
+    ): List<PoseTypeCountModel> {
+        return JPAQuery<QPoseSnapshot>(entityManager)
+            .select(
+                QPoseTypeCountModel(
+                    qPoseSnapshot.uid,
+                    qPoseSnapshot.type,
+                    qPoseSnapshot.id.count()
+                )
+            )
+            .from(qPoseSnapshot)
+            .where(
+                qPoseSnapshot.uid.eq(uid),
+                qPoseSnapshot.createdAt.between(fromCreatedAt, toCreatedAt)
+            )
+            .groupBy(qPoseSnapshot.type)
             .fetch()
     }
 }
