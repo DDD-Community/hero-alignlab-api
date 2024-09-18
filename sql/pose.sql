@@ -32,7 +32,7 @@ CREATE TABLE `pose_count`
     `id`          bigint NOT NULL AUTO_INCREMENT,
     `uid`         bigint NOT NULL COMMENT 'uid',
     `total_count` text   NOT NULL COMMENT '집계 데이터',
-    `date`        datetime DEFAULT CURRENT_TIMESTAMP COMMENT '기준 날짜',
+    `date`        date   NOT NULL COMMENT '기준 날짜',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 CREATE UNIQUE INDEX uidx__uid__date ON pose_count (uid, date);
