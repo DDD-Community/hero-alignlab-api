@@ -20,6 +20,8 @@ import java.time.LocalDateTime
 @Repository
 interface UserInfoRepository : JpaRepository<UserInfo, Long>, UserInfoQRepository {
     fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
+
+    fun existsByNicknameAndIdNot(nickname: String, id: Long): Boolean
 }
 
 @Transactional(readOnly = true)

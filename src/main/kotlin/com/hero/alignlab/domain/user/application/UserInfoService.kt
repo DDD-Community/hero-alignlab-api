@@ -1,12 +1,19 @@
 package com.hero.alignlab.domain.user.application
 
+import arrow.fx.coroutines.parZip
 import com.hero.alignlab.common.encrypt.EncryptData
 import com.hero.alignlab.common.encrypt.Encryptor
+import com.hero.alignlab.common.extension.coExecute
+import com.hero.alignlab.config.database.TransactionTemplates
+import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.user.domain.UserInfo
 import com.hero.alignlab.domain.user.domain.vo.OAuthProvider
 import com.hero.alignlab.domain.user.infrastructure.UserInfoRepository
+import com.hero.alignlab.domain.user.model.request.ChangeNicknameRequest
+import com.hero.alignlab.domain.user.model.response.ChangeNicknameResponse
 import com.hero.alignlab.domain.user.model.response.UserInfoResponse
 import com.hero.alignlab.exception.ErrorCode
+import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.NotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 class UserInfoService(
     private val userInfoRepository: UserInfoRepository,
     private val encryptor: Encryptor,
+    private val txTemplates: TransactionTemplates,
 ) {
     suspend fun getUserByIdOrThrow(uid: Long): UserInfo {
         return withContext(Dispatchers.IO) {
@@ -86,6 +94,39 @@ class UserInfoService(
     suspend fun findAllUids(): List<Long> {
         return withContext(Dispatchers.IO) {
             userInfoRepository.findAllUids()
+        }
+    }
+
+    suspend fun changeNickname(
+        user: AuthUser,
+        id: Long,
+        request: ChangeNicknameRequest,
+    ): ChangeNicknameResponse {
+        if (user.uid != id) {
+            throw InvalidRequestException(ErrorCode.NOT_FOUND_USER_ERROR)
+        }
+
+        val updatedUserInfo = parZip(
+            { getUserByIdOrThrowSync(id) },
+            { existsByNicknameAndIdNot(request.nickname, id) }
+        ) { userInfo, existsNickname ->
+            if (existsNickname) {
+                throw InvalidRequestException(ErrorCode.DUPLICATE_USER_NICKNAME_ERROR)
+            }
+
+            txTemplates.writer.coExecute {
+                userInfo.apply {
+                    this.nickname = request.nickname
+                }
+            }
+        }
+
+        return ChangeNicknameResponse.from(updatedUserInfo)
+    }
+
+    suspend fun existsByNicknameAndIdNot(nickname: String, id: Long): Boolean {
+        return withContext(Dispatchers.IO) {
+            userInfoRepository.existsByNicknameAndIdNot(nickname, id)
         }
     }
 }

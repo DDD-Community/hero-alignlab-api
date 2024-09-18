@@ -11,5 +11,5 @@ class UserInfo(
     val id: Long = -1,
 
     @Column(name = "nickname")
-    val nickname: String,
+    var nickname: String,
 ) : BaseEntity()
