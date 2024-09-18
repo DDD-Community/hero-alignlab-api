@@ -62,23 +62,23 @@ class GroupFacade(
     }
 
     suspend fun withdraw(user: AuthUser, groupId: Long) {
-        withdraw(groupId, user.uid)
+        withdraw(user.uid, groupId)
     }
 
-    suspend fun withdraw(groupId: Long, uid: Long) {
+    suspend fun withdraw(uid: Long, groupId: Long) {
         val group = groupService.findByIdOrThrow(groupId)
 
         /** 그룹 승계 또는 제거 */
         if (group.ownerUid == uid) {
-            withdrawGroupOwner(group)
+            withdrawGroupOwner(uid, group)
         }
 
         /** 그룹원 제거 */
         withdrawGroupUser(group, uid)
     }
 
-    private suspend fun withdrawGroupOwner(group: Group) {
-        val groupUser = groupUserService.findTop1ByGroupIdOrderByCreatedAtAsc(group.id)
+    private suspend fun withdrawGroupOwner(uid: Long, group: Group) {
+        val groupUser = groupUserService.findTop1ByGroupIdAndUidNotOrderByCreatedAtAsc(group.id, uid)
 
         txTemplates.writer.executesOrNull {
             when (groupUser == null) {
@@ -94,12 +94,13 @@ class GroupFacade(
                     groupService.saveSync(succeedGroup)
                 }
             }
+            groupUserService.deleteByGroupIdAndUidSync(group.id, uid)
         }
     }
 
     private suspend fun withdrawGroupUser(group: Group, uid: Long) {
         txTemplates.writer.executesOrNull {
-            groupUserService.deleteBySync(group.id, uid)
+            groupUserService.deleteByGroupIdAndUidSync(group.id, uid)
             groupService.saveSync(group.apply { this.userCount -= 1 })
         }
     }

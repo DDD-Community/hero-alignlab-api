@@ -15,7 +15,7 @@ interface GroupUserRepository : JpaRepository<GroupUser, Long> {
 
     fun findAllByGroupIdAndUidIn(groupId: Long, uids: List<Long>): List<GroupUser>
 
-    fun findTop1ByGroupIdOrderByCreatedAtAsc(groupId: Long): GroupUser?
+    fun findTop1ByGroupIdAndUidNotOrderByCreatedAtAsc(groupId: Long, uid: Long): GroupUser?
 
     fun deleteByGroupIdAndUid(groupId: Long, uid: Long)
 

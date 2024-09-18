@@ -44,14 +44,14 @@ class GroupUserService(
         return groupUserRepository.findAllByGroupIdAndUidIn(groupId, uids)
     }
 
-    suspend fun findTop1ByGroupIdOrderByCreatedAtAsc(groupId: Long): GroupUser? {
+    suspend fun findTop1ByGroupIdAndUidNotOrderByCreatedAtAsc(groupId: Long, uid: Long): GroupUser? {
         return withContext(Dispatchers.IO) {
-            groupUserRepository.findTop1ByGroupIdOrderByCreatedAtAsc(groupId)
+            groupUserRepository.findTop1ByGroupIdAndUidNotOrderByCreatedAtAsc(groupId, uid)
         }
     }
 
     @Transactional
-    fun deleteBySync(groupId: Long, uid: Long) {
+    fun deleteByGroupIdAndUidSync(groupId: Long, uid: Long) {
         groupUserRepository.deleteByGroupIdAndUid(groupId, uid)
     }
 
