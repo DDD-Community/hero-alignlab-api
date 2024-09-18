@@ -91,24 +91,6 @@ dependencies {
 
     /** aws */
     implementation("com.amazonaws:aws-java-sdk-s3:${DependencyVersion.AWS_S3_SDK_VERSION}")
-
-    /** test */
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("io.projectreactor:reactor-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.testcontainers:mysql:${DependencyVersion.TEST_CONTAINER_MYSQL}")
-    testImplementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:${DependencyVersion.P6SPY_LOG}")
-    testImplementation("ch.qos.logback:logback-classic:${DependencyVersion.LOGBACK_CLASSIC}")
-    testImplementation("io.mockk:mockk:${DependencyVersion.MOCKK}")
-
-    /** kotest */
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-    testImplementation("io.kotest:kotest-runner-junit5:${DependencyVersion.KOTEST}")
-    testImplementation("io.kotest:kotest-assertions-core:${DependencyVersion.KOTEST}")
-    testImplementation("io.kotest:kotest-property:${DependencyVersion.KOTEST}")
-    testImplementation("io.kotest:kotest-framework-datatest-jvm:${DependencyVersion.KOTEST}")
-    testImplementation("io.kotest.extensions:kotest-extensions-spring:${DependencyVersion.KOTEST_EXTENSION}")
 }
 
 defaultTasks("bootRun")
