@@ -49,6 +49,7 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
     /** Group User Error Code */
     DUPLICATE_GROUP_JOIN_ERROR(HttpStatus.BAD_REQUEST, "한개의 그룹만 참여 가능합니다."),
     EXCEED_GROUP_USER_COUNT_ERROR(HttpStatus.BAD_REQUEST, "그룹 정원을 초과하였습니다."),
+    NOT_FOUND_GROUP_USER_ERROR(HttpStatus.NOT_FOUND, "그룹 유저 정보를 찾을 수 없습니다."),
 
     /** Image Client Error Code */
     IMAGE_CLIENT_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, "이미지 업로드 중 오류가 발생했습니다."),

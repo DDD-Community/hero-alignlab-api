@@ -7,6 +7,7 @@ import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.Group
+import com.hero.alignlab.domain.group.domain.GroupUser
 import com.hero.alignlab.domain.group.model.CreateGroupContext
 import com.hero.alignlab.domain.group.model.request.CheckGroupRegisterRequest
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
@@ -66,24 +67,29 @@ class GroupFacade(
     }
 
     suspend fun withdraw(uid: Long, groupId: Long) {
-        val group = groupService.findByIdOrThrow(groupId)
+        parZip(
+            { groupService.findByIdOrThrow(groupId) },
+            { groupUserService.findByGroupIdAndUidOrThrow(groupId, uid) }
+        ) { group, groupUser ->
+            when (group.ownerUid == uid) {
+                /** 그룹 승계 또는 제거 */
+                true -> withdrawGroupOwner(uid, group, groupUser)
 
-        /** 그룹 승계 또는 제거 */
-        if (group.ownerUid == uid) {
-            withdrawGroupOwner(uid, group)
+                /** 그룹원 제거 */
+                false -> withdrawGroupUser(group, uid, groupUser)
+            }
         }
-
-        /** 그룹원 제거 */
-        withdrawGroupUser(group, uid)
     }
 
-    private suspend fun withdrawGroupOwner(uid: Long, group: Group) {
-        val groupUser = groupUserService.findTop1ByGroupIdAndUidNotOrderByCreatedAtAsc(group.id, uid)
+    private suspend fun withdrawGroupOwner(uid: Long, group: Group, groupUser: GroupUser) {
+        val otherGroupUser = groupUserService.findTop1ByGroupIdAndUidNotOrderByCreatedAtAsc(group.id, uid)
 
         txTemplates.writer.executesOrNull {
-            when (groupUser == null) {
+            when (otherGroupUser == null) {
                 /** 그룹 제거 */
-                true -> groupService.deleteByIdSync(group.id)
+                true -> {
+                    groupService.deleteByIdSync(group.id)
+                }
 
                 /** 그룹 승계 */
                 false -> {
@@ -94,13 +100,14 @@ class GroupFacade(
                     groupService.saveSync(succeedGroup)
                 }
             }
-            groupUserService.deleteByGroupIdAndUidSync(group.id, uid)
+            
+            groupUserService.delete(groupUser)
         }
     }
 
-    private suspend fun withdrawGroupUser(group: Group, uid: Long) {
+    private suspend fun withdrawGroupUser(group: Group, uid: Long, groupUser: GroupUser) {
         txTemplates.writer.executesOrNull {
-            groupUserService.deleteByGroupIdAndUidSync(group.id, uid)
+            groupUserService.delete(groupUser)
             groupService.saveSync(group.apply { this.userCount -= 1 })
         }
     }

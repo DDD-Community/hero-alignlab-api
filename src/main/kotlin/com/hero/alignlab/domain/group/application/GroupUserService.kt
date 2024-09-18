@@ -56,6 +56,11 @@ class GroupUserService(
     }
 
     @Transactional
+    fun delete(groupUser: GroupUser) {
+        groupUserRepository.delete(groupUser)
+    }
+
+    @Transactional
     fun saveSync(groupId: Long, uid: Long): GroupUser {
         return groupUserRepository.save(GroupUser(groupId = groupId, uid = uid))
     }
@@ -64,6 +69,11 @@ class GroupUserService(
         return withContext(Dispatchers.IO) {
             groupUserRepository.existsByGroupIdAndUid(groupId, uid)
         }
+    }
+
+    suspend fun findByGroupIdAndUidOrThrow(groupId: Long, uid: Long): GroupUser {
+        return findByGroupIdAndUid(groupId, uid)
+            ?: throw NotFoundException(ErrorCode.NOT_FOUND_GROUP_USER_ERROR)
     }
 
     suspend fun findByGroupIdAndUid(groupId: Long, uid: Long): GroupUser? {
