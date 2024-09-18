@@ -45,13 +45,14 @@ class PoseSnapshotListener(
             val targetDate = event.poseSnapshot.createdAt.toLocalDate()
 
             /** 집계 데이터 처리 */
-            val poseCount = targetDate
-                .run { poseCountService.findByUidAndDateOrNull(event.poseSnapshot.uid, this) }
+            val poseCount = poseCountService.findByUidAndDateOrNull(event.poseSnapshot.uid, targetDate)
                 ?: PoseCount(uid = event.poseSnapshot.uid, date = targetDate)
 
             val updatedPoseCount = poseCount.apply {
-                val typeCount = this.totalCount.count[event.poseSnapshot.type] ?: 0
-                this.totalCount.count[event.poseSnapshot.type] = typeCount + 1
+                val type = event.poseSnapshot.type
+
+                val typeCount = this.totalCount.count[type] ?: 0
+                this.totalCount.count[type] = typeCount + 1
             }
 
             /** 포즈에 연관된 데이터 처리 */
