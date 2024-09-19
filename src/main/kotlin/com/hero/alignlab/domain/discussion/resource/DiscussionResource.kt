@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController
 class DiscussionResource(
     private val discussionService: DiscussionService,
 ) {
+    /**
+     * - type : QNA(문의하기), REPORT(신고하기), SUGGEST(제안하기)
+     */
     @Operation(summary = "문의하기 생성")
     @PostMapping("/api/v1/discussion")
     suspend fun create(
