@@ -5,11 +5,11 @@ import com.hero.alignlab.common.extension.wrapOk
 import com.hero.alignlab.common.model.Response
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.notification.application.PoseNotificationService
+import com.hero.alignlab.domain.notification.model.request.CreateOrUpdatePoseNotificationRequest
 import com.hero.alignlab.domain.notification.model.request.PatchPoseNotificationRequest
-import com.hero.alignlab.domain.notification.model.request.RegisterPoseNotificationRequest
+import com.hero.alignlab.domain.notification.model.response.CreatePoseNotificationResponse
 import com.hero.alignlab.domain.notification.model.response.GetPoseNotificationResponse
 import com.hero.alignlab.domain.notification.model.response.PatchPoseNotificationResponse
-import com.hero.alignlab.domain.notification.model.response.RegisterPoseNotificationResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
@@ -40,13 +40,13 @@ class PoseNotificationResource(
         return poseNotificationService.getNotification(user).wrapOk()
     }
 
-    @Operation(summary = "자세 알림 등록")
+    @Operation(summary = "자세 알림 등록 및 수정")
     @PostMapping(path = ["/api/v1/pose-notifications"])
-    suspend fun registerPoseNotification(
+    suspend fun createOrUpdatePoseNotification(
         user: AuthUser,
-        @RequestBody request: RegisterPoseNotificationRequest,
-    ): ResponseEntity<Response<RegisterPoseNotificationResponse>> {
-        return poseNotificationService.registerNotification(user, request).wrapCreated()
+        @RequestBody request: CreateOrUpdatePoseNotificationRequest,
+    ): ResponseEntity<Response<CreatePoseNotificationResponse>> {
+        return poseNotificationService.createOrUpdateNotification(user, request).wrapCreated()
     }
 
     /** 변경이 필요한 항목만 Request로 입력 */

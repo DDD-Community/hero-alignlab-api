@@ -5,11 +5,11 @@ import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.notification.domain.PoseNotification
 import com.hero.alignlab.domain.notification.infrastructure.PoseNotificationRepository
+import com.hero.alignlab.domain.notification.model.request.CreateOrUpdatePoseNotificationRequest
 import com.hero.alignlab.domain.notification.model.request.PatchPoseNotificationRequest
-import com.hero.alignlab.domain.notification.model.request.RegisterPoseNotificationRequest
+import com.hero.alignlab.domain.notification.model.response.CreatePoseNotificationResponse
 import com.hero.alignlab.domain.notification.model.response.GetPoseNotificationResponse
 import com.hero.alignlab.domain.notification.model.response.PatchPoseNotificationResponse
-import com.hero.alignlab.domain.notification.model.response.RegisterPoseNotificationResponse
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.NotFoundException
 import kotlinx.coroutines.Dispatchers
@@ -26,10 +26,10 @@ class PoseNotificationService(
         return GetPoseNotificationResponse.from(poseNotification)
     }
 
-    suspend fun registerNotification(
+    suspend fun createOrUpdateNotification(
         user: AuthUser,
-        request: RegisterPoseNotificationRequest
-    ): RegisterPoseNotificationResponse {
+        request: CreateOrUpdatePoseNotificationRequest
+    ): CreatePoseNotificationResponse {
         val poseNotification = findByUidOrNull(user.uid)
 
         val registeredPoseNotification = txTemplates.writer.executes {
@@ -43,7 +43,7 @@ class PoseNotificationService(
             ).run { poseNotificationRepository.save(this) }
         }
 
-        return RegisterPoseNotificationResponse.from(registeredPoseNotification)
+        return CreatePoseNotificationResponse.from(registeredPoseNotification)
     }
 
     suspend fun findByUidOrNull(uid: Long): PoseNotification? {
