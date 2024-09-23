@@ -4,6 +4,7 @@ import com.hero.alignlab.common.extension.coExecuteOrNull
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.group.application.GroupUserScoreService
 import com.hero.alignlab.domain.group.application.GroupUserService
+import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.application.PoseKeyPointSnapshotService
 import com.hero.alignlab.domain.pose.application.PoseSnapshotService
@@ -12,10 +13,7 @@ import com.hero.alignlab.domain.pose.domain.PoseKeyPointSnapshot
 import com.hero.alignlab.domain.pose.domain.vo.PoseType.Companion.BAD_POSE
 import com.hero.alignlab.event.model.LoadPoseSnapshot
 import com.hero.alignlab.ws.handler.ReactiveGroupUserWebSocketHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionalEventListener
 
@@ -74,8 +72,15 @@ class PoseSnapshotListener(
 
                 val groupUserScore = groupUserScoreService.createOrUpdateGroupUserScore(this, score)
 
-                wsHandler.launchSendEvent(groupUserScore.uid, groupUserScore.groupId)
+                sendEventWithDelay(groupUserScore)
             }
+        }
+    }
+
+    private fun sendEventWithDelay(groupUserScore: GroupUserScore) {
+        CoroutineScope(Dispatchers.IO + Job()).launch {
+            delay(3000)
+            wsHandler.launchSendEvent(groupUserScore.uid, groupUserScore.groupId)
         }
     }
 }
