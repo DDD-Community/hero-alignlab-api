@@ -63,6 +63,8 @@ jobs:
           oauth.kakao.admin-key: ${{ secrets.OAUTH_KAKAO_ADMIN_KEY }}
           # Discord-Webhook-client 환경 변수 주입
           client.discord.webhook.url: ${{ secrets.CLIENT_DISCORD_WEBHOOK_URL }}
+          client.discord.webhook.channels.statistics.token: ${{ secrets.CLIENT_DISCORD_WEBHOOK_CHANNELS_STATISTICS_TOKEN }}
+          client.discord.webhook.channels.discussion.token: ${{ secrets.CLIENT_DISCORD_WEBHOOK_CHANNELS_DISCUSSION_TOKEN }}
 
       # Secret Setup - application-prod.yml
       - name: Inject env-values to application-prod.yml
