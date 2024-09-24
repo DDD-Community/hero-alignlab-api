@@ -5,7 +5,6 @@ import com.hero.alignlab.client.discord.client.DiscordWebhookClient
 import com.hero.alignlab.client.discord.client.SuspendableDiscordWebhookClient
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -30,21 +29,24 @@ class DiscordWebhookClientConfig {
     ): DiscordWebhookClient {
         logger.info { "initialized DiscordWebhookClient. $discordWebhookConfig" }
 
-        val webclient = WebClientFactory.generate("https://discord.com/api/webhooks")
+        val webclient = WebClientFactory.generate(null)
 
-        return SuspendableDiscordWebhookClient(webclient, discordWebhookConfig.channels)
+        return SuspendableDiscordWebhookClient(webclient, discordWebhookConfig)
     }
 
     data class Config(
-        var channels: Map<Channel, Token> = emptyMap()
+        var statisticsUrl: String = "",
+        var discussionUrl: String = ""
     ) {
-        data class Token(
-            @field:NotBlank
-            var token: String = "",
-        )
-
         enum class Channel {
             STATISTICS, DISCUSSION;
+        }
+
+        fun resolveUrl(channel: Channel): String {
+            return when (channel) {
+                Channel.STATISTICS -> this.statisticsUrl
+                Channel.DISCUSSION -> this.discussionUrl
+            }
         }
     }
 }

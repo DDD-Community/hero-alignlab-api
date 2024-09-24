@@ -71,11 +71,8 @@ client:
     unlink-path: /v1/user/unlink
   discord:
     webhook:
-      channels:
-        STATISTICS:
-          token:
-        DISCUSSION:
-          token:
+      statistics-url:
+      discussion-url:
 
 encrypt:
   key:
