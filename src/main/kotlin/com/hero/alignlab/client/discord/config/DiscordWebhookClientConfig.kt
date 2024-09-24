@@ -38,8 +38,7 @@ class DiscordWebhookClientConfig {
     }
 
     data class Config(
-        @field:NotBlank
-        var url: String = "",
+        val url: String = "https://discord.com/api/webhooks",
         var channels: Map<Channel, Token> = emptyMap()
     ) {
         data class Token(
