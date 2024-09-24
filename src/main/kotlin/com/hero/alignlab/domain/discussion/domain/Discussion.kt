@@ -14,6 +14,9 @@ class Discussion(
     @Column(name = "uid")
     val uid: Long,
 
+    @Column(name = "email")
+    val email: String? = null,
+
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     val type: DiscussionType,

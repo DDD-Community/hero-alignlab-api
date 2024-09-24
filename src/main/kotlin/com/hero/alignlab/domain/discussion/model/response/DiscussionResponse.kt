@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 data class DiscussionResponse(
     val id: Long,
     val uid: Long,
+    val email: String?,
     val type: DiscussionType,
     val title: String,
     val content: String,
@@ -18,6 +19,7 @@ data class DiscussionResponse(
             return DiscussionResponse(
                 id = discussion.id,
                 uid = discussion.uid,
+                email = discussion.email,
                 type = discussion.type,
                 title = discussion.title,
                 content = discussion.content,

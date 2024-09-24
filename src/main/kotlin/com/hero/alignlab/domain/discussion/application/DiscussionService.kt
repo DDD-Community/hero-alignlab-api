@@ -17,6 +17,7 @@ class DiscussionService(
     suspend fun create(user: AuthUser, request: DiscussionRequest): DiscussionResponse {
         val discussion = Discussion(
             uid = user.uid,
+            email = request.email,
             type = request.type,
             title = request.title,
             content = request.content,
