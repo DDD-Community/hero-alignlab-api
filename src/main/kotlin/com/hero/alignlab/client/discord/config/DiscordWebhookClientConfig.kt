@@ -8,7 +8,6 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,7 +19,6 @@ class DiscordWebhookClientConfig {
     private val logger = KotlinLogging.logger { }
 
     @Bean
-    @ConditionalOnProperty(prefix = "client.discord.webhook", name = ["url"])
     @ConfigurationProperties(prefix = "client.discord.webhook")
     fun discordWebhookConfig() = Config()
 
@@ -32,13 +30,12 @@ class DiscordWebhookClientConfig {
     ): DiscordWebhookClient {
         logger.info { "initialized DiscordWebhookClient. $discordWebhookConfig" }
 
-        val webclient = WebClientFactory.generate(discordWebhookConfig.url)
+        val webclient = WebClientFactory.generate("https://discord.com/api/webhooks")
 
         return SuspendableDiscordWebhookClient(webclient, discordWebhookConfig.channels)
     }
 
     data class Config(
-        val url: String = "https://discord.com/api/webhooks",
         var channels: Map<Channel, Token> = emptyMap()
     ) {
         data class Token(

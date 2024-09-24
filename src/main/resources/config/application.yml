@@ -71,7 +71,6 @@ client:
     unlink-path: /v1/user/unlink
   discord:
     webhook:
-      url: https://discord.com/api/webhooks
       channels:
         STATISTICS:
           token:
