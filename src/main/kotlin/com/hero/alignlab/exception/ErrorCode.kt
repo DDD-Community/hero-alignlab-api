@@ -59,5 +59,8 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
 
     /** Pose Layout Error Code */
     NOT_FOUND_POSE_LAYOUT_ERROR(HttpStatus.NOT_FOUND, "포즈 레이아웃을 찾을 수 없습니다."),
+
+    /** discord */
+    NOT_FOUND_TARGET_TOKEN(HttpStatus.NOT_FOUND, "디스코드 발송 토큰이 없습니다."),
     ;
 }

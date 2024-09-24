@@ -34,11 +34,21 @@ class DiscordWebhookClientConfig {
 
         val webclient = WebClientFactory.generate(discordWebhookConfig.url)
 
-        return SuspendableDiscordWebhookClient(webclient)
+        return SuspendableDiscordWebhookClient(webclient, discordWebhookConfig.channels)
     }
 
     data class Config(
         @field:NotBlank
         var url: String = "",
-    )
+        var channels: Map<Channel, Token> = emptyMap()
+    ) {
+        data class Token(
+            @field:NotBlank
+            var token: String = "",
+        )
+
+        enum class Channel {
+            STATISTICS, DISCUSSION;
+        }
+    }
 }

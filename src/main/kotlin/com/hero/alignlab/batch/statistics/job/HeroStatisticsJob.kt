@@ -1,6 +1,7 @@
 package com.hero.alignlab.batch.statistics.job
 
 import com.hero.alignlab.client.discord.DiscordWebhookService
+import com.hero.alignlab.client.discord.config.DiscordWebhookClientConfig
 import com.hero.alignlab.client.discord.model.request.SendMessageRequest
 import com.hero.alignlab.domain.discussion.infrastructure.DiscussionRepository
 import com.hero.alignlab.domain.group.infrastructure.GroupRepository
@@ -113,10 +114,6 @@ class HeroStatisticsJob(
 
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-            val text = countActiveUserTop3.await().joinToString("\n") {
-                "- uid: ${it.uid} / count: ${it.count}"
-            }
-
             val message = """
                 **$title [${fromDate.format(formatter)} ~ ${toDate.format(formatter)}]**
                 
@@ -145,7 +142,10 @@ class HeroStatisticsJob(
                 **이용자 현황**
                 - ${countActiveUserTop3.await().joinToString(" | ") { "uid : ${it.uid}  count : ${it.count}" }}
             """.trimIndent()
-            discordWebhookService.sendMessage(SendMessageRequest(message))
+            discordWebhookService.sendMessage(
+                channel = DiscordWebhookClientConfig.Config.Channel.STATISTICS,
+                request = SendMessageRequest(message)
+            )
         }
     }
 }

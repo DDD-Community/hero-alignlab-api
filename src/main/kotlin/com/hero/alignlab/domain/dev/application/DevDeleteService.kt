@@ -85,4 +85,45 @@ class DevDeleteService(
         discussionRepository.deleteAllByUid(uid)
         discussionCommentRepository.deleteAllByUid(uid)
     }
+
+    @Transactional
+    fun deleteAllWithoutUser(uid: Long) {
+        /*
+        /** 유저 정보 삭제 */
+        credentialUserInfoRepository.deleteAllByUid(uid)
+        oauthUserInfoRepository.deleteAllByUid(uid)
+        userInfoRepository.deleteById(uid)
+        */
+
+        /** pose layout 데이터 삭제 */
+        val poseLayoutIds = poseLayoutRepository.findAllByUid(uid).map { it.id }
+
+        poseLayoutRepository.deleteAllByUid(uid)
+        poseLayoutPointRepository.deleteAllByPoseLayoutIdIn(poseLayoutIds)
+
+        poseCountRepository.deleteAllByUid(uid)
+        val poseSnapshotIds = poseSnapshotRepository.findAllByUid(uid)
+            .map { it.id }
+
+        poseSnapshotRepository.deleteAllByUid(uid)
+        poseKeyPointSnapshotRepository.deleteAllByPoseSnapshotIdIn(poseSnapshotIds)
+
+        /** pose noti 제거 */
+        poseNotificationRepository.deleteAllByUid(uid)
+
+        /** syslog */
+        systemActionLogRepository.deleteAllByUid(uid)
+
+        /** img */
+        imageMetadataRepository.deleteAllByUid(uid)
+
+        /** group */
+        groupRepository.deleteAllByOwnerUid(uid)
+        groupUserRepository.deleteAllByUid(uid)
+        groupUserScoreRepository.deleteAllByUid(uid)
+
+        /** discussion */
+        discussionRepository.deleteAllByUid(uid)
+        discussionCommentRepository.deleteAllByUid(uid)
+    }
 }

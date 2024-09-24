@@ -3,6 +3,7 @@ package com.hero.alignlab.event.model
 import com.hero.alignlab.common.extension.mapper
 import com.hero.alignlab.common.extension.remoteIp
 import com.hero.alignlab.domain.auth.model.AUTH_TOKEN_KEY
+import com.hero.alignlab.domain.discussion.domain.Discussion
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.pose.domain.PoseSnapshot
 import com.hero.alignlab.domain.pose.model.PoseSnapshotModel.KeyPoint
@@ -61,4 +62,8 @@ data class SystemActionLogEvent(
 
 data class WithdrawEvent(
     val uid: Long,
+) : BaseEvent()
+
+data class DiscussionEvent(
+    val discussion: Discussion,
 ) : BaseEvent()

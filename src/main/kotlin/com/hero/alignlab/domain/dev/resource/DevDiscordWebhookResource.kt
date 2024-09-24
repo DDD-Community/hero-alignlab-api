@@ -2,6 +2,7 @@ package com.hero.alignlab.domain.dev.resource
 
 import com.hero.alignlab.batch.statistics.job.HeroStatisticsJob
 import com.hero.alignlab.client.discord.client.DiscordWebhookClient
+import com.hero.alignlab.client.discord.config.DiscordWebhookClientConfig
 import com.hero.alignlab.client.discord.model.request.SendMessageRequest
 import com.hero.alignlab.config.swagger.SwaggerTag.DEV_TAG
 import com.hero.alignlab.domain.auth.model.DevAuthUser
@@ -25,9 +26,10 @@ class DevDiscordWebhookResource(
     @PostMapping("/api/dev/v1/discord-webhooks/{id}")
     suspend fun sendMessage(
         dev: DevAuthUser,
+        @RequestParam channel: DiscordWebhookClientConfig.Config.Channel,
         @RequestParam message: String,
     ) {
-        discordWebhookClient.sendMessage(SendMessageRequest(message))
+        discordWebhookClient.sendMessage(channel, SendMessageRequest(message))
     }
 
     @Operation(summary = "discord webhook daily noti")

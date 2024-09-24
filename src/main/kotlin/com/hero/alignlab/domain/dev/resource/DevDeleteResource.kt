@@ -23,6 +23,6 @@ class DevDeleteResource(
         dev: DevAuthUser,
         @PathVariable uid: Long,
     ) {
-        devDeleteService.deleteAll(uid)
+        devDeleteService.deleteAllWithoutUser(uid)
     }
 }
