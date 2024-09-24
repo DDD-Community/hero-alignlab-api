@@ -24,7 +24,11 @@ interface SystemActionLogRepository : JpaRepository<SystemActionLog, Long>, Syst
 
 @Transactional(readOnly = true)
 interface SystemActionLogQRepository {
-    fun countActiveUserTop3(fromCreatedAt: LocalDateTime, toCreatedAt: LocalDateTime): List<CountActiveUser>
+    fun countActiveUser(
+        fromCreatedAt: LocalDateTime,
+        toCreatedAt: LocalDateTime,
+        limit: Long = 3L
+    ): List<CountActiveUser>
 }
 
 class SystemActionLogRepositoryImpl : SystemActionLogQRepository,
@@ -37,7 +41,11 @@ class SystemActionLogRepositoryImpl : SystemActionLogQRepository,
 
     private val qSystemActionLog = QSystemActionLog.systemActionLog
 
-    override fun countActiveUserTop3(fromCreatedAt: LocalDateTime, toCreatedAt: LocalDateTime): List<CountActiveUser> {
+    override fun countActiveUser(
+        fromCreatedAt: LocalDateTime,
+        toCreatedAt: LocalDateTime,
+        limit: Long
+    ): List<CountActiveUser> {
         return JPAQuery<QSystemActionLog>(entityManager)
             .select(
                 QCountActiveUser(
@@ -52,7 +60,7 @@ class SystemActionLogRepositoryImpl : SystemActionLogQRepository,
             )
             .groupBy(qSystemActionLog.uid)
             .orderBy(qSystemActionLog.id.count().desc())
-            .limit(3)
+            .limit(limit)
             .fetch()
     }
 }

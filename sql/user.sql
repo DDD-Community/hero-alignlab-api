@@ -3,6 +3,7 @@ CREATE TABLE `user_info`
 (
     `id`          bigint      NOT NULL AUTO_INCREMENT COMMENT 'user id',
     `nickname`    varchar(64) NOT NULL COMMENT '닉네임',
+    `level`       int      DEFAULT 1 COMMENT '유저 레벨',
     `created_at`  datetime DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
     `modified_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
     PRIMARY KEY (`id`)

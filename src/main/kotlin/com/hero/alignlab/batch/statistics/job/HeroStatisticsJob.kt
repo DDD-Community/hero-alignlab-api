@@ -65,7 +65,7 @@ class HeroStatisticsJob(
                 systemActionLogRepository.count()
             }
             val countActiveUserTop3 = async(Dispatchers.IO) {
-                systemActionLogRepository.countActiveUserTop3(fromDate, toDate)
+                systemActionLogRepository.countActiveUser(fromDate, toDate)
             }
 
             /** 포즈 */

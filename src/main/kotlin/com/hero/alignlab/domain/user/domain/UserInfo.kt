@@ -12,4 +12,10 @@ class UserInfo(
 
     @Column(name = "nickname")
     var nickname: String,
-) : BaseEntity()
+
+    @Column(name = "level")
+    var level: Int = 1,
+) : BaseEntity() {
+    val maxLevel: Boolean
+        get() = level >= 5
+}
