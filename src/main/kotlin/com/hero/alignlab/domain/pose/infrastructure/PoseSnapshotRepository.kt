@@ -19,6 +19,10 @@ import java.time.LocalDateTime
 @Repository
 interface PoseSnapshotRepository : JpaRepository<PoseSnapshot, Long>, PoseSnapshotQRepository {
     fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
+
+    fun findAllByUid(uid: Long): List<PoseSnapshot>
+
+    fun deleteAllByUid(uid: Long)
 }
 
 interface PoseSnapshotQRepository {

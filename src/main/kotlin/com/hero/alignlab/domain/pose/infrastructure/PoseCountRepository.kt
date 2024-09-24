@@ -24,6 +24,8 @@ interface PoseCountRepository : JpaRepository<PoseCount, Long>, PostCountQReposi
     fun findByUidAndDate(uid: Long, date: LocalDate): PoseCount?
 
     fun findAllByUidIn(uids: List<Long>): List<PoseCount>
+
+    fun deleteAllByUid(uid: Long)
 }
 
 @Transactional(readOnly = true)

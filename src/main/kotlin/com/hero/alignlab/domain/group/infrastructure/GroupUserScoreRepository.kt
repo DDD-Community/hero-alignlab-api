@@ -20,4 +20,6 @@ interface GroupUserScoreRepository : JpaRepository<GroupUserScore, Long> {
     fun findAllByUidIn(uids: List<Long>): List<GroupUserScore>
 
     fun deleteAllByModifiedAtBefore(modifiedAt: LocalDateTime)
+
+    fun deleteAllByUid(uid: Long)
 }

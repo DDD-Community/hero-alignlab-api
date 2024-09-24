@@ -20,6 +20,8 @@ import java.time.LocalDateTime
 @Repository
 interface SystemActionLogRepository : JpaRepository<SystemActionLog, Long>, SystemActionLogQRepository {
     fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
+
+    fun deleteAllByUid(uid: Long)
 }
 
 @Transactional(readOnly = true)

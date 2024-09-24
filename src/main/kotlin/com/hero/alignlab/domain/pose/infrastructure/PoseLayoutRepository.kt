@@ -11,4 +11,8 @@ interface PoseLayoutRepository : JpaRepository<PoseLayout, Long> {
     fun findTop1ByUidOrderByIdDesc(uid: Long): PoseLayout?
 
     fun findByIdAndUid(id: Long, uid: Long): PoseLayout?
+
+    fun findAllByUid(uid: Long): List<PoseLayout>
+
+    fun deleteAllByUid(uid: Long)
 }

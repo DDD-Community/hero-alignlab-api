@@ -10,4 +10,6 @@ import java.time.LocalDateTime
 @Repository
 interface ImageMetadataRepository : JpaRepository<ImageMetadata, Long> {
     fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
+
+    fun deleteAllByUid(uid: Long)
 }

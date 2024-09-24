@@ -7,4 +7,6 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional(readOnly = true)
 @Repository
-interface DiscussionCommentRepository : JpaRepository<DiscussionComment, Long>
+interface DiscussionCommentRepository : JpaRepository<DiscussionComment, Long> {
+    fun deleteAllByUid(uid: Long)
+}

@@ -34,4 +34,6 @@ interface GroupUserRepository : JpaRepository<GroupUser, Long> {
     fun countAllByGroupId(groupId: Long): Long
 
     fun findByUidAndGroupIdIn(uid: Long, groupIds: List<Long>): List<GroupUser>
+
+    fun deleteAllByUid(uid: Long)
 }

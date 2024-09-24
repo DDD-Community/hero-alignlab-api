@@ -7,4 +7,6 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional(readOnly = true)
 @Repository
-interface PoseKeyPointSnapshotRepository : JpaRepository<PoseKeyPointSnapshot, Long>
+interface PoseKeyPointSnapshotRepository : JpaRepository<PoseKeyPointSnapshot, Long> {
+    fun deleteAllByPoseSnapshotIdIn(poseKeyPointSnapshots: List<Long>)
+}

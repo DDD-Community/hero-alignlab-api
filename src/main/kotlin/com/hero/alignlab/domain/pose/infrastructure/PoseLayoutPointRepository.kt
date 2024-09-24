@@ -9,4 +9,6 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 interface PoseLayoutPointRepository : JpaRepository<PoseLayoutPoint, Long> {
     fun findAllByPoseLayoutId(poseLayoutPointId: Long): List<PoseLayoutPoint>
+
+    fun deleteAllByPoseLayoutIdIn(poseLayoutPointIds: List<Long>)
 }

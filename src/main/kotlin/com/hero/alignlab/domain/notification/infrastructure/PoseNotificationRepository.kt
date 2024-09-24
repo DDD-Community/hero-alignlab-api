@@ -14,4 +14,6 @@ interface PoseNotificationRepository : JpaRepository<PoseNotification, Long> {
     fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
 
     fun findByIdAndUid(id: Long, uid: Long): PoseNotification?
+
+    fun deleteAllByUid(uid: Long)
 }
