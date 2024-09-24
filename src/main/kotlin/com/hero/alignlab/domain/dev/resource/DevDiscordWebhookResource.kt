@@ -23,7 +23,7 @@ class DevDiscordWebhookResource(
     private val statisticsJob: HeroStatisticsJob,
 ) {
     @Operation(summary = "discord webhook test")
-    @PostMapping("/api/dev/v1/discord-webhooks/{id}")
+    @PostMapping("/api/dev/v1/discord-webhooks")
     suspend fun sendMessage(
         dev: DevAuthUser,
         @RequestParam channel: DiscordWebhookClientConfig.Config.Channel,
