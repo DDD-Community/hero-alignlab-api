@@ -37,7 +37,7 @@ class PoseCountUpdateJob(
                     .groupBy { totalCount -> totalCount.uid }
 
                 /** 집계 처리 데이터 조회 */
-                val poseCounts = poseCountService.findAllByUidIn(targetUids)
+                val poseCounts = poseCountService.findAllByUidInAndDate(targetUids, targetDate)
                     .mapNotNull { poseCount ->
                         /** 데이터가 없는 경우, 업데이트를 진행하지 않는다. */
                         val totalCount = totalCountByUid[poseCount.uid] ?: return@mapNotNull null

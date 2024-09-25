@@ -84,9 +84,9 @@ class PoseCountService(
         )
     }
 
-    suspend fun findAllByUidIn(uids: List<Long>): List<PoseCount> {
+    suspend fun findAllByUidInAndDate(uids: List<Long>, date: LocalDate): List<PoseCount> {
         return withContext(Dispatchers.IO) {
-            poseCountRepository.findAllByUidIn(uids)
+            poseCountRepository.findAllByUidInAndDate(uids, date)
         }
     }
 

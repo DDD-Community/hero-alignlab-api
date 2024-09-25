@@ -23,7 +23,7 @@ import java.time.LocalDate
 interface PoseCountRepository : JpaRepository<PoseCount, Long>, PostCountQRepository {
     fun findByUidAndDate(uid: Long, date: LocalDate): PoseCount?
 
-    fun findAllByUidIn(uids: List<Long>): List<PoseCount>
+    fun findAllByUidInAndDate(uids: List<Long>, date: LocalDate): List<PoseCount>
 
     fun deleteAllByUid(uid: Long)
 }
