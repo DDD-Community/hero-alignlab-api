@@ -33,14 +33,16 @@ class PoseNotificationService(
         val poseNotification = findByUidOrNull(user.uid)
 
         val registeredPoseNotification = txTemplates.writer.executes {
-            poseNotification?.apply {
+            val noti = poseNotification?.apply {
                 this.isActive = request.isActive
                 this.duration = request.duration
             } ?: PoseNotification(
                 uid = user.uid,
                 isActive = request.isActive,
                 duration = request.duration
-            ).run { poseNotificationRepository.save(this) }
+            )
+
+            poseNotificationRepository.save(noti)
         }
 
         return CreatePoseNotificationResponse.from(registeredPoseNotification)
