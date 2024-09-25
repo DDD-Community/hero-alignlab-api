@@ -52,10 +52,8 @@ class GroupRankRefreshJob(
                 }
             }
 
-        // TODO : 개발 작업 진행을 위해 해당 로직 주석 처리
-/*        *//** 1시간 전에 생성된 랭크 정보는 삭제 *//*
         txTemplates.writer.coExecute {
             groupUserScoreService.deleteAllByModifiedAtBeforeSync(from)
-        }*/
+        }
     }
 }
