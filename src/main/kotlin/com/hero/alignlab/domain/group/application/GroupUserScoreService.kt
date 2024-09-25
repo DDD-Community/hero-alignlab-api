@@ -92,4 +92,9 @@ class GroupUserScoreService(
     fun deleteAllByModifiedAtBeforeSync(modifiedAt: LocalDateTime) {
         return groupUserScoreRepository.deleteAllByModifiedAtBefore(modifiedAt)
     }
+
+    @Transactional
+    fun deleteAllByUid(uid: Long) {
+        groupUserScoreRepository.deleteAllByUid(uid)
+    }
 }

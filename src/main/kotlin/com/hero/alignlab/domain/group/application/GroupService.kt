@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class GroupService(
@@ -66,6 +67,7 @@ class GroupService(
         groupRepository.deleteById(id)
     }
 
+    @Transactional
     fun saveSync(group: Group): Group {
         return groupRepository.save(group)
     }

@@ -79,6 +79,10 @@ class GroupFacade(
                 false -> withdrawGroupUser(group, uid, groupUser)
             }
         }
+
+        txTemplates.writer.executes {
+            groupUserScoreService.deleteAllByUid(uid)
+        }
     }
 
     private suspend fun withdrawGroupOwner(uid: Long, group: Group, groupUser: GroupUser) {
@@ -100,7 +104,7 @@ class GroupFacade(
                     groupService.saveSync(succeedGroup)
                 }
             }
-            
+
             groupUserService.delete(groupUser)
         }
     }
@@ -234,6 +238,7 @@ class GroupFacade(
         txTemplates.writer.executesOrNull {
             groupUserService.deleteSync(groupUserId)
             groupService.saveSync(group.apply { this.userCount -= 1 })
+            groupUserScoreService.deleteAllByUid(user.uid)
         }
     }
 
