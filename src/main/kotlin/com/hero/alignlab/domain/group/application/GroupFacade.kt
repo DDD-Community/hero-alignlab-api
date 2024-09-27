@@ -259,17 +259,22 @@ class GroupFacade(
         val userById = userInfoService.findAllByIds(groupUserScores.map { it.uid }).associateBy { it.id }
 
         val rank = AtomicInteger(1)
+        val ranks = groupUserScores.mapNotNull { groupUserScore ->
+            GetGroupRankResponse(
+                groupUserId = groupUserScore.groupUserId,
+                name = userById[groupUserScore.uid]?.nickname ?: return@mapNotNull null,
+                rank = rank.getAndIncrement(),
+                score = groupUserScore.score ?: return@mapNotNull null,
+            )
+        }
+        val avgGroupUserScore = (ranks.sumOf { it.score } / ranks.size)
+        val myScore = ranks.firstOrNull { it.groupUserId == groupUser.id }?.score
 
         return GetGroupRanksResponse(
             groupId = groupUser.groupId,
-            ranks = groupUserScores.mapNotNull { groupUserScore ->
-                GetGroupRankResponse(
-                    groupUserId = groupUserScore.groupUserId,
-                    name = userById[groupUserScore.uid]?.nickname ?: return@mapNotNull null,
-                    rank = rank.getAndIncrement(),
-                    score = groupUserScore.score ?: return@mapNotNull null,
-                )
-            }
+            ranks = ranks,
+            avgScore = avgGroupUserScore,
+            myScore = myScore
         )
     }
 }
