@@ -10,6 +10,7 @@ import com.hero.alignlab.domain.pose.application.PoseKeyPointSnapshotService
 import com.hero.alignlab.domain.pose.application.PoseSnapshotService
 import com.hero.alignlab.domain.pose.domain.PoseCount
 import com.hero.alignlab.domain.pose.domain.PoseKeyPointSnapshot
+import com.hero.alignlab.domain.pose.domain.vo.PoseTotalCount
 import com.hero.alignlab.domain.pose.domain.vo.PoseType.Companion.BAD_POSE
 import com.hero.alignlab.event.model.LoadPoseSnapshot
 import com.hero.alignlab.ws.handler.ReactiveGroupUserWebSocketHandler
@@ -42,15 +43,16 @@ class PoseSnapshotListener(
 
             val targetDate = event.poseSnapshot.createdAt.toLocalDate()
 
+            val poseSnapshot = poseSnapshotService.countByUidsAndDate(listOf(event.poseSnapshot.uid), targetDate)
+                .associate { snapshot -> snapshot.type to snapshot.count.toInt() }
+
             /** 집계 데이터 처리 */
             val poseCount = poseCountService.findByUidAndDateOrNull(event.poseSnapshot.uid, targetDate)
                 ?: PoseCount(uid = event.poseSnapshot.uid, date = targetDate)
 
+            /** 집계 데이터 다시 조회하여, 동기화 진행 */
             val updatedPoseCount = poseCount.apply {
-                val type = event.poseSnapshot.type
-
-                val typeCount = this.totalCount.count[type] ?: 0
-                this.totalCount.count[type] = typeCount + 1
+                this.totalCount = PoseTotalCount(count = poseSnapshot)
             }
 
             /** 포즈에 연관된 데이터 처리 */
