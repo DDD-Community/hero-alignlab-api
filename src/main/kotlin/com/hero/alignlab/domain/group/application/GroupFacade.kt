@@ -267,7 +267,10 @@ class GroupFacade(
                 score = groupUserScore.score ?: return@mapNotNull null,
             )
         }
-        val avgGroupUserScore = (ranks.sumOf { it.score } / ranks.size)
+        val avgGroupUserScore = when (ranks.isNotEmpty()) {
+            true -> (ranks.sumOf { it.score } / ranks.size)
+            false -> null
+        }
         val myScore = ranks.firstOrNull { it.groupUserId == groupUser.id }?.score
 
         return GetGroupRanksResponse(
