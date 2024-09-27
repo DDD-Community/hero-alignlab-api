@@ -5,6 +5,7 @@ import com.hero.alignlab.common.extension.wrapVoid
 import com.hero.alignlab.config.swagger.SwaggerTag.DEV_TAG
 import com.hero.alignlab.domain.auth.model.DevAuthUser
 import com.hero.alignlab.domain.dev.application.DevPoseService
+import com.hero.alignlab.domain.dev.model.request.DevBulkCreatePoseSnapshot
 import com.hero.alignlab.domain.dev.model.request.DevPoseSnapshotRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -27,6 +28,15 @@ class DevPoseResource(
         @RequestBody request: DevPoseSnapshotRequest,
     ): ResponseEntity<Unit> {
         return devPoseService.create(request).wrapVoid()
+    }
+
+    @Operation(summary = "[DEV] 벌크 포즈 스냅샷 생성")
+    @PostMapping("/api/dev/v1/pose-snapshots/bulk")
+    suspend fun bulkCreatePoseSnapshots(
+        dev: DevAuthUser,
+        @RequestBody request: DevBulkCreatePoseSnapshot,
+    ): ResponseEntity<Unit> {
+        return devPoseService.bulkCreate(request).wrapVoid()
     }
 
     @Operation(summary = "[DEV] 포즈 데이터 삭제")

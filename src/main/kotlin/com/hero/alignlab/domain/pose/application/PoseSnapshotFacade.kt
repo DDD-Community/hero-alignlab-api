@@ -17,10 +17,14 @@ class PoseSnapshotFacade(
     private val publisher: ApplicationEventPublisher,
 ) {
     suspend fun loadPoseSnapshot(user: AuthUser, request: PoseSnapshotRequest): PoseSnapshotResponse {
+        return createPoseSnapshot(user.uid, request)
+    }
+
+    fun createPoseSnapshot(uid: Long, request: PoseSnapshotRequest): PoseSnapshotResponse {
         val createdPoseSnapshot = txTemplates.writer.executes {
             val createdPoseSnapshot = poseSnapshotService.saveSync(
                 PoseSnapshot(
-                    uid = user.uid,
+                    uid = uid,
                     score = request.snapshot.score,
                     type = request.type,
                     imageUrl = request.imageUrl

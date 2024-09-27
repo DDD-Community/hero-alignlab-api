@@ -2,6 +2,7 @@ package com.hero.alignlab.domain.dev.application
 
 import com.hero.alignlab.common.extension.executes
 import com.hero.alignlab.config.database.TransactionTemplates
+import com.hero.alignlab.domain.dev.model.request.DevBulkCreatePoseSnapshot
 import com.hero.alignlab.domain.dev.model.request.DevPoseSnapshotRequest
 import com.hero.alignlab.domain.group.application.GroupUserScoreService
 import com.hero.alignlab.domain.pose.application.*
@@ -10,6 +11,7 @@ import com.hero.alignlab.domain.pose.domain.vo.PoseType
 import com.hero.alignlab.domain.pose.model.PoseSnapshotModel
 import com.hero.alignlab.domain.pose.model.request.PoseSnapshotRequest
 import com.hero.alignlab.event.model.LoadPoseSnapshot
+import kotlinx.coroutines.delay
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -19,6 +21,7 @@ import java.time.temporal.ChronoUnit
 class DevPoseService(
     private val poseSnapshotService: PoseSnapshotService,
     private val groupUserScoreService: GroupUserScoreService,
+    private val poseSnapshotFacade: PoseSnapshotFacade,
     private val poseCountService: PoseCountService,
     private val poseKeyPointSnapshotService: PoseKeyPointSnapshotService,
     private val poseLayoutService: PoseLayoutService,
@@ -26,6 +29,17 @@ class DevPoseService(
     private val txTemplates: TransactionTemplates,
     private val publisher: ApplicationEventPublisher,
 ) {
+    suspend fun bulkCreate(request: DevBulkCreatePoseSnapshot) {
+        request.targets.forEach { target ->
+            target.types.map { (type, count) ->
+                repeat(count) {
+                    poseSnapshotFacade.createPoseSnapshot(target.uid, generatePoseSnapshotRequest(type))
+                    delay(100)
+                }
+            }
+        }
+    }
+
     suspend fun create(request: DevPoseSnapshotRequest) {
         val daysBetween = ChronoUnit.DAYS.between(request.fromDate, request.toDate).toInt()
         val dailySnapshots = request.dailyCount
@@ -33,7 +47,7 @@ class DevPoseService(
         for (day in 0..daysBetween) {
             val currentDate = request.fromDate.plusDays(day.toLong())
             for (count in 1..dailySnapshots) {
-                val poseSnapshotRequest = generatePoseSnapshotRequest(request.uid)
+                val poseSnapshotRequest = generatePoseSnapshotRequest(PoseType.CHIN_UTP)
 
                 txTemplates.writer.executes {
                     val createdPoseSnapshot = poseSnapshotService.saveSync(
@@ -52,7 +66,7 @@ class DevPoseService(
         }
     }
 
-    private fun generatePoseSnapshotRequest(uid: Long): PoseSnapshotRequest {
+    private fun generatePoseSnapshotRequest(type: PoseType): PoseSnapshotRequest {
         return PoseSnapshotRequest(
             snapshot = PoseSnapshotModel(
                 keypoints = listOf(
@@ -161,7 +175,7 @@ class DevPoseService(
                 ),
                 score = BigDecimal("0.5373632567269462")
             ),
-            type = PoseType.CHIN_UTP,
+            type = type,
             imageUrl = null
         )
     }
