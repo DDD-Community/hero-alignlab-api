@@ -19,7 +19,7 @@ class PoseCountScheduler(
     private val logger = KotlinLogging.logger { }
 
     /** 전일 데이터에 대한 정합성 체크 */
-    @Scheduled(cron = "0 0 4 * * *")
+    // @Scheduled(cron = "0 0 4 * * *")
     fun poseCountUpdateJob() {
         val targetDate = LocalDate.now().minusDays(1)
 
