@@ -13,7 +13,7 @@ class GroupRankScheduler(
     private val groupRankRefreshJob: GroupRankRefreshJob,
 ) {
     /** 10초에 한번 스케줄러 동작 */
-    // @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 10000)
     fun runRefreshGroupRank() {
         CoroutineScope(Dispatchers.IO + Job()).launch {
             groupRankRefreshJob.run()

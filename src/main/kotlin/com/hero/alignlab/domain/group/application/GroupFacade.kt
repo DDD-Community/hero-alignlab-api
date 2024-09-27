@@ -8,18 +8,24 @@ import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.domain.GroupUser
+import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.group.model.CreateGroupContext
 import com.hero.alignlab.domain.group.model.request.CheckGroupRegisterRequest
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.response.*
+import com.hero.alignlab.domain.pose.application.PoseSnapshotService
+import com.hero.alignlab.domain.pose.domain.vo.PoseType.Companion.BAD_POSE
 import com.hero.alignlab.domain.user.application.UserInfoService
 import com.hero.alignlab.event.model.CreateGroupEvent
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.NotFoundException
+import com.hero.alignlab.ws.handler.ReactiveGroupUserWebSocketHandler
+import kotlinx.coroutines.*
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
 
 @Service
@@ -30,6 +36,8 @@ class GroupFacade(
     private val userInfoService: UserInfoService,
     private val txTemplates: TransactionTemplates,
     private val publisher: ApplicationEventPublisher,
+    private val wsHandler: ReactiveGroupUserWebSocketHandler,
+    private val poseSnapshotService: PoseSnapshotService,
 ) {
     suspend fun createGroup(user: AuthUser, request: CreateGroupRequest): CreateGroupResponse {
         return parZip(
@@ -279,5 +287,30 @@ class GroupFacade(
             avgScore = avgGroupUserScore,
             myScore = myScore
         )
+    }
+
+    suspend fun refreshGroupScore(uid: Long) {
+        /** group score 처리 */
+        groupUserService.findByUidOrNull(uid)?.run {
+            val to = LocalDateTime.now()
+            val from = to.minusHours(1)
+
+            val score = poseSnapshotService.countByUidAndModifiedAt(
+                uid = uid,
+                fromCreatedAt = from,
+                toCreatedAt = to
+            ).filter { model -> model.type in BAD_POSE }.sumOf { model -> model.count }.toInt()
+
+            val groupUserScore = groupUserScoreService.createOrUpdateGroupUserScore(this, score)
+
+            sendEventWithDelay(groupUserScore)
+        }
+    }
+
+    private fun sendEventWithDelay(groupUserScore: GroupUserScore) {
+        CoroutineScope(Dispatchers.IO + Job()).launch {
+            delay(3000)
+            wsHandler.launchSendEvent(groupUserScore.uid, groupUserScore.groupId)
+        }
     }
 }
