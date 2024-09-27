@@ -3,6 +3,7 @@ package com.hero.alignlab.ws.handler
 import com.hero.alignlab.domain.auth.application.AuthFacade
 import com.hero.alignlab.domain.group.application.GroupUserService
 import com.hero.alignlab.ws.model.GroupUserUriContext
+import com.hero.alignlab.ws.model.WsGroupUserModel
 import com.hero.alignlab.ws.service.GroupUserWsFacade
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
@@ -149,4 +150,11 @@ class ReactiveGroupUserWebSocketHandler(
         /** Websocket Session Release */
         groupUserByMap.clear()
     }
+
+    fun getWsGroupUsers(): List<WsGroupUserModel> {
+        return groupUserByMap.map {
+            WsGroupUserModel(it.key, it.value.keys)
+        }
+    }
 }
+
