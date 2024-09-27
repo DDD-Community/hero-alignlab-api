@@ -86,7 +86,7 @@ jobs:
         run: ./gradlew clean --stacktrace --info build
         shell: bash
 
-      # Generate Image Tag
+      # Generate Docker Image Tag
       - name: Make image tag
         run: echo "IMAGE_TAG=$ACTIVE_PROFILE-${GITHUB_SHA::7}" >> $GITHUB_ENV # activeProfile-커밋 hash 값
 
