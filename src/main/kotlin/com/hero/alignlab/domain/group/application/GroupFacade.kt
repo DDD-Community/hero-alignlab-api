@@ -98,7 +98,7 @@ class GroupFacade(
                 /** 그룹 승계 */
                 false -> {
                     val succeedGroup = group.apply {
-                        this.ownerUid = groupUser.uid
+                        this.ownerUid = otherGroupUser.uid
                         this.userCount -= 1
                     }
                     groupService.saveSync(succeedGroup)
