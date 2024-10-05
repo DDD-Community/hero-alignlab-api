@@ -2,7 +2,7 @@ package com.hero.alignlab.event.listener
 
 import com.hero.alignlab.domain.dev.application.DevDeleteService
 import com.hero.alignlab.domain.group.application.GroupFacade
-import com.hero.alignlab.domain.group.infrastructure.GroupRepository
+import com.hero.alignlab.domain.group.application.GroupService
 import com.hero.alignlab.event.model.WithdrawEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +14,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 class WithdrawEventListener(
     /** 탈퇴 회원이 그룹장인 경우 승계 작업 필요. */
     private val groupFacade: GroupFacade,
-    private val groupRepository: GroupRepository,
+    private val groupService: GroupService,
     private val devDeleteService: DevDeleteService,
 ) {
     /**
@@ -24,7 +24,7 @@ class WithdrawEventListener(
     fun handle(event: WithdrawEvent) {
         /** 그룹 승계 및 탈퇴 */
         CoroutineScope(Dispatchers.IO).launch {
-            val group = groupRepository.findByOwnerUid(event.uid)
+            val group = groupService.findByOwnerUid(event.uid)
 
             if (group != null) {
                 groupFacade.withdraw(group.id, event.uid)

@@ -129,4 +129,16 @@ class UserInfoService(
             userInfoRepository.existsByNicknameAndIdNot(nickname, id)
         }
     }
+
+    suspend fun findAllById(ids: List<Long>): List<UserInfo> {
+        return withContext(Dispatchers.IO) {
+            userInfoRepository.findAllById(ids)
+        }
+    }
+
+    suspend fun saveAll(users: List<UserInfo>): List<UserInfo> {
+        return txTemplates.writer.coExecute {
+            userInfoRepository.saveAll(users)
+        }
+    }
 }

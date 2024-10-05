@@ -77,4 +77,10 @@ class GroupService(
             groupRepository.findAll(pageable)
         }
     }
+
+    suspend fun findByOwnerUid(uid: Long): Group? {
+        return withContext(Dispatchers.IO) {
+            groupRepository.findByOwnerUid(uid)
+        }
+    }
 }

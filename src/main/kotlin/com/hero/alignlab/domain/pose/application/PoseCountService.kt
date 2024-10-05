@@ -1,5 +1,6 @@
 package com.hero.alignlab.domain.pose.application
 
+import com.hero.alignlab.common.extension.coExecute
 import com.hero.alignlab.common.extension.coExecuteOrNull
 import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.config.database.TransactionTemplates
@@ -30,6 +31,12 @@ class PoseCountService(
     @Transactional
     fun saveAllSync(poseCounts: List<PoseCount>): List<PoseCount> {
         return poseCountRepository.saveAll(poseCounts)
+    }
+
+    suspend fun saveAll(poseCounts: List<PoseCount>): List<PoseCount> {
+        return txTemplates.writer.coExecute {
+            saveAllSync(poseCounts)
+        }
     }
 
     suspend fun findByUidAndDateOrNull(uid: Long, date: LocalDate): PoseCount? {

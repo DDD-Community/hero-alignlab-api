@@ -1,7 +1,5 @@
 package com.hero.alignlab.batch.posecount.job
 
-import com.hero.alignlab.common.extension.executesOrNull
-import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.pose.application.PoseCountService
 import com.hero.alignlab.domain.pose.application.PoseSnapshotService
 import com.hero.alignlab.domain.pose.domain.vo.PoseTotalCount
@@ -15,7 +13,6 @@ class PoseCountUpdateJob(
     private val poseCountService: PoseCountService,
     private val poseSnapshotService: PoseSnapshotService,
     private val userInfoService: UserInfoService,
-    private val txTemplates: TransactionTemplates,
 ) {
     private val logger = KotlinLogging.logger { }
 
@@ -50,9 +47,7 @@ class PoseCountUpdateJob(
                         }
                     }
 
-                txTemplates.writer.executesOrNull {
-                    poseCountService.saveAllSync(poseCounts)
-                }
+                poseCountService.saveAll(poseCounts)
             }
 
         logger.info { "finished PoseCountUpdateJob.run()" }
