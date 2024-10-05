@@ -2,6 +2,8 @@
 
 > 당신의 나쁜 자세에 한방! 나쁜 허리에 한방! 나쁜 목에 한방!
 
+![image](https://github.com/user-attachments/assets/a1459e6f-96d4-465e-a738-41792c27bb15)
+
 ### Spec
 
 > 자세공작소의 Server는 다음의 Spec을 기반으로 구현되었습니다.
