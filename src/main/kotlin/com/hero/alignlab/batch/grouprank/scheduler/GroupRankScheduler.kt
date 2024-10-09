@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component
 class GroupRankScheduler(
     private val groupRankRefreshJob: GroupRankRefreshJob,
 ) {
-    /** 10초에 한번 스케줄러 동작 */
-    @Scheduled(fixedRate = 10000)
+    /** 30초에 한번 스케줄러 동작 */
+    @Scheduled(fixedRate = 30000)
     fun runRefreshGroupRank() {
         CoroutineScope(Dispatchers.IO + Job()).launch {
             groupRankRefreshJob.run()
