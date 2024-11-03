@@ -11,6 +11,7 @@ import com.hero.alignlab.domain.user.domain.vo.OAuthProvider
 import com.hero.alignlab.domain.user.infrastructure.UserInfoRepository
 import com.hero.alignlab.domain.user.model.request.ChangeNicknameRequest
 import com.hero.alignlab.domain.user.model.response.ChangeNicknameResponse
+import com.hero.alignlab.domain.user.model.response.CheckChangeNicknameResponse
 import com.hero.alignlab.domain.user.model.response.UserInfoResponse
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
@@ -122,6 +123,37 @@ class UserInfoService(
         }
 
         return ChangeNicknameResponse.from(updatedUserInfo)
+    }
+
+    suspend fun checkChangeNickname(
+        user: AuthUser,
+        id: Long,
+        request: ChangeNicknameRequest,
+    ): CheckChangeNicknameResponse {
+        if (user.uid != id) {
+            return CheckChangeNicknameResponse(
+                valid = false,
+                reason = "유저 정보를 변경할 수 있는 권한이 없습니다.",
+            )
+        }
+
+        runCatching {
+            parZip(
+                { getUserByIdOrThrowSync(id) },
+                { existsByNicknameAndIdNot(request.nickname, id) }
+            ) { userInfo, existsNickname ->
+                if (existsNickname) {
+                    throw InvalidRequestException(ErrorCode.DUPLICATE_USER_NICKNAME_ERROR)
+                }
+            }
+        }.onFailure { e ->
+            return CheckChangeNicknameResponse(
+                valid = false,
+                reason = e.message ?: "닉네임 변경을 할 수 없습니다."
+            )
+        }
+
+        return CheckChangeNicknameResponse(valid = true)
     }
 
     suspend fun existsByNicknameAndIdNot(nickname: String, id: Long): Boolean {

@@ -6,6 +6,7 @@ import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.user.application.UserInfoService
 import com.hero.alignlab.domain.user.model.request.ChangeNicknameRequest
 import com.hero.alignlab.domain.user.model.response.ChangeNicknameResponse
+import com.hero.alignlab.domain.user.model.response.CheckChangeNicknameResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
@@ -26,6 +27,20 @@ class UserResource(
         @RequestBody request: ChangeNicknameRequest,
     ): ResponseEntity<Response<ChangeNicknameResponse>> {
         return userInfoService.changeNickname(
+            user = user,
+            id = id,
+            request = request
+        ).wrapOk()
+    }
+
+    @Operation(summary = "유저 닉네임 유효성 검사 체크")
+    @PutMapping("/api/v1/users/{id}/nickname/check")
+    suspend fun checkChangeNickname(
+        user: AuthUser,
+        @PathVariable id: Long,
+        @RequestBody request: ChangeNicknameRequest,
+    ): ResponseEntity<Response<CheckChangeNicknameResponse>> {
+        return userInfoService.checkChangeNickname(
             user = user,
             id = id,
             request = request

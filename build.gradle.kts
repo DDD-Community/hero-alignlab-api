@@ -91,6 +91,15 @@ dependencies {
 
     /** aws */
     implementation("com.amazonaws:aws-java-sdk-s3:${DependencyVersion.AWS_S3_SDK_VERSION}")
+
+    /** etc */
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    val isMacOS = System.getProperty("os.name").startsWith("Mac OS X")
+    val architecture = System.getProperty("os.arch").lowercase()
+    if (isMacOS && architecture == "aarch64") {
+        developmentOnly("io.netty:netty-resolver-dns-native-macos:${DependencyVersion.MAC_DNS}:osx-aarch_64")
+        testImplementation("io.netty:netty-resolver-dns-native-macos:${DependencyVersion.MAC_DNS}:osx-aarch_64")
+    }
 }
 
 defaultTasks("bootRun")
