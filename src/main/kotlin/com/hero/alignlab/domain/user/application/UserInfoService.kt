@@ -118,7 +118,7 @@ class UserInfoService(
             txTemplates.writer.coExecute {
                 userInfo.apply {
                     this.nickname = request.nickname
-                }
+                }.run { userInfoRepository.save(this) }
             }
         }
 
