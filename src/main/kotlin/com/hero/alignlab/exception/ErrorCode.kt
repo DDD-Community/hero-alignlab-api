@@ -44,7 +44,10 @@ enum class ErrorCode(val status: HttpStatus, val description: String) {
     INVALID_JOIN_CODE_ERROR(HttpStatus.BAD_REQUEST, "비밀번호의 조건이 부합하지 않습니다."),
     NOT_CONTAINS_GROUP_USER_ERROR(HttpStatus.BAD_REQUEST, "그룹원이 아닙니다."),
     NOT_FOUND_GROUP_ID_ERROR(HttpStatus.NOT_FOUND, "group Id를 찾을 수 없습니다."),
+    NOT_FOUND_GROUP_TAG_ERROR(HttpStatus.NOT_FOUND, "그룹 태그 정보를 찾을 수 없습니다."),
     OVER_RANGE_GROUP_NAME_ERROR(HttpStatus.BAD_REQUEST, "그룹명은 16글자까지만 입력할 수 있습니다."),
+    OVER_COUNT_GROUP_TAG_ERROR(HttpStatus.BAD_REQUEST, "그룹 태그는 최대 3개까지 입력 가능합니다."),
+    DUPLICATE_GROUP_TAG_NAME_ERROR(HttpStatus.BAD_REQUEST, "중복된 태그명이 있습니다."),
 
     /** Group User Error Code */
     DUPLICATE_GROUP_JOIN_ERROR(HttpStatus.BAD_REQUEST, "한개의 그룹만 참여 가능합니다."),

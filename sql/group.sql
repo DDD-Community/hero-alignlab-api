@@ -46,3 +46,26 @@ CREATE TABLE `group_user_score`
 CREATE UNIQUE INDEX uidx__group_user_id ON group_user_score (group_user_id);
 CREATE INDEX idx__group_id__group_user_id ON group_user_score (group_id, group_user_id);
 CREATE INDEX idx__uid ON group_user_score (uid);
+
+-- 그룹 태그
+CREATE TABLE `group_tag`
+(
+    `id`            bigint NOT NULL AUTO_INCREMENT COMMENT 'group tag id',
+    `name`          varchar(30) NOT NULL COMMENT '태그명',
+    `created_at`    datetime DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    `modified_at`   datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT=200000 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='그룹 태그';
+CREATE UNIQUE INDEX uidx__group_tag_name ON group_tag (name);
+
+-- 그룹 태그 매핑
+CREATE TABLE `group_tag_map`
+(
+    `id`            bigint NOT NULL AUTO_INCREMENT COMMENT 'group tag map id',
+    `group_id`      bigint NOT NULL COMMENT 'group id',
+    `tag_id`        bigint NOT NULL COMMENT 'group tag id',
+    `created_at`    datetime DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    `modified_at`   datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT=200000 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='그룹 태그 매핑';
+CREATE UNIQUE INDEX uidx__group_id__tag_id ON group_tag_map (group_id, tag_id);

@@ -51,9 +51,10 @@ class GroupResource(
     @GetMapping("/api/v1/groups")
     suspend fun searchGroups(
         user: AuthUser,
+        @RequestParam(required = false) tagName: String?,
         @ParameterObject pageRequest: HeroPageRequest,
     ): PageResponse<SearchGroupResponse> {
-        return groupFacade.searchGroup(user, pageRequest).wrapPage()
+        return groupFacade.searchGroup(user, tagName, pageRequest).wrapPage()
     }
 
     @Operation(summary = "그룹 생성")
@@ -72,9 +73,9 @@ class GroupResource(
         @PathVariable id: Long,
         @RequestBody request: UpdateGroupRequest
     ): ResponseEntity<Response<UpdateGroupResponse>> {
-        return groupService.updateGroup(
+        return groupFacade.updateGroup(
             user = user,
-            id = id,
+            groupId = id,
             request = request
         ).wrapOk()
     }

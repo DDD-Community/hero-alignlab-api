@@ -1,6 +1,7 @@
 package com.hero.alignlab.domain.group.model.response
 
 import com.hero.alignlab.domain.group.domain.Group
+import com.hero.alignlab.domain.group.domain.GroupTag
 
 data class GetGroupResponse(
     val id: Long,
@@ -16,10 +17,12 @@ data class GetGroupResponse(
     val userCount: Int,
     /** 그룹 정원 */
     val userCapacity: Int,
-    val ranks: List<GetGroupRankResponse>? = null
+    val ranks: List<GetGroupRankResponse>? = null,
+    /** 그룹 태그 리스트 */
+    val tags: List<GroupTagResponse>?,
 ) {
     companion object {
-        fun from(group: Group, ownerName: String): GetGroupResponse {
+        fun from(group: Group, ownerName: String, tags: List<GroupTag>): GetGroupResponse {
             return GetGroupResponse(
                 id = group.id,
                 name = group.name,
@@ -29,7 +32,8 @@ data class GetGroupResponse(
                 isHidden = group.isHidden,
                 joinCode = group.joinCode,
                 userCount = group.userCount,
-                userCapacity = group.userCapacity
+                userCapacity = group.userCapacity,
+                tags = tags.map { GroupTagResponse(it.id, it.name) },
             )
         }
     }

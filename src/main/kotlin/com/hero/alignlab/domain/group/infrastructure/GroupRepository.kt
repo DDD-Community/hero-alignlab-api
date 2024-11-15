@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 
 @Repository
 @Transactional(readOnly = true)
-interface GroupRepository : JpaRepository<Group, Long> {
+interface GroupRepository : JpaRepository<Group, Long>, GroupQRepository {
     fun existsByName(name: String): Boolean
 
     fun findByIdAndOwnerUid(id: Long, ownerUid: Long): Group?
