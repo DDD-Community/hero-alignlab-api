@@ -9,7 +9,6 @@ import com.hero.alignlab.common.model.PageResponse
 import com.hero.alignlab.common.model.Response
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.application.GroupFacade
-import com.hero.alignlab.domain.group.application.GroupService
 import com.hero.alignlab.domain.group.model.request.CheckGroupRegisterRequest
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.request.UpdateGroupRequest
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 class GroupResource(
-    private val groupService: GroupService,
     private val groupFacade: GroupFacade,
 ) {
     /**

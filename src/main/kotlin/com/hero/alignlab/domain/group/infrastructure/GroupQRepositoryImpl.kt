@@ -1,5 +1,6 @@
 package com.hero.alignlab.domain.group.infrastructure
 
+import com.hero.alignlab.common.extension.isContains
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.domain.QGroup.group
 import com.hero.alignlab.domain.group.domain.QGroupTag.groupTag
@@ -20,9 +21,7 @@ class GroupQRepositoryImpl(
             .from(group)
             .leftJoin(groupTagMap).on(group.id.eq(groupTagMap.groupId))
             .leftJoin(groupTag).on(groupTagMap.tagId.eq(groupTag.id))
-            .where(
-                tagName?.takeIf { it.isNotEmpty() }?.let { groupTag.name.contains(it) }
-            )
+            .where(groupTag.name.isContains(tagName))
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .orderBy(getGroupOrderSpecifier(pageable))
@@ -33,9 +32,7 @@ class GroupQRepositoryImpl(
             .from(group)
             .leftJoin(groupTagMap).on(group.id.eq(groupTagMap.groupId))
             .leftJoin(groupTag).on(groupTagMap.tagId.eq(groupTag.id))
-            .where(
-                tagName?.takeIf { it.isNotEmpty() }?.let { groupTag.name.contains(it) }
-            )
+            .where(groupTag.name.isContains(tagName))
             .orderBy(getGroupOrderSpecifier(pageable))
             .fetchOne() ?: 0L
 

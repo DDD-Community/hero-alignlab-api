@@ -22,7 +22,7 @@ data class GetGroupResponse(
     val tags: List<GroupTagResponse>?,
 ) {
     companion object {
-        fun from(group: Group, ownerName: String, tags: List<GroupTag>): GetGroupResponse {
+        fun of(group: Group, tags: List<GroupTag>?, ownerName: String): GetGroupResponse {
             return GetGroupResponse(
                 id = group.id,
                 name = group.name,
@@ -33,7 +33,7 @@ data class GetGroupResponse(
                 joinCode = group.joinCode,
                 userCount = group.userCount,
                 userCapacity = group.userCapacity,
-                tags = tags.map { GroupTagResponse(it.id, it.name) },
+                tags = tags?.map { GroupTagResponse(it.id, it.name) },
             )
         }
     }

@@ -8,7 +8,7 @@ import jakarta.persistence.*
 class UserInfo(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = -1,
+    val id: Long = 0L,
 
     @Column(name = "nickname")
     var nickname: String,

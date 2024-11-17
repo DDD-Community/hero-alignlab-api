@@ -8,7 +8,7 @@ import jakarta.persistence.*
 data class GroupTag(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = -1,
+    val id: Long = 0L,
 
     @Column(name = "name")
     var name: String,

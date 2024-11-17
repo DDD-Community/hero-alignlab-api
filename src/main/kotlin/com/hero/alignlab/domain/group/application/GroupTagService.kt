@@ -19,29 +19,35 @@ class GroupTagService(
 ) {
     @Transactional
     fun saveSync(request: CreateGroupTagRequest): List<GroupTag> {
-        return request.tagNames.map { tagName ->
-            findOrCreateTag(tagName).also { tag ->
-                groupTagMapRepository.save(GroupTagMap(groupId = request.groupId, tagId = tag.id))
-            }
-        }
+        val existsTags = groupTagRepository.findAllByNameIn(request.tagNames)
+        val existsTagNames = existsTags.map { tag -> tag.name }
+
+        val needToCreateTags = request.tagNames
+            .filterNot { tagName -> existsTagNames.contains(tagName) }
+            .map { tagName -> GroupTag(name = tagName) }
+
+        val createdTags = groupTagRepository.saveAll(needToCreateTags)
+
+        (createdTags + existsTags)
+            .map { tag -> GroupTagMap(groupId = request.groupId, tagId = tag.id) }
+            .run { groupTagMapRepository.saveAll(this) }
+
+        return (createdTags + existsTags)
     }
 
     @Transactional
-    fun deleteSyncGroupId(groupId: Long) {
-        groupTagMapRepository.deleteByGroupId(groupId)
+    fun deleteGroupTagMapSyncByGroupId(groupId: Long) {
+        /**
+         * 왜, QueryDSL로 삭제를 했는지
+         * https://docs.jboss.org/hibernate/orm/4.2/javadocs/org/hibernate/event/internal/AbstractFlushingEventListener.html
+         */
+        groupTagRepository.deleteGroupTagMapByGroupId(groupId)
     }
 
     suspend fun findByGroupId(groupId: Long): List<GroupTag> {
         return withContext(Dispatchers.IO) {
-            val tagIds = groupTagMapRepository.findByGroupId(groupId)
-                .map { it.tagId }
-            groupTagRepository.findByIdIn(tagIds)
+            groupTagRepository.findByGroupId(groupId)
         }
-    }
-
-    private fun findOrCreateTag(tagName: String): GroupTag {
-        return groupTagRepository.findByName(tagName)
-            .firstOrNull() ?: groupTagRepository.save(GroupTag(name = tagName))
     }
 
     fun validateGroupTag(tagNames: List<String>) {

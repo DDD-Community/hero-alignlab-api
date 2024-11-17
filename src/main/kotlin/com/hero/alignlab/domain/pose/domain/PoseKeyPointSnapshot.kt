@@ -10,7 +10,7 @@ class PoseKeyPointSnapshot(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long = -1L,
+    val id: Long = 0L,
 
     @Column(name = "pose_snapshot_id")
     val poseSnapshotId: Long,

@@ -90,7 +90,7 @@ class GroupFacade(
 
             val updatedGroupTag = if (!request.tagNames.isNullOrEmpty()) {
                 groupTagService.validateGroupTag(request.tagNames)
-                groupTagService.deleteSyncGroupId(groupId)
+                groupTagService.deleteGroupTagMapSyncByGroupId(groupId)
                 groupTagService.saveSync(CreateGroupTagRequest(groupId, request.tagNames))
             } else emptyList()
 
@@ -118,7 +118,7 @@ class GroupFacade(
 
         txTemplates.writer.executes {
             groupUserScoreService.deleteAllByUid(uid)
-            groupTagService.deleteSyncGroupId(groupId)
+            groupTagService.deleteGroupTagMapSyncByGroupId(groupId)
         }
     }
 
@@ -214,12 +214,12 @@ class GroupFacade(
                     .filterNot { groupUserScore -> groupUserScore.score == null }
                     .sortedBy { groupUserScore -> groupUserScore.score }
                     .take(5)
-            }
-        ) { group, groupUserScore ->
+            },
+            { groupTagService.findByGroupId(groupId) },
+        ) { group, groupUserScore, tags ->
             val ownerGroupUser = userInfoService.getUserByIdOrThrow(group.ownerUid)
-            val tags = groupTagService.findByGroupId(groupId)
 
-            GetGroupResponse.from(group, ownerGroupUser.nickname, tags).run {
+            GetGroupResponse.of(group, tags, ownerGroupUser.nickname).run {
                 when (group.ownerUid == user.uid) {
                     true -> this
                     false -> this.copy(joinCode = null)
