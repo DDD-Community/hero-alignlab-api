@@ -9,10 +9,10 @@ import jakarta.persistence.*
 class ImageMetadata(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = -1,
+    val id: Long = 0L,
 
     @Column(name = "uid")
-    val uid: Long = -1,
+    val uid: Long = 0L,
 
     @Column(name = "filename")
     val filename: String,

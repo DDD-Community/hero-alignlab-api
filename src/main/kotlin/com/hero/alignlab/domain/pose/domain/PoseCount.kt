@@ -11,7 +11,7 @@ class PoseCount(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long = -1,
+    val id: Long = 0L,
 
     @Column(name = "uid")
     val uid: Long,

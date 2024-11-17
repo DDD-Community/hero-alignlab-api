@@ -1,13 +1,7 @@
 package com.hero.alignlab.domain.group.application
 
-import com.hero.alignlab.common.extension.executes
-import com.hero.alignlab.config.database.TransactionTemplates
-import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.infrastructure.GroupRepository
-import com.hero.alignlab.domain.group.model.UpdateGroupContext
-import com.hero.alignlab.domain.group.model.request.UpdateGroupRequest
-import com.hero.alignlab.domain.group.model.response.UpdateGroupResponse
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.NotFoundException
 import kotlinx.coroutines.Dispatchers
@@ -21,18 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class GroupService(
     private val groupRepository: GroupRepository,
-    private val txTemplates: TransactionTemplates,
 ) {
-    suspend fun updateGroup(user: AuthUser, id: Long, request: UpdateGroupRequest): UpdateGroupResponse {
-        val group = findByIdAndOwnerUidOrThrow(id, user.uid)
-
-        val updatedGroup = txTemplates.writer.executes {
-            groupRepository.save(UpdateGroupContext(group, request).update())
-        }
-
-        return UpdateGroupResponse.from(updatedGroup)
-    }
-
     suspend fun existsByName(name: String): Boolean {
         return withContext(Dispatchers.IO) {
             groupRepository.existsByName(name)
@@ -72,9 +55,9 @@ class GroupService(
         return groupRepository.save(group)
     }
 
-    suspend fun findAll(pageable: Pageable): Page<Group> {
+    suspend fun findByTagNameAndPage(tagName: String?, pageable: Pageable): Page<Group> {
         return withContext(Dispatchers.IO) {
-            groupRepository.findAll(pageable)
+            groupRepository.findByTagNameAndPage(tagName, pageable)
         }
     }
 

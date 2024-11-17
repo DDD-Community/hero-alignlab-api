@@ -9,7 +9,7 @@ import jakarta.persistence.*
 class OAuthUserInfo(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = -1,
+    val id: Long = 0L,
 
     @Column(name = "uid")
     val uid: Long,

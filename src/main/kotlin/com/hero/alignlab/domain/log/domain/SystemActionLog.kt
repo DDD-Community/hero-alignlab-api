@@ -8,7 +8,7 @@ import jakarta.persistence.*
 class SystemActionLog(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = -1L,
+    val id: Long = 0L,
 
     @Column(name = "uid")
     val uid: Long? = null,

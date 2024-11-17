@@ -11,4 +11,6 @@ data class UpdateGroupRequest(
     val joinCode: String?,
     /** 정원, 기본값 30 */
     val userCapacity: Int?,
+    /** 수정할 태그 리스트 */
+    val tagNames: List<String>?,
 )

@@ -10,10 +10,10 @@ import jakarta.persistence.*
 class PoseNotification(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = -1,
+    val id: Long = 0L,
 
     @Column(name = "uid")
-    val uid: Long = -1,
+    val uid: Long = 0L,
 
     @Column(name = "is_active")
     var isActive: Boolean = true,

@@ -10,7 +10,7 @@ class PoseLayoutPoint(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long = -1,
+    val id: Long = 0L,
 
     @Column(name = "pose_layout_id")
     val poseLayoutId: Long,

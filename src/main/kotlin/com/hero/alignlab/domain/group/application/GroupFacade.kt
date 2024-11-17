@@ -7,11 +7,15 @@ import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.domain.Group
+import com.hero.alignlab.domain.group.domain.GroupTag
 import com.hero.alignlab.domain.group.domain.GroupUser
 import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.group.model.CreateGroupContext
+import com.hero.alignlab.domain.group.model.UpdateGroupContext
 import com.hero.alignlab.domain.group.model.request.CheckGroupRegisterRequest
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
+import com.hero.alignlab.domain.group.model.request.CreateGroupTagRequest
+import com.hero.alignlab.domain.group.model.request.UpdateGroupRequest
 import com.hero.alignlab.domain.group.model.response.*
 import com.hero.alignlab.domain.pose.application.PoseSnapshotService
 import com.hero.alignlab.domain.pose.domain.vo.PoseType.Companion.BAD_POSE
@@ -33,6 +37,7 @@ class GroupFacade(
     private val groupService: GroupService,
     private val groupUserService: GroupUserService,
     private val groupUserScoreService: GroupUserScoreService,
+    private val groupTagService: GroupTagService,
     private val userInfoService: UserInfoService,
     private val txTemplates: TransactionTemplates,
     private val publisher: ApplicationEventPublisher,
@@ -54,19 +59,42 @@ class GroupFacade(
 
             val group = CreateGroupContext(user, request).create()
 
-            val createdGroup = createGroup(user, group)
+            txTemplates.writer.executes {
+                val createdGroup = createGroup(user, group)
+                val createdGroupTags = createGroupTag(createdGroup.id, request.tagNames)
 
-            CreateGroupResponse.from(createdGroup)
+                CreateGroupResponse.from(createdGroup, createdGroupTags)
+            }
         }
     }
 
     fun createGroup(user: AuthUser, group: Group): Group {
+        val createdGroup = groupService.saveSync(group)
+
+        publisher.publishEvent(CreateGroupEvent(createdGroup))
+
+        return createdGroup
+    }
+
+    fun createGroupTag(groupId: Long, tagNames: List<String>?): List<GroupTag> {
+        return if (!tagNames.isNullOrEmpty()) {
+            groupTagService.validateGroupTag(tagNames)
+            groupTagService.saveSync(CreateGroupTagRequest(groupId, tagNames))
+        } else emptyList()
+    }
+
+    suspend fun updateGroup(user: AuthUser, groupId: Long, request: UpdateGroupRequest): UpdateGroupResponse {
+        val group = groupService.findByIdAndOwnerUidOrThrow(groupId, user.uid)
         return txTemplates.writer.executes {
-            val createdGroup = groupService.saveSync(group)
+            val updatedGroup = groupService.saveSync(UpdateGroupContext(group, request).update())
 
-            publisher.publishEvent(CreateGroupEvent(createdGroup))
+            val updatedGroupTag = if (!request.tagNames.isNullOrEmpty()) {
+                groupTagService.validateGroupTag(request.tagNames)
+                groupTagService.deleteGroupTagMapSyncByGroupId(groupId)
+                groupTagService.saveSync(CreateGroupTagRequest(groupId, request.tagNames))
+            } else emptyList()
 
-            createdGroup
+            UpdateGroupResponse.from(updatedGroup, updatedGroupTag)
         }
     }
 
@@ -90,6 +118,7 @@ class GroupFacade(
 
         txTemplates.writer.executes {
             groupUserScoreService.deleteAllByUid(uid)
+            groupTagService.deleteGroupTagMapSyncByGroupId(groupId)
         }
     }
 
@@ -185,11 +214,12 @@ class GroupFacade(
                     .filterNot { groupUserScore -> groupUserScore.score == null }
                     .sortedBy { groupUserScore -> groupUserScore.score }
                     .take(5)
-            }
-        ) { group, groupUserScore ->
+            },
+            { groupTagService.findByGroupId(groupId) },
+        ) { group, groupUserScore, tags ->
             val ownerGroupUser = userInfoService.getUserByIdOrThrow(group.ownerUid)
 
-            GetGroupResponse.from(group, ownerGroupUser.nickname).run {
+            GetGroupResponse.of(group, tags, ownerGroupUser.nickname).run {
                 when (group.ownerUid == user.uid) {
                     true -> this
                     false -> this.copy(joinCode = null)
@@ -222,8 +252,8 @@ class GroupFacade(
         }
     }
 
-    suspend fun searchGroup(user: AuthUser, pageRequest: HeroPageRequest): Page<SearchGroupResponse> {
-        val groups = groupService.findAll(pageRequest.toDefault())
+    suspend fun searchGroup(user: AuthUser, tagName: String?, pageRequest: HeroPageRequest): Page<SearchGroupResponse> {
+        val groups = groupService.findByTagNameAndPage(tagName, pageRequest.toDefault())
 
         val groupUserByUid = groups.content.map { group -> group.id }
             .run { groupUserService.findByUidAndGroupIdIn(user.uid, this) }

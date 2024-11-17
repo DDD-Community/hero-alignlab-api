@@ -9,7 +9,6 @@ import com.hero.alignlab.common.model.PageResponse
 import com.hero.alignlab.common.model.Response
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.group.application.GroupFacade
-import com.hero.alignlab.domain.group.application.GroupService
 import com.hero.alignlab.domain.group.model.request.CheckGroupRegisterRequest
 import com.hero.alignlab.domain.group.model.request.CreateGroupRequest
 import com.hero.alignlab.domain.group.model.request.UpdateGroupRequest
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 class GroupResource(
-    private val groupService: GroupService,
     private val groupFacade: GroupFacade,
 ) {
     /**
@@ -51,9 +49,10 @@ class GroupResource(
     @GetMapping("/api/v1/groups")
     suspend fun searchGroups(
         user: AuthUser,
+        @RequestParam(required = false) tagName: String?,
         @ParameterObject pageRequest: HeroPageRequest,
     ): PageResponse<SearchGroupResponse> {
-        return groupFacade.searchGroup(user, pageRequest).wrapPage()
+        return groupFacade.searchGroup(user, tagName, pageRequest).wrapPage()
     }
 
     @Operation(summary = "그룹 생성")
@@ -72,9 +71,9 @@ class GroupResource(
         @PathVariable id: Long,
         @RequestBody request: UpdateGroupRequest
     ): ResponseEntity<Response<UpdateGroupResponse>> {
-        return groupService.updateGroup(
+        return groupFacade.updateGroup(
             user = user,
-            id = id,
+            groupId = id,
             request = request
         ).wrapOk()
     }

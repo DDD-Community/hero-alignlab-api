@@ -4,8 +4,8 @@ import com.hero.alignlab.domain.common.domain.BaseEntity
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "`group_user_score`")
-class GroupUserScore(
+@Table(name = "`group_tag_map`")
+data class GroupTagMap (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
@@ -13,12 +13,6 @@ class GroupUserScore(
     @Column(name = "group_id")
     val groupId: Long,
 
-    @Column(name = "group_user_id")
-    val groupUserId: Long,
-
-    @Column(name = "uid")
-    val uid: Long,
-
-    @Column(name = "score")
-    var score: Int?,
+    @Column(name = "tag_id")
+    val tagId: Long
 ) : BaseEntity()

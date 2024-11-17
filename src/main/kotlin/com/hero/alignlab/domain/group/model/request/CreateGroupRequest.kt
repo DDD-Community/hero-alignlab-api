@@ -11,4 +11,6 @@ data class CreateGroupRequest(
     val joinCode: String?,
     /** 정원, 기본값 30 */
     val userCapacity: Int?,
+    /** 태그 리스트, 최대 3개 */
+    val tagNames: List<String>?,
 )
