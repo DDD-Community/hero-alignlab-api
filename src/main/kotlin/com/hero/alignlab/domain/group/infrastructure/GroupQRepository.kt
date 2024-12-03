@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface GroupQRepository {
-    fun findByTagNameAndPage(tagName: String?, pageable: Pageable): Page<Group>
+    fun findByKeywordAndPage(keyword: String?, pageable: Pageable): Page<Group>
 }

@@ -252,8 +252,8 @@ class GroupFacade(
         }
     }
 
-    suspend fun searchGroup(user: AuthUser, tagName: String?, pageRequest: HeroPageRequest): Page<SearchGroupResponse> {
-        val groups = groupService.findByTagNameAndPage(tagName, pageRequest.toDefault())
+    suspend fun searchGroup(user: AuthUser, keyword: String?, pageRequest: HeroPageRequest): Page<SearchGroupResponse> {
+        val groups = groupService.findByKeywordAndPage(keyword, pageRequest.toDefault())
 
         val groupUserByUid = groups.content.map { group -> group.id }
             .run { groupUserService.findByUidAndGroupIdIn(user.uid, this) }

@@ -55,9 +55,9 @@ class GroupService(
         return groupRepository.save(group)
     }
 
-    suspend fun findByTagNameAndPage(tagName: String?, pageable: Pageable): Page<Group> {
+    suspend fun findByKeywordAndPage(keyword: String?, pageable: Pageable): Page<Group> {
         return withContext(Dispatchers.IO) {
-            groupRepository.findByTagNameAndPage(tagName, pageable)
+            groupRepository.findByKeywordAndPage(keyword, pageable)
         }
     }
 

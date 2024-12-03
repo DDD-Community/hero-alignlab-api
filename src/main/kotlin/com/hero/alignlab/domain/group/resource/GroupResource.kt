@@ -49,10 +49,10 @@ class GroupResource(
     @GetMapping("/api/v1/groups")
     suspend fun searchGroups(
         user: AuthUser,
-        @RequestParam(required = false) tagName: String?,
+        @RequestParam(required = false) keyword: String?,
         @ParameterObject pageRequest: HeroPageRequest,
     ): PageResponse<SearchGroupResponse> {
-        return groupFacade.searchGroup(user, tagName, pageRequest).wrapPage()
+        return groupFacade.searchGroup(user, keyword, pageRequest).wrapPage()
     }
 
     @Operation(summary = "그룹 생성")

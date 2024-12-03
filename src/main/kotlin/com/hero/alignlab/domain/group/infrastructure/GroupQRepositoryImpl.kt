@@ -15,13 +15,13 @@ import org.springframework.data.domain.Pageable
 class GroupQRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : GroupQRepository {
-    override fun findByTagNameAndPage(tagName: String?, pageable: Pageable): Page<Group> {
+    override fun findByKeywordAndPage(keyword: String?, pageable: Pageable): Page<Group> {
         val groups = queryFactory
             .selectDistinct(group)
             .from(group)
             .leftJoin(groupTagMap).on(group.id.eq(groupTagMap.groupId))
             .leftJoin(groupTag).on(groupTagMap.tagId.eq(groupTag.id))
-            .where(groupTag.name.isContains(tagName))
+            .where(group.name.isContains(keyword)?.or(groupTag.name.isContains(keyword)))
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .orderBy(getGroupOrderSpecifier(pageable))
@@ -32,7 +32,7 @@ class GroupQRepositoryImpl(
             .from(group)
             .leftJoin(groupTagMap).on(group.id.eq(groupTagMap.groupId))
             .leftJoin(groupTag).on(groupTagMap.tagId.eq(groupTag.id))
-            .where(groupTag.name.isContains(tagName))
+            .where(group.name.isContains(keyword)?.or(groupTag.name.isContains(keyword)))
             .orderBy(getGroupOrderSpecifier(pageable))
             .fetchOne() ?: 0L
 
@@ -40,11 +40,11 @@ class GroupQRepositoryImpl(
     }
 
     private fun getGroupOrderSpecifier(pageable: Pageable): OrderSpecifier<out Comparable<*>?>? {
-        val order = pageable.sort.firstOrNull() ?: return null
+        val order = pageable.sort.firstOrNull() ?: return group.createdAt.desc()
         val orderSpecifier: ComparableExpressionBase<out Comparable<*>> = when (order.property) {
             "createdAt" -> group.createdAt
             "name" -> group.name
-            "ownerUid" -> group.ownerUid
+            "userCount" -> group.userCount
             else -> group.createdAt
         }
         return if (order.isDescending) orderSpecifier.desc() else orderSpecifier.asc()
