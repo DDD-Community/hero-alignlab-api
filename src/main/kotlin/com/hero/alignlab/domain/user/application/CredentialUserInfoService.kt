@@ -25,4 +25,10 @@ class CredentialUserInfoService(
     fun saveSync(credentialUserInfo: CredentialUserInfo): CredentialUserInfo {
         return credentialUserInfoRepository.save(credentialUserInfo)
     }
+
+    suspend fun findAllByUid(uid: Long): List<CredentialUserInfo> {
+        return withContext(Dispatchers.IO) {
+            credentialUserInfoRepository.findAllByUid(uid)
+        }
+    }
 }

@@ -17,4 +17,6 @@ interface CredentialUserInfoRepository : JpaRepository<CredentialUserInfo, Long>
     fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
 
     fun deleteAllByUid(uid: Long)
+
+    fun findAllByUid(uid: Long): List<CredentialUserInfo>
 }

@@ -63,7 +63,7 @@ class UserInfoService(
             getUserByIdOrThrowSync(id)
         }
 
-        return UserInfoResponse.from(userInfo)
+        return UserInfoResponse.of(userInfo)
     }
 
     suspend fun findByCredentialOrThrow(username: String, password: String): UserInfo {

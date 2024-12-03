@@ -1,5 +1,6 @@
 package com.hero.alignlab.domain.auth.application
 
+import arrow.fx.coroutines.parZip
 import com.hero.alignlab.common.encrypt.EncryptData
 import com.hero.alignlab.common.encrypt.Encryptor
 import com.hero.alignlab.common.extension.coExecute
@@ -12,9 +13,12 @@ import com.hero.alignlab.domain.auth.model.request.SignUpRequest
 import com.hero.alignlab.domain.auth.model.response.SignInResponse
 import com.hero.alignlab.domain.auth.model.response.SignUpResponse
 import com.hero.alignlab.domain.user.application.CredentialUserInfoService
+import com.hero.alignlab.domain.user.application.OAuthUserInfoService
 import com.hero.alignlab.domain.user.application.UserInfoService
 import com.hero.alignlab.domain.user.domain.CredentialUserInfo
 import com.hero.alignlab.domain.user.domain.UserInfo
+import com.hero.alignlab.domain.user.domain.vo.OAuthProvider
+import com.hero.alignlab.domain.user.model.response.AuthProvider
 import com.hero.alignlab.domain.user.model.response.UserInfoResponse
 import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
@@ -27,6 +31,7 @@ import java.time.LocalDateTime
 class AuthFacade(
     private val userInfoService: UserInfoService,
     private val credentialUserInfoService: CredentialUserInfoService,
+    private val oAuthUserInfoService: OAuthUserInfoService,
     private val jwtTokenService: JwtTokenService,
     private val encryptor: Encryptor,
     private val txTemplates: TransactionTemplates,
@@ -94,8 +99,22 @@ class AuthFacade(
     }
 
     suspend fun getUserInfo(user: AuthUser): UserInfoResponse {
-        val userInfo = userInfoService.getUserByIdOrThrow(user.uid)
+        return parZip(
+            { userInfoService.getUserByIdOrThrow(user.uid) },
+            { credentialUserInfoService.findAllByUid(user.uid) },
+            { oAuthUserInfoService.findAllByUid(user.uid) },
+        ) { userInfo, credentialUsers, oAuthUsers ->
+            val providers = buildList {
+                if (credentialUsers.isNotEmpty()) {
+                    add(AuthProvider.BASIC)
+                }
 
-        return UserInfoResponse.from(userInfo)
+                repeat(
+                    oAuthUsers.filter { it.provider == OAuthProvider.KAKAO }.size
+                ) { add(AuthProvider.KAKAO) }
+            }
+
+            UserInfoResponse.of(userInfo, providers)
+        }
     }
 }
