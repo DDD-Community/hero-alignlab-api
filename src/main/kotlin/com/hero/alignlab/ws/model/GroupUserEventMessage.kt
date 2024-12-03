@@ -1,6 +1,7 @@
 package com.hero.alignlab.ws.model
 
 import com.hero.alignlab.common.extension.mapper
+import com.hero.alignlab.domain.cheer.domain.CheerUp
 import com.hero.alignlab.domain.group.domain.GroupUser
 import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.user.domain.UserInfo
@@ -12,8 +13,9 @@ data class GroupUserEventMessage(
     val groupId: Long,
     /** 본인 정보, 접속 종료시 본인 정보는 미제공 */
     val groupUser: ConcurrentUser?,
-    /** 그룹 유저 리스 */
-    val groupUsers: List<ConcurrentUser>
+    /** 그룹 유저 리스트 */
+    val groupUsers: List<ConcurrentUser>,
+    val cheerUp: CheerUpModel,
 ) {
     data class ConcurrentUser(
         val groupUserId: Long,
@@ -23,13 +25,25 @@ data class GroupUserEventMessage(
         val score: Int,
     )
 
+    data class CheerUpModel(
+        /** 나에게 응원하기를 보낸 사용자의 uid */
+        val senderUid: Long?,
+        /** 금일 받은 응원하기 수 */
+        val countCheeredUp: Long?,
+        /** 내가 응원을 보낸 사용자 목록 */
+        val sentUids: List<Long>?,
+    )
+
     companion object {
         fun of(
             uid: Long,
             groupId: Long,
             userInfoByUid: Map<Long, UserInfo>,
             groupUserById: Map<Long, GroupUser>,
-            scoreByUid: Map<Long, GroupUserScore>
+            scoreByUid: Map<Long, GroupUserScore>,
+            cheerUpSenderUid: Long?,
+            countCheeredUp: Long,
+            cheerUpsByTargetUid: Map<Long, List<CheerUp>>,
         ): GroupUserEventMessage {
             val rank = AtomicInteger(1)
 
@@ -52,7 +66,12 @@ data class GroupUserEventMessage(
             return GroupUserEventMessage(
                 groupId = groupId,
                 groupUser = groupUsers.firstOrNull { users -> users.uid == uid },
-                groupUsers = groupUsers.take(5)
+                groupUsers = groupUsers.take(5),
+                cheerUp = CheerUpModel(
+                    senderUid = cheerUpSenderUid,
+                    countCheeredUp = countCheeredUp,
+                    sentUids = cheerUpsByTargetUid[uid]?.map { cheerUp -> cheerUp.targetUid }
+                )
             )
         }
     }

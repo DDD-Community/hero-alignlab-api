@@ -20,9 +20,15 @@ data class GetGroupResponse(
     val ranks: List<GetGroupRankResponse>? = null,
     /** 그룹 태그 리스트 */
     val tags: List<GroupTagResponse>?,
+    val countCheeredUp: Long? = null,
 ) {
     companion object {
-        fun of(group: Group, tags: List<GroupTag>?, ownerName: String): GetGroupResponse {
+        fun of(
+            group: Group,
+            tags: List<GroupTag>?,
+            ownerName: String,
+            countCheeredUp: Long?,
+        ): GetGroupResponse {
             return GetGroupResponse(
                 id = group.id,
                 name = group.name,
@@ -34,6 +40,7 @@ data class GetGroupResponse(
                 userCount = group.userCount,
                 userCapacity = group.userCapacity,
                 tags = tags?.map { GroupTagResponse(it.id, it.name) },
+                countCheeredUp = countCheeredUp,
             )
         }
     }

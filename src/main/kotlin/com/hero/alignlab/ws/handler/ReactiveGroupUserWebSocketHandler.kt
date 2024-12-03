@@ -111,6 +111,22 @@ class ReactiveGroupUserWebSocketHandler(
         }
     }
 
+    fun launchSendEventByCheerUp(uid: Long, groupId: Long, senderUid: Long) {
+        groupUserByMap[groupId]?.let { groupUsers ->
+            CoroutineScope(Dispatchers.IO + Job()).launch {
+                val eventMessage = groupUsers.keys
+                    .toList()
+                    .let { uids -> groupUserWsFacade.generateEventMessage(uid, groupId, uids) }
+
+                groupUsers[uid]?.let { session ->
+                    session
+                        .send(Mono.just(session.textMessage(eventMessage.message())))
+                        .subscribe()
+                }
+            }
+        }
+    }
+
     /** 발송되는 순서가 중요하지 않다. */
     private fun launchSendEvent(
         uid: Long,

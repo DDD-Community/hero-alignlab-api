@@ -110,6 +110,10 @@ class GroupUserService(
         groupUserRepository.deleteById(groupUserId)
     }
 
+    suspend fun findByUidOrThrow(uid: Long): GroupUser {
+        return findByUidOrNull(uid) ?: throw NotFoundException(ErrorCode.NOT_FOUND_GROUP_USER_ERROR)
+    }
+
     suspend fun findByUidOrNull(uid: Long): GroupUser? {
         return withContext(Dispatchers.IO) {
             groupUserRepository.findByUid(uid)
@@ -131,6 +135,12 @@ class GroupUserService(
     suspend fun findByUidAndGroupIdIn(uid: Long, groupIds: List<Long>): List<GroupUser> {
         return withContext(Dispatchers.IO) {
             groupUserRepository.findByUidAndGroupIdIn(uid, groupIds)
+        }
+    }
+
+    suspend fun findAllByGroupId(groupId: Long): List<GroupUser> {
+        return withContext(Dispatchers.IO) {
+            groupUserRepository.findAllByGroupId(groupId)
         }
     }
 }

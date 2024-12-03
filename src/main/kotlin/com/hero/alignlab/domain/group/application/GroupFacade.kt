@@ -6,6 +6,7 @@ import com.hero.alignlab.common.extension.executesOrNull
 import com.hero.alignlab.common.model.HeroPageRequest
 import com.hero.alignlab.config.database.TransactionTemplates
 import com.hero.alignlab.domain.auth.model.AuthUser
+import com.hero.alignlab.domain.cheer.application.CheerUpService
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.domain.GroupTag
 import com.hero.alignlab.domain.group.domain.GroupUser
@@ -29,6 +30,7 @@ import kotlinx.coroutines.*
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -43,6 +45,7 @@ class GroupFacade(
     private val publisher: ApplicationEventPublisher,
     private val wsHandler: ReactiveGroupUserWebSocketHandler,
     private val poseSnapshotService: PoseSnapshotService,
+    private val cheerUpService: CheerUpService,
 ) {
     suspend fun createGroup(user: AuthUser, request: CreateGroupRequest): CreateGroupResponse {
         return parZip(
@@ -216,10 +219,11 @@ class GroupFacade(
                     .take(5)
             },
             { groupTagService.findByGroupId(groupId) },
-        ) { group, groupUserScore, tags ->
+            { cheerUpService.countAllByCheeredAtAndUid(LocalDate.now(), user.uid) },
+        ) { group, groupUserScore, tags, countCheeredUp ->
             val ownerGroupUser = userInfoService.getUserByIdOrThrow(group.ownerUid)
 
-            GetGroupResponse.of(group, tags, ownerGroupUser.nickname).run {
+            GetGroupResponse.of(group, tags, ownerGroupUser.nickname, countCheeredUp).run {
                 when (group.ownerUid == user.uid) {
                     true -> this
                     false -> this.copy(joinCode = null)
