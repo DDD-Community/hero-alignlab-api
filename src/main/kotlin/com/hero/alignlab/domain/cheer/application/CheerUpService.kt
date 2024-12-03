@@ -37,4 +37,10 @@ class CheerUpService(
             cheerUpRepository.findAllByTargetUidInAndCheeredAt(targetUids, cheeredAt)
         }
     }
+
+    suspend fun findAllByUidAndCheeredAt(uid: Long, cheeredAt: LocalDate): List<CheerUp> {
+        return withContext(Dispatchers.IO) {
+            cheerUpRepository.findAllByUidAndCheeredAt(uid, cheeredAt)
+        }
+    }
 }

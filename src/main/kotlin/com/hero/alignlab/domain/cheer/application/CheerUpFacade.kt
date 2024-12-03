@@ -1,9 +1,11 @@
 package com.hero.alignlab.domain.cheer.application
 
+import arrow.fx.coroutines.parZip
 import com.hero.alignlab.domain.auth.model.AuthUser
 import com.hero.alignlab.domain.cheer.domain.CheerUp
 import com.hero.alignlab.domain.cheer.model.request.CheerUpRequest
 import com.hero.alignlab.domain.cheer.model.response.CheerUpResponse
+import com.hero.alignlab.domain.cheer.model.response.CheerUpSummaryResponse
 import com.hero.alignlab.domain.group.application.GroupUserService
 import com.hero.alignlab.ws.handler.ReactiveGroupUserWebSocketHandler
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -62,5 +64,17 @@ class CheerUpFacade(
         }
 
         return CheerUpResponse(createdUids.toSet())
+    }
+
+    suspend fun getCheerUpSummary(user: AuthUser, cheeredAt: LocalDate): CheerUpSummaryResponse {
+        return parZip(
+            { cheerUpService.countAllByCheeredAtAndUid(cheeredAt, user.uid) },
+            { cheerUpService.findAllByUidAndCheeredAt(user.uid, cheeredAt) }
+        ) { countCheeredUp, cheerUps ->
+            CheerUpSummaryResponse(
+                countCheeredUp = countCheeredUp,
+                cheeredUpUids = cheerUps.map { cheerUp -> cheerUp.targetUid }
+            )
+        }
     }
 }

@@ -14,4 +14,6 @@ interface CheerUpRepository : JpaRepository<CheerUp, Long> {
     fun existsByUidAndTargetUidAndCheeredAt(uid: Long, targetUid: Long, cheeredAt: LocalDate): Boolean
 
     fun findAllByTargetUidInAndCheeredAt(targetUids: Set<Long>, cheeredAt: LocalDate): List<CheerUp>
+
+    fun findAllByUidAndCheeredAt(uid: Long, cheeredAt: LocalDate): List<CheerUp>
 }
