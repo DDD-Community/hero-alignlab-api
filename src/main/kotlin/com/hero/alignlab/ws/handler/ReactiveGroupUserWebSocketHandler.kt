@@ -114,9 +114,14 @@ class ReactiveGroupUserWebSocketHandler(
     fun launchSendEventByCheerUp(uid: Long, groupId: Long, senderUid: Long) {
         groupUserByMap[groupId]?.let { groupUsers ->
             CoroutineScope(Dispatchers.IO + Job()).launch {
-                val eventMessage = groupUsers.keys
-                    .toList()
-                    .let { uids -> groupUserWsFacade.generateEventMessage(uid, groupId, uids) }
+                val eventMessage = groupUsers.keys.toList().let { uids ->
+                    groupUserWsFacade.generateEventMessage(
+                        uid = uid,
+                        groupId = groupId,
+                        uids = uids,
+                        cheerUpSenderUid = senderUid
+                    )
+                }
 
                 groupUsers[uid]?.let { session ->
                     session
