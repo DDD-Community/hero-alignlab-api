@@ -11,7 +11,7 @@ data class UpdateGroupResponse(
     /** 그룹 설명 */
     val description: String?,
     /** 그룹 태그 리스트 */
-    val tags: List<GroupTagResponse>?,
+    val tagNames: List<String>?,
 ) {
     companion object {
         fun from(group: Group, tags: List<GroupTag>): UpdateGroupResponse {
@@ -19,7 +19,7 @@ data class UpdateGroupResponse(
                 id = group.id,
                 name = group.name,
                 description = group.description,
-                tags = tags.map { GroupTagResponse(it.id, it.name) },
+                tagNames = tags.map { it.name },
             )
         }
     }

@@ -9,6 +9,8 @@ data class MyGroupResponse(
     val name: String,
     /** 그룹 설명 */
     val description: String?,
+    /** owner uid */
+    val ownerUid: Long,
     /** 그룹원 수 */
     val userCount: Int,
     /** 그룹 정원 */
@@ -22,6 +24,7 @@ data class MyGroupResponse(
                 id = group.id,
                 name = group.name,
                 description = group.description,
+                ownerUid = group.ownerUid,
                 userCount = userCount,
                 userCapacity = group.userCapacity,
                 ownerNickname = ownerNickname

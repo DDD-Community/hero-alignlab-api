@@ -19,7 +19,7 @@ data class GetGroupResponse(
     val userCapacity: Int,
     val ranks: List<GetGroupRankResponse>? = null,
     /** 그룹 태그 리스트 */
-    val tags: List<GroupTagResponse>?,
+    val tagNames: List<String>?,
     val countCheeredUp: Long? = null,
 ) {
     companion object {
@@ -39,7 +39,7 @@ data class GetGroupResponse(
                 joinCode = group.joinCode,
                 userCount = group.userCount,
                 userCapacity = group.userCapacity,
-                tags = tags?.map { GroupTagResponse(it.id, it.name) },
+                tagNames = tags?.map { it.name },
                 countCheeredUp = countCheeredUp,
             )
         }
