@@ -258,15 +258,19 @@ class GroupFacade(
 
     suspend fun searchGroup(user: AuthUser, keyword: String?, pageRequest: HeroPageRequest): Page<SearchGroupResponse> {
         val groups = groupService.findByKeywordAndPage(keyword, pageRequest.toDefault())
+        val groupIds = groups.content.map { group -> group.id }
 
-        val groupUserByUid = groups.content.map { group -> group.id }
+        val groupUserByUid = groupIds
             .run { groupUserService.findByUidAndGroupIdIn(user.uid, this) }
             .associateBy { groupUser -> groupUser.groupId }
+
+        val groupTagsByGroupId = groupTagService.findGroupTagNamesByGroupIds(groupIds)
 
         return groups
             .map { group ->
                 val hasJoined = groupUserByUid[group.id] != null
-                SearchGroupResponse.from(group, hasJoined)
+                val groupTags = groupTagsByGroupId[group.id]
+                SearchGroupResponse.from(group, hasJoined, groupTags)
             }
     }
 

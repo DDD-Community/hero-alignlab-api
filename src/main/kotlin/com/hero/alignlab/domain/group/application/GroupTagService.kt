@@ -50,6 +50,14 @@ class GroupTagService(
         }
     }
 
+    suspend fun findGroupTagNamesByGroupIds(groupIds: List<Long>): Map<Long, List<String>> {
+        return withContext(Dispatchers.IO) {
+            groupTagRepository.findByGroupIds(groupIds)
+                .groupBy { it.groupId }
+                .mapValues { entry -> entry.value.map { it.tagName } }
+        }
+    }
+
     fun validateGroupTag(tagNames: List<String>) {
         if (tagNames.size > 3) {
             throw InvalidRequestException(ErrorCode.OVER_COUNT_GROUP_TAG_ERROR)
