@@ -1,6 +1,7 @@
 package com.hero.alignlab.domain.group.application
 
 import com.hero.alignlab.domain.auth.model.AuthUser
+import com.hero.alignlab.domain.group.infrastructure.GroupTagRepository
 import com.hero.alignlab.domain.group.model.response.MyGroupResponse
 import com.hero.alignlab.domain.user.application.UserInfoService
 import org.springframework.stereotype.Service
@@ -10,6 +11,7 @@ class MyGroupFacade(
     private val groupService: GroupService,
     private val groupUserService: GroupUserService,
     private val userInfoService: UserInfoService,
+    private val groupTagRepository: GroupTagRepository
 ) {
     // TODO : 기획 확인후, 코드 변경
     suspend fun getMyGroup(user: AuthUser): MyGroupResponse? {
@@ -17,7 +19,8 @@ class MyGroupFacade(
         val group = groupService.findByIdOrThrow(groupUser.groupId)
         val groupUserCount = groupUserService.countAllByGroupId(groupUser.groupId)
         val ownerUserInfo = userInfoService.findByIdOrThrow(group.ownerUid)
+        val tagNames = groupTagRepository.findByGroupId(group.id).map { it.name }
 
-        return MyGroupResponse.of(group, groupUserCount.toInt(), ownerUserInfo.nickname)
+        return MyGroupResponse.of(group, groupUserCount.toInt(), ownerUserInfo.nickname, tagNames)
     }
 }
