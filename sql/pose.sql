@@ -49,7 +49,7 @@ CREATE TABLE `pose_noti`
     `modified_at` datetime             DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT '자세 알림';
-CREATE INDEX uidx__uid ON pose_noti (uid);
+CREATE UNIQUE INDEX uidx__uid ON pose_noti (uid);
 
 -- 포즈 레이아웃
 CREATE TABLE `pose_layout`
