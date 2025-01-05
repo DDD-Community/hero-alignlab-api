@@ -37,7 +37,7 @@ class AuthFacade(
     private val txTemplates: TransactionTemplates,
 ) {
     companion object {
-        private val TOKEN_EXPIRED_DATE = LocalDateTime.of(2024, 12, 29, 0, 0, 0)
+        private val TOKEN_EXPIRED_DATE = LocalDateTime.of(2025, 12, 29, 0, 0, 0)
     }
 
     suspend fun resolveAuthUser(token: AuthUserToken): AuthUser {
