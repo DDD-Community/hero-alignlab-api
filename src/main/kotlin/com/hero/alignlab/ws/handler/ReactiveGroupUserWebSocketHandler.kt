@@ -17,7 +17,6 @@ import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.WebSocketSession
 import reactor.core.publisher.Mono
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 
 @Component
 class ReactiveGroupUserWebSocketHandler(
@@ -29,35 +28,48 @@ class ReactiveGroupUserWebSocketHandler(
 
     /**
      * redis는 현 상태에서 사용하지 않는다. 현재 스펙상 오버엔지니어링
+     * - session 정보들을 local에 캐싱해두어 사용.
      * - key : groupdId
      * - value
      *      - key : uid
      *      - value : WebSocketSession
      */
-    private val groupUserByMap: ConcurrentMap<Long, ConcurrentMap<Long, WebSocketSession>> = ConcurrentHashMap()
+    private val groupUserByGroupId: MutableMap<Long, MutableMap<Long, WebSocketSession>> = mutableMapOf()
 
     override fun handle(session: WebSocketSession): Mono<Void> {
         return mono {
+            /** uri 정보를 파싱 */
             val uriContext = GroupUserUriContext.from(session)
 
+            /** uri에 들어있는 Token 정보로, ws로 요청이 들어온 user를 조회 */
             val user = authFacade.resolveAuthUser(uriContext.token)
 
+            /** user가 속해 있는 그룹 정보를 전체 조회 */
             val groupUsers = groupUserService.findAllByUid(user.uid)
 
             groupUsers.forEach { groupUser ->
-                val targetGroupUser = groupUserByMap[groupUser.groupId] ?: ConcurrentHashMap()
+                /** 현재 접속중인 그룹 유저들의 정보 */
+                val groupUsersByUid = groupUserByGroupId[groupUser.groupId] ?: ConcurrentHashMap()
 
-                targetGroupUser[groupUser.uid] = session
+                /** ws를 요청한 사용자의 Session 정볼흘 업데이트 */
+                groupUsersByUid[groupUser.uid] = session
 
-                groupUserByMap[groupUser.groupId] = targetGroupUser
+                /** local 정보 최신화 */
+                groupUserByGroupId[groupUser.groupId] = groupUsersByUid
             }
 
-            groupUserByMap.forEach { (groupId, sessionByUid) ->
+            groupUserByGroupId.forEach { (groupId, sessionByUid) ->
+                /** ws 요청 사용자의 세션 */
                 sessionByUid[user.uid] ?: return@forEach
 
-                launchSendEvent(user.uid, groupId, sessionByUid)
+                /** 홰당 사용자의 session에 소켓 메세지 발송 및 같은 그룹원에게 소켓 메세지 발송 */
+                launchSendConnectEvent(
+                    groupId = groupId,
+                    sessionByUid = sessionByUid
+                )
             }
 
+            /** ws에 대한 ping-pong 및 종료 처리 로직 */
             session.receive()
                 .map { message -> message.payloadAsText }
                 .flatMap { payload -> checkPingPong(payload, session) }
@@ -85,7 +97,7 @@ class ReactiveGroupUserWebSocketHandler(
     }
 
     private fun handleSessionTermination(uid: Long) {
-        groupUserByMap.forEach { (groupId, uidBySession) ->
+        groupUserByGroupId.forEach { (groupId, uidBySession) ->
             val removedUser = uidBySession.remove(uid)
 
             if (removedUser != null) {
@@ -93,89 +105,101 @@ class ReactiveGroupUserWebSocketHandler(
 
                 when (uidBySession.isEmpty()) {
                     true -> {
-                        groupUserByMap.remove(groupId)
+                        groupUserByGroupId.remove(groupId)
                         logger.info { "Removed group $groupId as it has no more users." }
                     }
 
                     false -> {
-                        launchSendEvent(uid, groupId, uidBySession)
+                        launchSendConnectEvent(groupId, uidBySession)
                     }
                 }
             }
         }
     }
 
-    fun launchSendEvent(uid: Long, groupId: Long) {
-        groupUserByMap[groupId]?.let { groupUsers ->
-            launchSendEvent(uid, groupId, groupUsers)
+    fun forceCloseAllWebSocketSessions() {
+        groupUserByGroupId.forEach { (_, session) ->
+            session.forEach { (_, session) ->
+                session.close().subscribe()
+            }
         }
+
+        /** Websocket Session Release */
+        groupUserByGroupId.clear()
     }
 
-    fun launchSendEventByCheerUp(uid: Long, groupId: Long, senderUid: Long) {
-        groupUserByMap[groupId]?.let { groupUsers ->
-            CoroutineScope(Dispatchers.IO + Job()).launch {
-                val eventMessage = groupUsers.keys.toList().let { uids ->
-                    groupUserWsFacade.generateEventMessage(
-                        uid = uid,
-                        groupId = groupId,
-                        uids = uids,
-                        cheerUpSenderUid = senderUid
-                    )
-                }
-
-                groupUsers[uid]?.let { session ->
-                    session
-                        .send(Mono.just(session.textMessage(eventMessage.message())))
-                        .subscribe()
-                }
-            }
+    fun getWsGroupUsers(): List<WsGroupUserModel> {
+        return groupUserByGroupId.map { (groupId, groupUsers) ->
+            WsGroupUserModel(groupId, groupUsers.keys)
         }
     }
 
     /** 발송되는 순서가 중요하지 않다. */
-    private fun launchSendEvent(
-        uid: Long,
+    private fun launchSendConnectEvent(
         groupId: Long,
-        sessionByUid: ConcurrentMap<Long, WebSocketSession>
+        sessionByUid: MutableMap<Long, WebSocketSession>,
     ) {
         CoroutineScope(Dispatchers.IO + Job()).launch {
-            sendUpdatedGroupStatus(uid, groupId, sessionByUid)
+            sendConnectEvent(
+                groupId = groupId,
+                sessionByUid = sessionByUid
+            )
         }
     }
 
-    private suspend fun sendUpdatedGroupStatus(
-        uid: Long,
+    private suspend fun sendConnectEvent(
         groupId: Long,
         sessionByUid: MutableMap<Long, WebSocketSession>
     ) {
-        val eventMessage = sessionByUid.keys
-            .toList()
-            .let { uids -> groupUserWsFacade.generateEventMessage(uid, groupId, uids) }
+        sessionByUid.forEach { (uid, session) ->
+            val eventMessage = groupUserWsFacade.generateEventMessage(
+                uid = uid,
+                groupId = groupId,
+                spreadUids = sessionByUid.keys.toList()
+            )
 
-        sessionByUid.forEach { (_, session) ->
             session
                 .send(Mono.just(session.textMessage(eventMessage.message())))
                 .subscribe()
         }
     }
 
-    fun forceCloseAllWebSocketSessions() {
-        groupUserByMap.forEach { (_, session) ->
-            session.forEach { (_, session) ->
+    fun launchSendStatusUpdateEvent(groupId: Long) {
+        val sessions = groupUserByGroupId[groupId] ?: return
+
+        launchSendConnectEvent(groupId, sessions)
+    }
+
+    /** 응원을 보낸 사람과 받은 사람에게 WS 알림 진행 */
+    fun launchSendEventByCheerUp(actorUid: Long, targetUid: Long, groupId: Long) {
+        CoroutineScope(Dispatchers.IO + Job()).launch {
+            /** 응원하기를 누른 action 대상자  */
+            groupUserByGroupId[groupId]?.get(actorUid)?.let { session ->
+                val eventMessage = groupUserWsFacade.generateEventMessage(
+                    uid = actorUid,
+                    groupId = groupId,
+                    spreadUids = listOf(actorUid, targetUid),
+                    cheerUpSenderUid = actorUid,
+                )
+
                 session
-                    .close()
+                    .send(Mono.just(session.textMessage(eventMessage.message())))
+                    .subscribe()
+            }
+
+            /** 응원하기를 받은 대상자 */
+            groupUserByGroupId[groupId]?.get(targetUid)?.let { session ->
+                val eventMessage = groupUserWsFacade.generateEventMessage(
+                    uid = targetUid,
+                    groupId = groupId,
+                    spreadUids = listOf(actorUid, targetUid),
+                    cheerUpSenderUid = actorUid,
+                )
+
+                session
+                    .send(Mono.just(session.textMessage(eventMessage.message())))
                     .subscribe()
             }
         }
-
-        /** Websocket Session Release */
-        groupUserByMap.clear()
-    }
-
-    fun getWsGroupUsers(): List<WsGroupUserModel> {
-        return groupUserByMap.map {
-            WsGroupUserModel(it.key, it.value.keys)
-        }
     }
 }
-

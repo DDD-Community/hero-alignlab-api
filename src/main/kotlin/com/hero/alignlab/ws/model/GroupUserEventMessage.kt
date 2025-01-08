@@ -1,7 +1,6 @@
 package com.hero.alignlab.ws.model
 
 import com.hero.alignlab.common.extension.mapper
-import com.hero.alignlab.domain.cheer.domain.CheerUp
 import com.hero.alignlab.domain.group.domain.GroupUser
 import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.user.domain.UserInfo
@@ -29,9 +28,9 @@ data class GroupUserEventMessage(
         /** 나에게 응원하기를 보낸 사용자의 uid */
         val senderUid: Long?,
         /** 금일 받은 응원하기 수 */
-        val countCheeredUp: Long?,
+        val countCheeredUp: Long,
         /** 내가 응원을 보낸 사용자 목록 */
-        val sentUids: List<Long>?,
+        val sentUids: List<Long>,
     )
 
     companion object {
@@ -43,7 +42,7 @@ data class GroupUserEventMessage(
             scoreByUid: Map<Long, GroupUserScore>,
             cheerUpSenderUid: Long?,
             countCheeredUp: Long,
-            cheerUpsByTargetUid: Map<Long, List<CheerUp>>,
+            cheerUpsByTargetUid: List<Long>,
         ): GroupUserEventMessage {
             val rank = AtomicInteger(1)
 
@@ -70,7 +69,7 @@ data class GroupUserEventMessage(
                 cheerUp = CheerUpModel(
                     senderUid = cheerUpSenderUid,
                     countCheeredUp = countCheeredUp,
-                    sentUids = cheerUpsByTargetUid[uid]?.map { cheerUp -> cheerUp.targetUid }
+                    sentUids = cheerUpsByTargetUid,
                 )
             )
         }

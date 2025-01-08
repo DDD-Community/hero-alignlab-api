@@ -19,17 +19,17 @@ class GroupUserWsFacade(
     suspend fun generateEventMessage(
         uid: Long,
         groupId: Long,
-        uids: List<Long>,
+        spreadUids: List<Long>,
         cheerUpSenderUid: Long? = null,
     ): GroupUserEventMessage {
         val now = LocalDate.now()
 
         return parZip(
-            { userInfoService.findAllByIds(uids) },
-            { groupUserService.findAllByGroupIdAndUids(groupId, uids) },
-            { groupUserScoreService.findAllByGroupIdAndUids(groupId, uids) },
+            { userInfoService.findAllByIds(spreadUids) },
+            { groupUserService.findAllByGroupIdAndUids(groupId, spreadUids) },
+            { groupUserScoreService.findAllByGroupIdAndUids(groupId, spreadUids) },
             { cheerUpService.countAllByCheeredAtAndUid(now, uid) },
-            { cheerUpService.findAllByTargetUidInAndCheeredAt(uids.toSet(), now) }
+            { cheerUpService.findAllByUidAndCheeredAt(uid, now) },
         ) { userInfoByUid, groupUsers, groupUserScores, countCheeredUp, cheerUps ->
             GroupUserEventMessage.of(
                 uid = uid,
@@ -39,7 +39,7 @@ class GroupUserWsFacade(
                 scoreByUid = groupUserScores.associateBy { score -> score.uid },
                 cheerUpSenderUid = cheerUpSenderUid,
                 countCheeredUp = countCheeredUp,
-                cheerUpsByTargetUid = cheerUps.groupBy { cheerUp -> cheerUp.targetUid },
+                cheerUpsByTargetUid = cheerUps.map { cheerUp -> cheerUp.targetUid }
             )
         }
     }

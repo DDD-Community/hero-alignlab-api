@@ -51,9 +51,9 @@ class CheerUpFacade(
                         logger.error(e) { "fail to create cheerUp" }
                     }.onSuccess { createdCheerUp ->
                         reactiveGroupUserWebSocketHandler.launchSendEventByCheerUp(
-                            uid = createdCheerUp.targetUid,
+                            actorUid = user.uid,
+                            targetUid = createdCheerUp.targetUid,
                             groupId = otherGroupUser.groupId,
-                            senderUid = user.uid,
                         )
                     }.getOrNull()?.targetUid
                 }
