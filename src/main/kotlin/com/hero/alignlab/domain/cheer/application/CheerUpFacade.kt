@@ -68,7 +68,7 @@ class CheerUpFacade(
 
     suspend fun getCheerUpSummary(user: AuthUser, cheeredAt: LocalDate): CheerUpSummaryResponse {
         return parZip(
-            { cheerUpService.countAllByCheeredAtAndUid(cheeredAt, user.uid) },
+            { cheerUpService.countAllByCheeredAtAndTargetUid(cheeredAt, user.uid) },
             { cheerUpService.findAllByUidAndCheeredAt(user.uid, cheeredAt) }
         ) { countCheeredUp, cheerUps ->
             CheerUpSummaryResponse(

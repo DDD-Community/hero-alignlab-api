@@ -20,6 +20,12 @@ class CheerUpService(
         }
     }
 
+    suspend fun countAllByCheeredAtAndTargetUid(cheeredAt: LocalDate, targetUid: Long): Long {
+        return withContext(Dispatchers.IO) {
+            cheerUpRepository.countAllByCheeredAtAndTargetUid(cheeredAt, targetUid)
+        }
+    }
+
     suspend fun existsByUidAndTargetUidAndCheeredAt(uid: Long, targetUid: Long, cheeredAt: LocalDate): Boolean {
         return withContext(Dispatchers.IO) {
             cheerUpRepository.existsByUidAndTargetUidAndCheeredAt(uid, targetUid, cheeredAt)
