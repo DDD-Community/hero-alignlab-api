@@ -18,4 +18,6 @@ interface CheerUpRepository : JpaRepository<CheerUp, Long> {
     fun findAllByTargetUidInAndCheeredAt(targetUids: Set<Long>, cheeredAt: LocalDate): List<CheerUp>
 
     fun findAllByUidAndCheeredAt(uid: Long, cheeredAt: LocalDate): List<CheerUp>
+
+    fun deleteAllByUid(uid: Long)
 }

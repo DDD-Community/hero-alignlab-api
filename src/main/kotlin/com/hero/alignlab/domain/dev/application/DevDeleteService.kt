@@ -1,5 +1,6 @@
 package com.hero.alignlab.domain.dev.application
 
+import com.hero.alignlab.domain.cheer.infrastructure.CheerUpRepository
 import com.hero.alignlab.domain.discussion.infrastructure.DiscussionCommentRepository
 import com.hero.alignlab.domain.discussion.infrastructure.DiscussionRepository
 import com.hero.alignlab.domain.group.infrastructure.GroupRepository
@@ -46,13 +47,19 @@ class DevDeleteService(
     /** discussion */
     private val discussionRepository: DiscussionRepository,
     private val discussionCommentRepository: DiscussionCommentRepository,
+
+    /** cheer-up */
+    private val cheerUpRepository: CheerUpRepository,
+
+    /** notification */
+    private val notificationRepository: PoseNotificationRepository,
 ) {
     @Transactional
     fun deleteAll(uid: Long) {
         /** 유저 정보 삭제 */
         credentialUserInfoRepository.deleteAllByUid(uid)
         oauthUserInfoRepository.deleteAllByUid(uid)
-        userInfoRepository.deleteById(uid)
+        userInfoRepository.deleteAllById(listOf(uid))
 
         /** pose layout 데이터 삭제 */
         val poseLayoutIds = poseLayoutRepository.findAllByUid(uid).map { it.id }
@@ -84,6 +91,12 @@ class DevDeleteService(
         /** discussion */
         discussionRepository.deleteAllByUid(uid)
         discussionCommentRepository.deleteAllByUid(uid)
+
+        /** cheer-up */
+        cheerUpRepository.deleteAllByUid(uid)
+
+        /** notification */
+        notificationRepository.deleteAllByUid(uid)
     }
 
     @Transactional
