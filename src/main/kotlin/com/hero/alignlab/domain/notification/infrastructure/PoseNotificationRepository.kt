@@ -16,4 +16,6 @@ interface PoseNotificationRepository : JpaRepository<PoseNotification, Long> {
     fun findByIdAndUid(id: Long, uid: Long): PoseNotification?
 
     fun deleteAllByUid(uid: Long)
+
+    fun deleteAllByUidNotIn(uids: List<Long>)
 }

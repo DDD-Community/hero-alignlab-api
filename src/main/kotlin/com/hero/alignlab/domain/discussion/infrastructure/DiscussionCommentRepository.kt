@@ -9,4 +9,6 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 interface DiscussionCommentRepository : JpaRepository<DiscussionComment, Long> {
     fun deleteAllByUid(uid: Long)
+
+    fun deleteAllByUidNotIn(uids: List<Long>)
 }

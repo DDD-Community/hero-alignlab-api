@@ -19,4 +19,6 @@ interface CredentialUserInfoRepository : JpaRepository<CredentialUserInfo, Long>
     fun deleteAllByUid(uid: Long)
 
     fun findAllByUid(uid: Long): List<CredentialUserInfo>
+
+    fun deleteAllByUidNotIn(uids: List<Long>)
 }

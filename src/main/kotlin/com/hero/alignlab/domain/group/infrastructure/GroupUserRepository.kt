@@ -38,4 +38,6 @@ interface GroupUserRepository : JpaRepository<GroupUser, Long> {
     fun deleteAllByUid(uid: Long)
 
     fun findAllByGroupId(groupId: Long): List<GroupUser>
+
+    fun deleteAllByUidNotIn(uids: List<Long>)
 }

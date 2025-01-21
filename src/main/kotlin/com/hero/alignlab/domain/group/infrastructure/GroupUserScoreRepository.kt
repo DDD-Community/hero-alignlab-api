@@ -22,4 +22,6 @@ interface GroupUserScoreRepository : JpaRepository<GroupUserScore, Long> {
     fun deleteAllByModifiedAtBefore(modifiedAt: LocalDateTime)
 
     fun deleteAllByUid(uid: Long)
+
+    fun deleteAllByUidNotIn(uids: List<Long>)
 }

@@ -26,6 +26,8 @@ interface PoseCountRepository : JpaRepository<PoseCount, Long>, PostCountQReposi
     fun findAllByUidInAndDate(uids: List<Long>, date: LocalDate): List<PoseCount>
 
     fun deleteAllByUid(uid: Long)
+
+    fun deleteAllByUidNotIn(uids: List<Long>)
 }
 
 @Transactional(readOnly = true)

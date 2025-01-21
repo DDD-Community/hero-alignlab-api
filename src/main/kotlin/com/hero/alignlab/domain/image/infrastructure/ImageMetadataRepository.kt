@@ -12,4 +12,6 @@ interface ImageMetadataRepository : JpaRepository<ImageMetadata, Long> {
     fun countByCreatedAtBetween(startAt: LocalDateTime, endAt: LocalDateTime): Long
 
     fun deleteAllByUid(uid: Long)
+
+    fun deleteAllByUidNotIn(uids: List<Long>)
 }

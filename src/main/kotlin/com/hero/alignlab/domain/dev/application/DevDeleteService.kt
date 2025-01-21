@@ -50,9 +50,6 @@ class DevDeleteService(
 
     /** cheer-up */
     private val cheerUpRepository: CheerUpRepository,
-
-    /** notification */
-    private val notificationRepository: PoseNotificationRepository,
 ) {
     @Transactional
     fun deleteAll(uid: Long) {
@@ -94,9 +91,6 @@ class DevDeleteService(
 
         /** cheer-up */
         cheerUpRepository.deleteAllByUid(uid)
-
-        /** notification */
-        notificationRepository.deleteAllByUid(uid)
     }
 
     @Transactional

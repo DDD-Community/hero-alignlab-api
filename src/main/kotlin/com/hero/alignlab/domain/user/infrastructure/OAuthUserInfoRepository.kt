@@ -21,4 +21,6 @@ interface OAuthUserInfoRepository : JpaRepository<OAuthUserInfo, Long> {
     fun deleteAllByUid(uid: Long)
 
     fun findAllByUid(uid: Long): List<OAuthUserInfo>
+
+    fun deleteAllByUidNotIn(uids: List<Long>)
 }

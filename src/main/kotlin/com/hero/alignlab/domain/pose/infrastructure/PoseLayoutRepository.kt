@@ -15,4 +15,8 @@ interface PoseLayoutRepository : JpaRepository<PoseLayout, Long> {
     fun findAllByUid(uid: Long): List<PoseLayout>
 
     fun deleteAllByUid(uid: Long)
+
+    fun deleteAllByUidNotIn(uids: List<Long>)
+
+    fun findAllByUidNotIn(uids: List<Long>): List<PoseLayout>
 }

@@ -23,6 +23,10 @@ interface PoseSnapshotRepository : JpaRepository<PoseSnapshot, Long>, PoseSnapsh
     fun findAllByUid(uid: Long): List<PoseSnapshot>
 
     fun deleteAllByUid(uid: Long)
+
+    fun findAllByUidNotIn(uids: List<Long>): List<PoseSnapshot>
+
+    fun deleteAllByUidNotIn(uids: List<Long>)
 }
 
 interface PoseSnapshotQRepository {
