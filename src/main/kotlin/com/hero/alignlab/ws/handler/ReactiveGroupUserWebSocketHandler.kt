@@ -164,7 +164,7 @@ class ReactiveGroupUserWebSocketHandler(
         }
     }
 
-    fun launchSendStatusUpdateEvent(groupId: Long) {
+    fun launchSendStatusUpdateEventByGroupId(groupId: Long) {
         val sessions = groupUserByGroupId[groupId] ?: return
 
         launchSendConnectEvent(groupId, sessions)
