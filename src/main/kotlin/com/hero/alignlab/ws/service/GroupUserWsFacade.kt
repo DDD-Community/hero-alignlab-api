@@ -17,6 +17,7 @@ class GroupUserWsFacade(
     private val cheerUpService: CheerUpService,
 ) {
     suspend fun generateEventMessage(
+        trace: GroupUserEventMessage.Trace,
         uid: Long,
         groupId: Long,
         spreadUids: List<Long>,
@@ -32,6 +33,7 @@ class GroupUserWsFacade(
             { cheerUpService.findAllByUidAndCheeredAt(uid, now) },
         ) { userInfoByUid, groupUsers, groupUserScores, countCheeredUp, cheerUps ->
             GroupUserEventMessage.of(
+                trace = trace,
                 uid = uid,
                 groupId = groupId,
                 userInfoByUid = userInfoByUid.associateBy { userInfo -> userInfo.id },

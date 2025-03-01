@@ -348,7 +348,7 @@ class GroupFacade(
     private fun sendEventWithDelay(groupUserScore: GroupUserScore) {
         CoroutineScope(Dispatchers.IO + Job()).launch {
             delay(3000)
-            wsHandler.launchSendStatusUpdateEventByGroupId(groupUserScore.groupId)
+            wsHandler.launchSendStatusUpdateEventByGroupId(groupUserScore.uid, groupUserScore.groupId)
         }
     }
 }

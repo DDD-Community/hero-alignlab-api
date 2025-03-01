@@ -2,6 +2,7 @@ package com.hero.alignlab.ws.handler
 
 import com.hero.alignlab.domain.auth.application.AuthFacade
 import com.hero.alignlab.domain.group.application.GroupUserService
+import com.hero.alignlab.ws.model.GroupUserEventMessage
 import com.hero.alignlab.ws.model.GroupUserUriContext
 import com.hero.alignlab.ws.model.WsGroupUserModel
 import com.hero.alignlab.ws.service.GroupUserWsFacade
@@ -62,8 +63,13 @@ class ReactiveGroupUserWebSocketHandler(
                 /** ws 요청 사용자의 세션 */
                 sessionByUid[user.uid] ?: return@forEach
 
-                /** 홰당 사용자의 session에 소켓 메세지 발송 및 같은 그룹원에게 소켓 메세지 발송 */
+                /** 같은 그룹원에게 모니터링 신규 참여자에 대한 정보를 안내하기 위해 소켓 메세지 발송 */
                 launchSendConnectEvent(
+                    trace = GroupUserEventMessage.Trace(
+                        action = "그룹 내 유저 모니터링 참여 (그룹원 전체에게 발송)",
+                        rootUid = user.uid,
+                        reason = "${user.uid}가 세션에 모니터링을 진행하게 되었고, 이에 따라 그룹[${groupId}] 전체인원에게 해당 사용자의 정보를 제공",
+                    ),
                     groupId = groupId,
                     sessionByUid = sessionByUid
                 )
@@ -110,7 +116,15 @@ class ReactiveGroupUserWebSocketHandler(
                     }
 
                     false -> {
-                        launchSendConnectEvent(groupId, uidBySession)
+                        launchSendConnectEvent(
+                            trace = GroupUserEventMessage.Trace(
+                                action = "그룹내 유저 모니터링 종료 (전체 그룹원에게 발송)",
+                                rootUid = uid,
+                                reason = "${uid}가 모니터링을 종료함에 따라, 그룹[${groupId}]에게 최신화된 접속 유저 정보를 반환"
+                            ),
+                            groupId = groupId,
+                            sessionByUid = uidBySession
+                        )
                     }
                 }
             }
@@ -136,49 +150,57 @@ class ReactiveGroupUserWebSocketHandler(
 
     /** 발송되는 순서가 중요하지 않다. */
     private fun launchSendConnectEvent(
+        trace: GroupUserEventMessage.Trace,
         groupId: Long,
         sessionByUid: MutableMap<Long, WebSocketSession>,
     ) {
         CoroutineScope(Dispatchers.IO + Job()).launch {
-            sendConnectEvent(
-                groupId = groupId,
-                sessionByUid = sessionByUid
-            )
+            sessionByUid.forEach { (uid, session) ->
+                val eventMessage = groupUserWsFacade.generateEventMessage(
+                    trace = trace,
+                    uid = uid,
+                    groupId = groupId,
+                    spreadUids = sessionByUid.keys.toList()
+                )
+
+                session
+                    .send(Mono.just(session.textMessage(eventMessage.message())))
+                    .subscribe()
+            }
         }
     }
 
-    private suspend fun sendConnectEvent(
-        groupId: Long,
-        sessionByUid: MutableMap<Long, WebSocketSession>
-    ) {
-        sessionByUid.forEach { (uid, session) ->
-            val eventMessage = groupUserWsFacade.generateEventMessage(
-                uid = uid,
-                groupId = groupId,
-                spreadUids = sessionByUid.keys.toList()
-            )
-
-            session
-                .send(Mono.just(session.textMessage(eventMessage.message())))
-                .subscribe()
-        }
-    }
-
-    fun launchSendStatusUpdateEventByGroupId(groupId: Long) {
+    fun launchSendStatusUpdateEventByGroupId(uid: Long, groupId: Long) {
         val sessions = groupUserByGroupId[groupId] ?: return
 
-        launchSendConnectEvent(groupId, sessions)
+        launchSendConnectEvent(
+            trace = GroupUserEventMessage.Trace(
+                action = "포즈 촬영으로 인한 업데이트 발송 (전체 그룹원 발송)",
+                rootUid = uid,
+                reason = "POSE 촬영 진행 -> 그룹 정보 갱신 필요, 포즈 촬여을 한 uid: $uid"
+            ),
+            groupId = groupId,
+            sessionByUid = sessions,
+        )
     }
 
     /** 응원을 보낸 사람과 받은 사람에게 WS 알림 진행 */
     fun launchSendEventByCheerUp(actorUid: Long, targetUid: Long, groupId: Long) {
         CoroutineScope(Dispatchers.IO + Job()).launch {
+            val spreadUids = groupUserByGroupId[groupId]?.keys?.toList() ?: return@launch
+
             /** 응원하기를 누른 action 대상자  */
             groupUserByGroupId[groupId]?.get(actorUid)?.let { session ->
                 val eventMessage = groupUserWsFacade.generateEventMessage(
+                    trace = GroupUserEventMessage.Trace(
+                        action = "응원하기를 보냄 (보낸 사용자에게만 발송)",
+                        rootUid = actorUid,
+                        reason = "${actorUid}가 응원하기를 누름, 응원하기를 보낸 대상은 [$targetUid] action을 진행한 사용자에게 최신 데이터를 제공하기 위해 메세지를 받음 "
+                    ),
                     uid = actorUid,
                     groupId = groupId,
-                    spreadUids = listOf(actorUid, targetUid),
+                    /** 현재 접속중인 사용자에 대한 정보는 전체 제공되어야 함 */
+                    spreadUids = spreadUids,
                     cheerUpSenderUid = actorUid,
                 )
 
@@ -190,9 +212,15 @@ class ReactiveGroupUserWebSocketHandler(
             /** 응원하기를 받은 대상자 */
             groupUserByGroupId[groupId]?.get(targetUid)?.let { session ->
                 val eventMessage = groupUserWsFacade.generateEventMessage(
+                    trace = GroupUserEventMessage.Trace(
+                        action = "응원하기를 받음 (받은 사용자에게만 발송)",
+                        rootUid = actorUid,
+                        reason = "${actorUid}가 응원하기를 누름, 응원하기를 보낸 대상은 [$targetUid] 응원하기를 받았기 때문에 메세지를 받음"
+                    ),
                     uid = targetUid,
                     groupId = groupId,
-                    spreadUids = listOf(actorUid, targetUid),
+                    /** 현재 접속중인 사용자에 대한 정보는 전체 제공되어야 함 */
+                    spreadUids = spreadUids,
                     cheerUpSenderUid = actorUid,
                 )
 

@@ -8,6 +8,12 @@ import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
 
 data class GroupUserEventMessage(
+    /**
+     * - ws trace를 하기 위한 목적, 향후 해당 필드를 제거한다.
+     * - trace의 생성은 보내는 action이 진행되는 곳에서 생성한다.
+     */
+    val trace: Trace,
+    /** ws를 보낸 시간 */
     val timestamp: LocalDateTime = LocalDateTime.now(),
     val groupId: Long,
     /** 본인 정보, 접속 종료시 본인 정보는 미제공 */
@@ -16,6 +22,13 @@ data class GroupUserEventMessage(
     val groupUsers: List<ConcurrentUser>,
     val cheerUp: CheerUpModel,
 ) {
+    /** 트래킹을 위해, 해당 변수의 네이밍은 한글로 제공 */
+    data class Trace(
+        val action: String,
+        val rootUid: Long,
+        val reason: String,
+    )
+
     data class ConcurrentUser(
         val groupUserId: Long,
         val uid: Long,
@@ -35,6 +48,7 @@ data class GroupUserEventMessage(
 
     companion object {
         fun of(
+            trace: Trace,
             uid: Long,
             groupId: Long,
             userInfoByUid: Map<Long, UserInfo>,
@@ -63,6 +77,7 @@ data class GroupUserEventMessage(
             }
 
             return GroupUserEventMessage(
+                trace = trace,
                 groupId = groupId,
                 groupUser = groupUsers.firstOrNull { users -> users.uid == uid },
                 groupUsers = groupUsers.take(5),
