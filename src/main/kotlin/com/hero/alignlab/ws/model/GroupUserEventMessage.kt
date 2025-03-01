@@ -40,8 +40,10 @@ data class GroupUserEventMessage(
     data class CheerUpModel(
         /** 나에게 응원하기를 보낸 사용자의 uid */
         val senderUid: Long?,
-        /** 금일 받은 응원하기 수 */
+        /** 금일 응원하기를 진행한 수 */
         val countCheeredUp: Long,
+        /** 금일 음원하기를 받은 수 */
+        val countReceivedCheeredUp: Long,
         /** 내가 응원을 보낸 사용자 목록 */
         val sentUids: List<Long>,
     )
@@ -56,6 +58,7 @@ data class GroupUserEventMessage(
             scoreByUid: Map<Long, GroupUserScore>,
             cheerUpSenderUid: Long?,
             countCheeredUp: Long,
+            countReceivedCheeredUp: Long,
             cheerUpsByTargetUid: List<Long>,
         ): GroupUserEventMessage {
             val rank = AtomicInteger(1)
@@ -84,6 +87,7 @@ data class GroupUserEventMessage(
                 cheerUp = CheerUpModel(
                     senderUid = cheerUpSenderUid,
                     countCheeredUp = countCheeredUp,
+                    countReceivedCheeredUp = countReceivedCheeredUp,
                     sentUids = cheerUpsByTargetUid,
                 )
             )

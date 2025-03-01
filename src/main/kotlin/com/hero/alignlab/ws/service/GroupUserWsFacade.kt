@@ -30,8 +30,9 @@ class GroupUserWsFacade(
             { groupUserService.findAllByGroupIdAndUids(groupId, spreadUids) },
             { groupUserScoreService.findAllByGroupIdAndUids(groupId, spreadUids) },
             { cheerUpService.countAllByCheeredAtAndUid(now, uid) },
+            { cheerUpService.countAllByCheeredAtAndTargetUid(now, uid) },
             { cheerUpService.findAllByUidAndCheeredAt(uid, now) },
-        ) { userInfoByUid, groupUsers, groupUserScores, countCheeredUp, cheerUps ->
+        ) { userInfoByUid, groupUsers, groupUserScores, countCheeredUp, countReceivedCheeredUp, cheerUps ->
             GroupUserEventMessage.of(
                 trace = trace,
                 uid = uid,
@@ -41,6 +42,7 @@ class GroupUserWsFacade(
                 scoreByUid = groupUserScores.associateBy { score -> score.uid },
                 cheerUpSenderUid = cheerUpSenderUid,
                 countCheeredUp = countCheeredUp,
+                countReceivedCheeredUp = countReceivedCheeredUp,
                 cheerUpsByTargetUid = cheerUps.map { cheerUp -> cheerUp.targetUid }
             )
         }
