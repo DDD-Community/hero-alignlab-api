@@ -68,7 +68,7 @@ class ReactiveGroupUserWebSocketHandler(
                     trace = GroupUserEventMessage.Trace(
                         action = "그룹 내 유저 모니터링 참여 (그룹원 전체에게 발송)",
                         rootUid = user.uid,
-                        reason = "${user.uid}가 세션에 모니터링을 진행하게 되었고, 이에 따라 그룹[${groupId}] 전체인원에게 해당 사용자의 정보를 제공",
+                        reason = "${user.uid}가 모니터링을 진행하게 되었고, 이에 따라 그룹[${groupId}] 전체인원에게 해당 사용자의 정보를 제공",
                     ),
                     groupId = groupId,
                     sessionByUid = sessionByUid
