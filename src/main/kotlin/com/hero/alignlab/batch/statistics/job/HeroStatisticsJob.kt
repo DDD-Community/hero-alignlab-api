@@ -6,6 +6,7 @@ import com.hero.alignlab.client.discord.model.request.SendMessageRequest
 import com.hero.alignlab.domain.discussion.infrastructure.DiscussionRepository
 import com.hero.alignlab.domain.group.infrastructure.GroupRepository
 import com.hero.alignlab.domain.group.infrastructure.GroupUserRepository
+import com.hero.alignlab.domain.image.infrastructure.ImageMetadataRepository
 import com.hero.alignlab.domain.log.infrastructure.SystemActionLogRepository
 import com.hero.alignlab.domain.notification.infrastructure.PoseNotificationRepository
 import com.hero.alignlab.domain.pose.infrastructure.PoseSnapshotRepository
@@ -26,7 +27,7 @@ class HeroStatisticsJob(
     private val groupRepository: GroupRepository,
     private val groupUserRepository: GroupUserRepository,
     private val discussionRepository: DiscussionRepository,
-    private val imageRepository: GroupRepository,
+    private val imageMetadataRepository: ImageMetadataRepository,
     private val systemActionLogRepository: SystemActionLogRepository,
     private val poseNotificationRepository: PoseNotificationRepository,
     private val poseSnapshotRepository: PoseSnapshotRepository,
@@ -106,10 +107,10 @@ class HeroStatisticsJob(
 
             /** 이미지 */
             val imageCountByCreatedAt = async(Dispatchers.IO) {
-                imageRepository.countByCreatedAtBetween(fromDate, toDate)
+                imageMetadataRepository.countByCreatedAtBetween(fromDate, toDate)
             }
             val imageTotalCount = async(Dispatchers.IO) {
-                imageRepository.count()
+                imageMetadataRepository.count()
             }
 
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
