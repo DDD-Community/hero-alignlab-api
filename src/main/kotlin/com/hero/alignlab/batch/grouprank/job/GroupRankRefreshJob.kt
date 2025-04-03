@@ -13,7 +13,7 @@ class GroupRankRefreshJob(
         val groupUsers = groupUserService.findAll()
 
         groupUsers.forEach { groupUser ->
-            groupFacade.refreshGroupScore(groupUser.uid)
+            groupFacade.refreshGroupScoreByGroupRefresh(groupUser.uid)
         }
     }
 }

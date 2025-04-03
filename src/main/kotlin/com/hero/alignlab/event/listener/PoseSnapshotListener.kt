@@ -58,7 +58,7 @@ class PoseSnapshotListener(
                 poseCountService.saveSync(updatedPoseCount)
             }
 
-            groupFacade.refreshGroupScore(event.poseSnapshot.uid)
+            groupFacade.refreshGroupScoreByPoseSnapshot(event.poseSnapshot.uid)
         }
     }
 }

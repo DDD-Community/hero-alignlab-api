@@ -10,7 +10,6 @@ import com.hero.alignlab.domain.cheer.application.CheerUpService
 import com.hero.alignlab.domain.group.domain.Group
 import com.hero.alignlab.domain.group.domain.GroupTag
 import com.hero.alignlab.domain.group.domain.GroupUser
-import com.hero.alignlab.domain.group.domain.GroupUserScore
 import com.hero.alignlab.domain.group.model.CreateGroupContext
 import com.hero.alignlab.domain.group.model.UpdateGroupContext
 import com.hero.alignlab.domain.group.model.request.CheckGroupRegisterRequest
@@ -26,7 +25,10 @@ import com.hero.alignlab.exception.ErrorCode
 import com.hero.alignlab.exception.InvalidRequestException
 import com.hero.alignlab.exception.NotFoundException
 import com.hero.alignlab.ws.handler.ReactiveGroupUserWebSocketHandler
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
@@ -327,7 +329,7 @@ class GroupFacade(
         )
     }
 
-    suspend fun refreshGroupScore(uid: Long) {
+    suspend fun refreshGroupScoreByPoseSnapshot(uid: Long) {
         /** group score 처리 */
         groupUserService.findByUidOrNull(uid)?.run {
             val to = LocalDateTime.now()
@@ -341,14 +343,36 @@ class GroupFacade(
 
             val groupUserScore = groupUserScoreService.createOrUpdateGroupUserScore(this, score)
 
-            sendEventWithDelay(groupUserScore)
+            CoroutineScope(Dispatchers.IO + Job()).launch {
+                wsHandler.launchSendStatusUpdateEventByGroupId(groupUserScore.uid, groupUserScore.groupId)
+            }
         }
     }
 
-    private fun sendEventWithDelay(groupUserScore: GroupUserScore) {
+    suspend fun refreshGroupScoreByGroupRefresh(uid: Long) {
+        val groupUser = groupUserService.findByUidOrNull(uid) ?: return
+
+        val to = LocalDateTime.now()
+        val from = to.minusHours(1)
+
+        /** 최근 1시간 score */
+        val score = poseSnapshotService.countByUidAndModifiedAt(
+            uid = uid,
+            fromCreatedAt = from,
+            toCreatedAt = to
+        ).filter { model -> model.type in BAD_POSE }.sumOf { model -> model.count }.toInt()
+
+        val oldScore = groupUserScoreService.findByUidOrNull(uid)?.score ?: 0
+
+        /** 이전 스코어와 같으면 다음 동작 cancel */
+        if (score == oldScore) {
+            return
+        }
+
+        val groupUserScore = groupUserScoreService.createOrUpdateGroupUserScore(groupUser, score)
+
         CoroutineScope(Dispatchers.IO + Job()).launch {
-            delay(3000)
-            wsHandler.launchSendStatusUpdateEventByGroupId(groupUserScore.uid, groupUserScore.groupId)
+            wsHandler.launchSendGroupRankRefreshEventByGroupId(groupUserScore.uid, groupUserScore.groupId)
         }
     }
 }

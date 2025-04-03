@@ -184,6 +184,20 @@ class ReactiveGroupUserWebSocketHandler(
         )
     }
 
+    fun launchSendGroupRankRefreshEventByGroupId(uid: Long, groupId: Long) {
+        val sessions = groupUserByGroupId[groupId] ?: return
+
+        launchSendConnectEvent(
+            trace = GroupUserEventMessage.Trace(
+                action = "그룹 랭킹 갱신으로 인해 발송 (전체 그룹원 발송)",
+                rootUid = uid,
+                reason = "3초 단위 그룹 랭킹 갱신 -> 그룹 정보 노출에 대한 갱신 필요, 그룹 랭킹이 변경된 uid: $uid"
+            ),
+            groupId = groupId,
+            sessionByUid = sessions,
+        )
+    }
+
     /** 응원을 보낸 사람과 받은 사람에게 WS 알림 진행 */
     fun launchSendEventByCheerUp(actorUid: Long, targetUid: Long, groupId: Long) {
         CoroutineScope(Dispatchers.IO + Job()).launch {
