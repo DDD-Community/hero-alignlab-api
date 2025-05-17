@@ -45,4 +45,4 @@ hero:
     properties:
       hibernate.hbm2ddl.auto: none
       hibernate.criteria.literal_handling_mode: bind
-  maximum-jdbc-thread-pool-size: 30
+  maximum-jdbc-thread-pool-size: 25
